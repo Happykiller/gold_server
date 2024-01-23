@@ -1,0 +1,131 @@
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+query {
+  accounts {
+    index
+    type_id
+    parent_account_id
+    label
+    description
+    active
+    creator_id
+    modificator_id
+    creation_date
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+query {
+  account (
+    dto: {
+      account_id: 1
+    }
+  ) {
+    id
+    type_id
+    parent_account_id
+    label
+    description
+    active
+    creator_id
+    modificator_id
+    creation_date
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  createAccount (
+    dto: {
+      type_id: 1
+      label: "test"
+    }
+  ) {
+    id
+    type_id
+    parent_account_id
+    label
+    description
+    active
+    creator_id
+    modificator_id
+    creation_date
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  updateAccount (
+    dto: {
+      account_id: 1
+      type_id: 1
+      label: "test"
+    }
+  ) {
+    id
+    type_id
+    parent_account_id
+    label
+    description
+    active
+    creator_id
+    modificator_id
+    creation_date
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  deleteAccount (
+    dto: {
+      account_id: 1
+    }
+  )
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+query {
+  accountTypes {
+    id
+    label
+    description
+    active
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}

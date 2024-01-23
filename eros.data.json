@@ -2,15 +2,19 @@
   "datas": [
     {
       "type": "Float",
-      "value": 69.85019650427078
+      "value": 42
     },
     {
       "type": "String",
-      "value": "38uk9r707b"
+      "value": "Bob"
     },
     {
       "type": "Boolean",
       "value": true
+    },
+    {
+      "type": "Int",
+      "value": 0
     }
   ]
 }

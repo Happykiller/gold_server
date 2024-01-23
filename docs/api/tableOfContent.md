@@ -1,19 +1,31 @@
-# Lilith
-Poker planning
+# Gold
+Apis for Lilith
 ## Summary
 ---
 ### Others subscription
-- [subToSession](./pages/subtosession.md)
-- [subToSessions](./pages/subtosessions.md)
+- [subHello](./pages/subhello.md)
 ---
 ### Others query
-- [sessions](./pages/sessions.md)
-- [session](./pages/session.md)
-- [task_getAll](./pages/task_getall.md)
+- [auth](./pages/auth.md)
+- [operationLinks](./pages/operationlinks.md)
+- [operationThirds](./pages/operationthirds.md)
+- [operationStatus](./pages/operationstatus.md)
+- [operationCategories](./pages/operationcategories.md)
+- [operationTypes](./pages/operationtypes.md)
+- [operation](./pages/operation.md)
+- [operations](./pages/operations.md)
+- [accountTypes](./pages/accounttypes.md)
+- [account](./pages/account.md)
+- [accounts](./pages/accounts.md)
+- [hello](./pages/hello.md)
+- [testBdd](./pages/testbdd.md)
 ---
 ### Others mutation
-- [createSession](./pages/createsession.md)
-- [joinSession](./pages/joinsession.md)
-- [createItem](./pages/createitem.md)
-- [createVote](./pages/createvote.md)
-- [reveal](./pages/reveal.md)
+- [createAccount](./pages/createaccount.md)
+- [updateAccount](./pages/updateaccount.md)
+- [deleteAccount](./pages/deleteaccount.md)
+- [createOperation](./pages/createoperation.md)
+- [updateOperation](./pages/updateoperation.md)
+- [deleteOperation](./pages/deleteoperation.md)
+- [createOperationLink](./pages/createoperationlink.md)
+- [deleteOperationLink](./pages/deleteoperationlink.md)

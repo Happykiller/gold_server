@@ -3,7 +3,7 @@ import { Inject, UseGuards } from '@nestjs/common';
 import { Field, ObjectType, Query, Resolver, Subscription } from '@nestjs/graphql';
 
 import { PubSubHandler } from '@src/pubSub/pubSubHandler';
-import { TokenGuard } from '@src/presentation/guard/token.guard';
+import { GqlAuthGuard } from '../guard/auth.guard';
 
 @ObjectType()
 export class HelloModelResolver {
@@ -19,7 +19,7 @@ export class HelloResolver {
     private pubSubHandler: PubSubHandler
   ) {}
 
-  @UseGuards(TokenGuard)
+  @UseGuards(GqlAuthGuard)
   @Query(
     /* istanbul ignore next */
     () => HelloModelResolver
@@ -31,7 +31,7 @@ export class HelloResolver {
   }
 
   @SkipThrottle()
-  @UseGuards(TokenGuard)
+  @UseGuards(GqlAuthGuard)
   @Subscription(
     /* istanbul ignore next */
     (): typeof HelloModelResolver => HelloModelResolver, {

@@ -7,11 +7,17 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { config } from './config';
 import { HelloModule } from './presentation/hello/hello.module';
 import { TestModule } from './presentation/test/test.module';
+import { AccountModule } from './presentation/account/account.module';
+import { OperationModule } from './presentation/operation/operation.module';
+import { AuthModule } from './presentation/auth/auth.module';
 
 @Module({
   imports: [
     TestModule,
     HelloModule,
+    AccountModule,
+    OperationModule,
+    AuthModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       subscriptions: {

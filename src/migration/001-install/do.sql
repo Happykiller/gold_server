@@ -7,6 +7,7 @@ CREATE TABLE `account` (
   `type_id` int(11) NOT NULL DEFAULT 1,
   `parent_account_id` int(11) DEFAULT NULL,
   `label` varchar(250) NOT NULL,
+  `description` text NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `creator_id` int(11) NOT NULL,
   `creation_date` datetime NOT NULL,
@@ -25,6 +26,7 @@ CREATE TABLE `account` (
 CREATE TABLE `account_type_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `label` varchar(250) NOT NULL,
+  `description` text NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `creator_id` int(11) DEFAULT NULL,
   `creation_date` datetime NOT NULL,
@@ -50,7 +52,7 @@ CREATE TABLE `user` (
   `password` varchar(60) NOT NULL,
   `name_first` varchar(20) NOT NULL,
   `name_last` varchar(20) NOT NULL,
-  `description` varchar(250) NOT NULL,
+  `description` text NOT NULL,
   `mail` varchar(100) NOT NULL,
   `active` int(2) NOT NULL DEFAULT 1,
   `creation` datetime NOT NULL,
@@ -58,8 +60,6 @@ CREATE TABLE `user` (
   `language` varchar(50) NOT NULL DEFAULT 'fr',
   PRIMARY KEY (`id`),
   UNIQUE KEY `code_unique` (`code`),
-  KEY `user-fk-rank_id` (`rank_id`),
-  CONSTRAINT `user-fk-rank_id` FOREIGN KEY (`rank_id`) REFERENCES `rank` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 CREATE TABLE `operation` (
@@ -69,11 +69,10 @@ CREATE TABLE `operation` (
   `amount` decimal(10,2) NOT NULL,
   `date` datetime NOT NULL,
   `status_id` int(11) NOT NULL,
-  `sign` tinyint(1) NOT NULL,
   `type_id` int(11) NOT NULL,
   `third_id` int(11) DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
-  `comment` text NOT NULL,
+  `description` text NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `creator_id` int(11) NOT NULL,
   `creation_date` datetime NOT NULL,
@@ -101,7 +100,7 @@ CREATE TABLE `operation` (
 CREATE TABLE `operation_category_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `label` varchar(250) NOT NULL,
-  `description` varchar(500) NOT NULL,
+  `description` text NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `creator_id` int(11) DEFAULT NULL,
   `creation_date` datetime NOT NULL,
@@ -150,7 +149,7 @@ CREATE TABLE `operation_status_list` (
 CREATE TABLE `operation_third_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `label` varchar(250) NOT NULL,
-  `description` varchar(500) NOT NULL,
+  `description` text NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `creator_id` int(11) DEFAULT NULL,
   `creation_date` datetime NOT NULL,

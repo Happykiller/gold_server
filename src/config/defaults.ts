@@ -21,6 +21,13 @@ const defaults: Configuration = {
   },
   client: {
     token: merged.TOKEN_CLIENT ?? 'token'
+  },
+  jwt: {
+    refreshTokenName: 'thomyris-refresh-token',
+    secret: 'secretKey',
+    signOptions: {
+      expiresIn: '8h'
+    }
   }
 };
 

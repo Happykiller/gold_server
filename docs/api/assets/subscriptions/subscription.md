@@ -3,7 +3,6 @@
 
 ```graphql
 type Subscription {
-  subToSessions: [SessionRecordObjectResolver!]!
-  subToSession(dto: SubSessionInputResolver!): SessionDetailsRecordObjectResolver!
+  subHello: HelloModelResolver!
 }
 ```

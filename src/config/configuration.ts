@@ -23,6 +23,14 @@ export class Configuration {
     password?: string;
     database?: string;
   }
+
+  public jwt?: {
+    refreshTokenName?: string,
+    secret?: string,
+    signOptions?: {
+      expiresIn?: string
+    }
+  };
   
   /**
    * request limitation per second

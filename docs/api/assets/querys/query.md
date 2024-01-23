@@ -3,8 +3,18 @@
 
 ```graphql
 type Query {
-  task_getAll: [TaskRecord!]!
-  session(dto: SessionInputResolver!): SessionDetailsRecordObjectResolver!
-  sessions: [SessionRecordObjectResolver!]!
+  testBdd: TestModelResolver!
+  hello: HelloModelResolver!
+  accounts: [AccountModelResolver!]!
+  account(dto: GetAccountInputResolver!): AccountModelResolver!
+  accountTypes: [AccountTypeModelResolver!]!
+  operations(dto: GetAccountInputResolver!): [OperationModelResolver!]!
+  operation(dto: GetOperationInputResolver!): OperationModelResolver!
+  operationTypes: [OperationTypeModelResolver!]!
+  operationCategories: [OperationCategoryModelResolver!]!
+  operationStatus: [OperationStatutModelResolver!]!
+  operationThirds: [OperationThirdsModelResolver!]!
+  operationLinks(dto: GetOperationInputResolver!): [OperationLinkModelResolver!]!
+  auth(dto: AuthInput!): AuthType!
 }
 ```

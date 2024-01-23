@@ -1,0 +1,251 @@
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+query {
+  operations (
+    dto: {
+      account_id: 1
+    }
+  ) {
+    id
+    account_id
+    account_id_dest
+    amount
+    date
+    status_id
+    sign
+    type_id
+    third_id
+    category_id
+    description
+    active
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+query {
+  operation (
+    dto: {
+      operation_id: 1
+    }
+  ) {
+    id
+    account_id
+    account_id_dest
+    amount
+    date
+    status_id
+    sign
+    type_id
+    third_id
+    category_id
+    description
+    active
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  createOperation (
+    dto: {
+      account_id: 1
+      amount: 42.2
+      date: "now"
+      status_id: 1
+      sign: true
+      type_id: 1
+      third_id: 1
+      category_id: 1
+      description: "comment"
+    }
+  ) {
+    id
+    account_id
+    account_id_dest
+    amount
+    date
+    status_id
+    sign
+    type_id
+    third_id
+    category_id
+    description
+    active
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  deleteOperation (
+    dto: {
+      operation_id: 1
+    }
+  )
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+query {
+  operationTypes {
+    id
+    label
+    description
+    active
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+query {
+  operationCategories {
+    id
+    label
+    description
+    active
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+query {
+  operationStatus {
+    id
+    label
+    description
+    active
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+query {
+  operationThirds {
+    id
+    label
+    description
+    active
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+query {
+  operationLinks (
+    dto: {
+      operation_id: 1
+    }
+  ) {
+    id
+    operationA_id
+    operationB_id
+    active
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  createOperationLink (
+    dto: {
+      operationA_id: 1
+      operationB_id: 1
+    }
+  ) {
+    id
+    operationA_id
+    operationB_id
+    active
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  deleteOperationLink (
+    dto: {
+      operation_link_id: 1
+    }
+  )
+}

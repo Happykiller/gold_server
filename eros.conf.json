@@ -6,8 +6,8 @@
   },
   "maxDepth": 2,
   "app": {
-    "title": "Lilith",
-    "description": "Poker planning"
+    "title": "Gold",
+    "description": "Apis for Lilith"
   },
   "tree": {},
   "scalars":[]

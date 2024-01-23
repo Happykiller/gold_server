@@ -1,0 +1,23 @@
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer token
+X-REQUEST-TYPE: GraphQL
+
+query {
+  hello {
+    message
+  }
+}
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyMzk3MywiZXhwIjoxNzA2MDUyNzczfQ.qYvzhv2s6tR2o4lXt1ZpXcFZ8Ky5NW8Mx-lvV9Oubkg
+X-REQUEST-TYPE: GraphQL
+
+query {
+  testBdd {
+    resultat
+  }
+}

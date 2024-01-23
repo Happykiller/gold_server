@@ -3,10 +3,13 @@
 
 ```graphql
 type Mutation {
-  createSession(dto: CreateSessionInputResolver!): SessionRecordObjectResolver!
-  joinSession(dto: JoinSessionInputResolver!): Boolean!
-  createItem(dto: CreateItemInputResolver!): Boolean!
-  createVote(dto: CreateVoteInputResolver!): Boolean!
-  reveal(dto: RevealInputResolver!): Boolean!
+  createAccount(dto: CreateAccountInputResolver!): AccountModelResolver!
+  updateAccount(dto: UpdateAccountInputResolver!): AccountModelResolver!
+  deleteAccount(dto: GetAccountInputResolver!): Boolean!
+  createOperation(dto: CreateOperationInputResolver!): OperationModelResolver!
+  updateOperation(dto: UpdateOperationInputResolver!): OperationModelResolver!
+  deleteOperation(dto: GetOperationInputResolver!): Boolean!
+  createOperationLink(dto: CreateOperationLinkInputResolver!): OperationLinkModelResolver!
+  deleteOperationLink(dto: GetOperationLinkInputResolver!): Boolean!
 }
 ```

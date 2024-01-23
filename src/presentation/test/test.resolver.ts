@@ -1,8 +1,9 @@
 import { Inject, UseGuards } from '@nestjs/common';
 import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
-
-import { TokenGuard } from '@src/presentation/guard/token.guard';
 import inversify from '../../inversify/investify';
+import { GqlAuthGuard } from '../guard/auth.guard';
+import { UserSession } from '../auth/jwt.strategy';
+import { CurrentSession } from '../guard/userSession.decorator';
 
 @ObjectType()
 export class TestModelResolver {
@@ -12,13 +13,13 @@ export class TestModelResolver {
 
 @Resolver('TestResolver')
 export class TestResolver {
-  @UseGuards(TokenGuard)
+  @UseGuards(GqlAuthGuard)
   @Query(
     /* istanbul ignore next */
     () => TestModelResolver
   )
-  async testBdd(): Promise<TestModelResolver> {
-
+  async testBdd(@CurrentSession() session: UserSession): Promise<TestModelResolver> {
+    console.log(session);
     return {
       resultat: await inversify.testBddUsecase.execute()
     };
