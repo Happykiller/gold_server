@@ -11,6 +11,7 @@
     "start": "env NODE_ENV=prod nest start",
     "start:watch": "env NODE_ENV=prod nest start --watch",
     "start:dev": "env NODE_ENV=dev nest start --watch",
+    "start:mock": "env NODE_ENV=mock nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

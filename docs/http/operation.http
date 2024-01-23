@@ -16,7 +16,6 @@ query {
     amount
     date
     status_id
-    sign
     type_id
     third_id
     category_id
@@ -116,7 +115,7 @@ mutation {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
 X-REQUEST-TYPE: GraphQL
 
 query {
@@ -135,7 +134,7 @@ query {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
 X-REQUEST-TYPE: GraphQL
 
 query {
@@ -154,7 +153,7 @@ query {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
 X-REQUEST-TYPE: GraphQL
 
 query {
@@ -173,7 +172,7 @@ query {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
 X-REQUEST-TYPE: GraphQL
 
 query {
@@ -192,7 +191,7 @@ query {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
 X-REQUEST-TYPE: GraphQL
 
 query {
@@ -215,7 +214,7 @@ query {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
 X-REQUEST-TYPE: GraphQL
 
 mutation {
@@ -239,7 +238,7 @@ mutation {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
 X-REQUEST-TYPE: GraphQL
 
 mutation {
