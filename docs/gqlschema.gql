@@ -1,0 +1,20 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type HelloModelResolver {
+  message: String
+}
+
+type TestModelResolver {
+  resultat: Boolean
+}
+
+type Query {
+  testBdd: TestModelResolver!
+  hello: HelloModelResolver!
+}
+
+type Subscription {
+  subHello: HelloModelResolver!
+}

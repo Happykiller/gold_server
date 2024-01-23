@@ -1,0 +1,14 @@
+{
+  "input": "./docs/gqlschema.gql",
+  "output": {
+    "path": "./docs/",
+    "dirName": "api"
+  },
+  "maxDepth": 2,
+  "app": {
+    "title": "Lilith",
+    "description": "Poker planning"
+  },
+  "tree": {},
+  "scalars":[]
+}

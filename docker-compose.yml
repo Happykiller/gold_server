@@ -1,0 +1,12 @@
+## Fichier : docker-compose.yml
+version: '3.8'
+
+services:
+  gold_back:
+    build:
+      dockerfile: Dockerfile
+    container_name: gold_back
+    ports:
+      - '3000:3000'
+      - '5900:5900'
+    restart: always
