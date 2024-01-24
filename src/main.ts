@@ -3,8 +3,8 @@ import * as bodyParser from 'body-parser';
 import { NestFactory } from '@nestjs/core';
 import { NextFunction, Request, Response } from 'express';
 
-import { config } from './config';
-import { AppModule } from './app.module';
+import { config } from '@src/config';
+import { AppModule } from '@src/app.module';
 
 async function bootstrap() {
   const logger = new Logger('bootstrap');

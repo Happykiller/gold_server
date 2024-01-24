@@ -1,18 +1,14 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
-
 import { PassportStrategy } from '@nestjs/passport';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { config } from '../../config';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+
+import { config } from '@src/config';
+import inversify from '@src/inversify/investify';
+import { UserUsecaseModel } from '@src/usecase/model/user.usecase.model';
 
 export interface UserSession {
   id: number;
   code: string;
-}
-
-export interface UserUsecaseModel {
-  id: number;
-  code: string;
-  active: boolean
 }
 
 @Injectable()
@@ -29,11 +25,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!payload.code) {
       throw new UnauthorizedException();
     } else {
-      const user: UserUsecaseModel = {
-        id: 1,
-        code: payload.code,
-        active: true
-      };
+      const user: UserUsecaseModel = await inversify.getUserUsecase.execute({
+        code: payload.code
+      });
       return new Promise(resolve => {
         resolve({
           id: user.id,

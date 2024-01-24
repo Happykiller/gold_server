@@ -1,30 +1,40 @@
-import { Inject } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import {
   Args,
-  Context,
   Field,
   InputType,
   Int,
-  Mutation,
   ObjectType,
   Query,
   Resolver
 } from '@nestjs/graphql';
+import { JwtService } from '@nestjs/jwt';
+import { UnauthorizedException } from '@nestjs/common';
 
+import inversify from '@src/inversify/investify';
+import { UserSessionUsecaseModel } from '@src/usecase/model/userSession.usecase.model';
 
 @ObjectType()
-export class UserResolverModel {
+export class AuthModelResolver {
+  @Field(() => String, { description: 'Session token' })
+  accessToken: string;
   @Field(() => Int, { description: 'Id of the user' })
   id: number;
   @Field(() => String, { description: 'Code of the user' })
   code: string;
-}
-
-@ObjectType()
-export class AuthType extends UserResolverModel {
-  @Field(() => String, { description: 'Session token' })
-  accessToken: string;
+  @Field(() => String)
+  name_first: string;
+  @Field(() => String)
+  name_last: string;
+  @Field(() => String)
+  description: string;
+  @Field(() => String)
+  mail: string;
+  @Field(() => String)
+  creation: string;
+  @Field(() => String, { nullable: true })
+  modification: string;
+  @Field(() => String)
+  language: string;
 }
 
 @InputType()
@@ -44,14 +54,22 @@ export class AuthResolver {
 
   @Query(
     /* istanbul ignore next */
-    (): typeof AuthType => AuthType
+    (): typeof AuthModelResolver => AuthModelResolver
   )
-  async auth(@Args('dto') dto: AuthInput): Promise<AuthType> {
-    const token = this.jwtService.sign({ code: dto.login });
+  async auth(@Args('dto') dto: AuthInput): Promise<AuthModelResolver> {
+    const userSession:UserSessionUsecaseModel = await inversify.authUsecase.execute(dto);
+
+    if (!userSession) {
+      throw new UnauthorizedException('Credentials wrong');
+    }
+
+    const token = this.jwtService.sign({ 
+      code: userSession.code,
+      id: userSession.id
+    });
     return {
       accessToken: token,
-      id: 1,
-      code: dto.login
+      ... userSession
     };
   }
 }

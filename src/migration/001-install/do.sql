@@ -49,7 +49,7 @@ CREATE TABLE `migration` (
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` varchar(10) NOT NULL,
-  `password` varchar(60) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `name_first` varchar(20) NOT NULL,
   `name_last` varchar(20) NOT NULL,
   `description` text NOT NULL,

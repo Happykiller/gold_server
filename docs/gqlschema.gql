@@ -110,15 +110,22 @@ type OperationThirdsModelResolver {
   modification_date: String
 }
 
-type AuthType {
+type AuthModelResolver {
+  """Session token"""
+  accessToken: String!
+
   """Id of the user"""
   id: Int!
 
   """Code of the user"""
   code: String!
-
-  """Session token"""
-  accessToken: String!
+  name_first: String!
+  name_last: String!
+  description: String!
+  mail: String!
+  creation: String!
+  modification: String
+  language: String!
 }
 
 type Query {
@@ -134,7 +141,7 @@ type Query {
   operationStatus: [OperationStatutModelResolver!]!
   operationThirds: [OperationThirdsModelResolver!]!
   operationLinks(dto: GetOperationInputResolver!): [OperationLinkModelResolver!]!
-  auth(dto: AuthInput!): AuthType!
+  auth(dto: AuthInput!): AuthModelResolver!
 }
 
 input GetAccountInputResolver {

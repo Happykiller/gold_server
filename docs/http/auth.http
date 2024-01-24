@@ -1,18 +1,24 @@
 ###
-POST http://localhost:3000/graphql
+POST http://localhost:5900/graphql
 Content-Type: application/json
-Authorization: Bearer token
 X-REQUEST-TYPE: GraphQL
 
 query {
   auth (
     dto: {
-      login: "faro"
-      password: "prout"
+      login: "ropo"
+      password: "password"
     }
   ) {
     accessToken
     id
     code
+    name_first
+    name_last
+    description
+    mail
+    creation
+    modification
+    language
   }
 }

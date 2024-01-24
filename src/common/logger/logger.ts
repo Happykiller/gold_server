@@ -22,7 +22,7 @@ const logger = createLogger({
     }),
     format.json()
   ),
-  defaultMeta: { module: 'switch' },
+  defaultMeta: { module: 'gold' },
   transports: [
     new transports.Console()
   ],
@@ -36,8 +36,7 @@ if (process.env.NODE_ENV === 'prod'){
     filename: 'logs/switch-%DATE%.log',
     datePattern: 'YYYY-MM-DD',
     maxSize: '20m',
-    maxFiles: '14d',
-    auditFile: "logs/switch-audit.json"
+    maxFiles: '14d'
   });
 
   logger.add(transport);

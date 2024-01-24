@@ -1,11 +1,13 @@
 import * as jwt from 'jsonwebtoken';
 import { ExtractJwt } from 'passport-jwt';
-
 import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserSession, UserUsecaseModel } from '../auth/jwt.strategy';
-import { config } from '../../config';
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+
+import { config } from '@src/config';
+import inversify from '@src/inversify/investify';
+import { UserSession } from '@src/presentation/auth/jwt.strategy';
+import { UserUsecaseModel } from '@src/usecase/model/user.usecase.model';
 
 export class Context {
   req: any;// eslint-disable-line @typescript-eslint/no-explicit-any
@@ -30,16 +32,15 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException('Token expired');
     }
 
-    const user: UserUsecaseModel = {
-      id: 1,
-      code: userSession.code,
-      active: true
-    };
+    const user: UserUsecaseModel = await inversify.getUserUsecase.execute({
+      id: userSession.id
+    });
 
     if (user) {
       const refreshToken: string = jwt.sign(
         {
           code: userSession.code,
+          id: userSession.id
         },
         config.jwt.secret,
         {
@@ -51,7 +52,7 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
         throw new UnauthorizedException('Refresh token is not set');
       }
 
-      if (user.active !== true) throw new UnauthorizedException('User is deactivated');
+      if (!user.active) throw new UnauthorizedException('User is deactivated');
       context.res.header(config.jwt.refreshTokenName, refreshToken);
     } else {
       throw new UnauthorizedException('User is not set');

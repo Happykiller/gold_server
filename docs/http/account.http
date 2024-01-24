@@ -1,7 +1,7 @@
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
+Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
 
 query {
@@ -22,7 +22,7 @@ query {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
+Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
 
 query {
@@ -47,7 +47,7 @@ query {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
+Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
 
 mutation {
@@ -73,7 +73,7 @@ mutation {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
+Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
 
 mutation {
@@ -100,7 +100,7 @@ mutation {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
+Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
 
 mutation {
@@ -114,7 +114,7 @@ mutation {
 ###
 POST http://localhost:3000/graphql
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiZmFybyIsImlhdCI6MTcwNjAyNTEwMSwiZXhwIjoxNzA2MDUzOTAxfQ.tFsf4-ueBKciB_fq-Qs2-q2X74yohhpj-Fu6RSkLcaU
+Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
 
 query {
