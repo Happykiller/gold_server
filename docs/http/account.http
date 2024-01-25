@@ -1,5 +1,5 @@
 ###
-POST http://localhost:3000/graphql
+POST {{host}}/graphql
 Content-Type: application/json
 Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
@@ -11,7 +11,6 @@ query {
     parent_account_id
     label
     description
-    active
     creator_id
     modificator_id
     creation_date
@@ -20,7 +19,7 @@ query {
 }
 
 ###
-POST http://localhost:3000/graphql
+POST {{host}}/graphql
 Content-Type: application/json
 Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
@@ -36,7 +35,6 @@ query {
     parent_account_id
     label
     description
-    active
     creator_id
     modificator_id
     creation_date
@@ -45,7 +43,7 @@ query {
 }
 
 ###
-POST http://localhost:3000/graphql
+POST {{host}}/graphql
 Content-Type: application/json
 Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
@@ -62,7 +60,6 @@ mutation {
     parent_account_id
     label
     description
-    active
     creator_id
     modificator_id
     creation_date
@@ -71,7 +68,7 @@ mutation {
 }
 
 ###
-POST http://localhost:3000/graphql
+POST {{host}}/graphql
 Content-Type: application/json
 Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
@@ -80,7 +77,6 @@ mutation {
   updateAccount (
     dto: {
       account_id: 1
-      type_id: 1
       label: "test"
     }
   ) {
@@ -89,7 +85,6 @@ mutation {
     parent_account_id
     label
     description
-    active
     creator_id
     modificator_id
     creation_date
@@ -98,7 +93,7 @@ mutation {
 }
 
 ###
-POST http://localhost:3000/graphql
+POST {{host}}/graphql
 Content-Type: application/json
 Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
@@ -112,7 +107,7 @@ mutation {
 }
 
 ###
-POST http://localhost:3000/graphql
+POST {{host}}/graphql
 Content-Type: application/json
 Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL

@@ -1,7 +1,10 @@
 import { UseGuards } from '@nestjs/common';
 import { Field, ObjectType, Mutation, Query, Resolver, Int, Args, InputType, PartialType } from '@nestjs/graphql';
 
-import { GqlAuthGuard } from '../guard/auth.guard';
+import inversify from '@src/inversify/investify';
+import { GqlAuthGuard } from '@src/presentation/guard/auth.guard';
+import { UserSession } from '@src/presentation/auth/jwt.strategy';
+import { CurrentSession } from '@src/presentation/guard/userSession.decorator';
 
 @ObjectType()
 export class AccountModelResolver {
@@ -13,10 +16,8 @@ export class AccountModelResolver {
   parent_account_id: number;
   @Field(() => String)
   label: string;
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   description: string;
-  @Field(() => Boolean)
-  active: boolean;
   @Field(() => Int)
   creator_id: number;
   @Field(() => String)
@@ -41,12 +42,22 @@ export class CreateAccountInputResolver {
   parent_account_id: number;
   @Field(() => String)
   label: string;
+  @Field(() => String, { nullable: true })
+  description: string;
 }
 
 @InputType()
-export class UpdateAccountInputResolver extends PartialType(CreateAccountInputResolver) {
+export class UpdateAccountInputResolver {
   @Field(() => Int)
   account_id: number;
+  @Field(() => Int, { nullable: true })
+  type_id: number;
+  @Field(() => Int, { nullable: true })
+  parent_account_id: number;
+  @Field(() => String, { nullable: true })
+  label: string;
+  @Field(() => String, { nullable: true })
+  description: string;
 }
 
 @ObjectType()
@@ -76,8 +87,10 @@ export class AccountResolver {
     /* istanbul ignore next */
     () => [AccountModelResolver]
   )
-  async accounts(): Promise<AccountModelResolver[]> {
-    return [];
+  async accounts(@CurrentSession() session: UserSession): Promise<AccountModelResolver[]> {
+    return inversify.getAccountsUsecase.execute({
+      user_id: session.id
+    });
   }
 
   @UseGuards(GqlAuthGuard)
@@ -85,19 +98,11 @@ export class AccountResolver {
     /* istanbul ignore next */
     () => AccountModelResolver
   )
-  async account(@Args('dto') dto: GetAccountInputResolver): Promise<AccountModelResolver> {
-    return {
-      id: 1,
-      type_id: 1,
-      parent_account_id: null,
-      label: 'test',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    };
+  async account(@CurrentSession() session: UserSession, @Args('dto') dto: GetAccountInputResolver): Promise<AccountModelResolver> {
+    return inversify.getAccountUsecase.execute({
+      user_id: session.id,
+      account_id: dto.account_id
+    });
   }
 
   @UseGuards(GqlAuthGuard)
@@ -105,19 +110,11 @@ export class AccountResolver {
     /* istanbul ignore next */
     () => AccountModelResolver
   )
-  async createAccount(@Args('dto') dto: CreateAccountInputResolver): Promise<AccountModelResolver> {
-    return {
-      id: 1,
-      type_id: 1,
-      parent_account_id: null,
-      label: 'test',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    };
+  async createAccount(@CurrentSession() session: UserSession, @Args('dto') dto: CreateAccountInputResolver): Promise<AccountModelResolver> {
+    return inversify.createAccountUsecase.execute({
+      user_id: session.id,
+      ... dto
+    });
   }
 
   @UseGuards(GqlAuthGuard)
@@ -125,19 +122,11 @@ export class AccountResolver {
     /* istanbul ignore next */
     () => AccountModelResolver
   )
-  async updateAccount(@Args('dto') dto: UpdateAccountInputResolver): Promise<AccountModelResolver> {
-    return {
-      id: 1,
-      type_id: 1,
-      parent_account_id: null,
-      label: 'test',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    };
+  async updateAccount(@CurrentSession() session: UserSession, @Args('dto') dto: UpdateAccountInputResolver): Promise<AccountModelResolver> {
+    return inversify.updateAccountUsecase.execute({
+      user_id: session.id,
+      ... dto
+    });
   }
 
   @UseGuards(GqlAuthGuard)
@@ -145,8 +134,11 @@ export class AccountResolver {
     /* istanbul ignore next */
     () => Boolean
   )
-  async deleteAccount(@Args('dto') dto: GetAccountInputResolver): Promise<boolean> {
-    return true;
+  async deleteAccount(@CurrentSession() session: UserSession, @Args('dto') dto: GetAccountInputResolver): Promise<boolean> {
+    return inversify.deleteAccountUsecase.execute({
+      user_id: session.id,
+      account_id: dto.account_id
+    });
   }
 
   @UseGuards(GqlAuthGuard)

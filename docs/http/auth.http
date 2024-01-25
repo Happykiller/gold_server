@@ -1,5 +1,5 @@
 ###
-POST http://localhost:5900/graphql
+POST {{host}}/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
