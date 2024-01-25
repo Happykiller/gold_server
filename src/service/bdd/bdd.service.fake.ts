@@ -8,6 +8,7 @@ import { GetAccountsServiceDto } from '@src/service/bdd/dto/getAccounts.service.
 import { CreateAccountServiceDto } from '@service/bdd/dto/createAccount.service.dto';
 import { UpdateAccountServiceDto } from '@service/bdd/dto/updateAccount.service.dto';
 import { DeleteAccountServiceDto } from '@service/bdd/dto/deleteAccount.service.dto';
+import { AccountTypeServiceModel } from '@service/bdd/model/accountType.service.model';
 
 export class BddServiceFake implements BddService {
 
@@ -98,5 +99,25 @@ export class BddServiceFake implements BddService {
     elt.modification_date = (new Date()).getTime().toString();
 
     return Promise.resolve(true);
+  }
+
+  getAccountTypes(): Promise<AccountTypeServiceModel[]> {
+    return Promise.resolve([{
+      id: 1,
+      label: 'account.type-regular',
+      description: 'description',
+      creator_id: 1,
+      creation_date: 'now',
+      modificator_id: null,
+      modification_date: null
+    },{
+      id: 2,
+      label: 'account.type-template',
+      description: 'description',
+      creator_id: 1,
+      creation_date: 'now',
+      modificator_id: null,
+      modification_date: null
+    }]);
   }
 }

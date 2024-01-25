@@ -28,7 +28,7 @@ CREATE TABLE `account_type_list` (
   `label` varchar(250) NOT NULL,
   `description` text NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
-  `creator_id` int(11) DEFAULT NULL,
+  `creator_id` int(11) NOT NULL,
   `creation_date` datetime NOT CURRENT_TIMESTAMP,
   `modificator_id` int(11) DEFAULT NULL,
   `modification_date` datetime DEFAULT CURRENT_TIMESTAMP,

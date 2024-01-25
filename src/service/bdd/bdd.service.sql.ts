@@ -4,6 +4,7 @@ import * as mysql from 'mysql2/promise';
 import { config } from '@src/config';
 import { ERRORS } from '@src/common/ERROR';
 import { BddService } from '@src/service/bdd/bdd.service';
+import { AccountTypeServiceModel } from './model/accountType.service.model';
 import { UserServiceModel } from '@src/service/bdd/model/user.service.model';
 import { GetUserServiceDto } from '@src/service/bdd/dto/getUser.service.dto';
 import { AccountServiceModel } from '@src/service/bdd/model/account.service.model';
@@ -151,5 +152,21 @@ export class BddServiceSQL implements BddService {
       dto.account_id
     ]);
     return true;
+  }
+
+  async getAccountTypes(): Promise<AccountTypeServiceModel[]> {
+    const query = `SELECT id,
+        label, 
+        description, 
+        creator_id, 
+        creation_date, 
+        modificator_id, 
+        modification_date
+      FROM account_type_list a
+      WHERE 1=1
+      AND a.active = 1
+    ;`;
+    const [results] = await this.pool.execute(query);
+    return results;
   }
 }

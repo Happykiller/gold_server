@@ -68,8 +68,6 @@ export class AccountTypeModelResolver {
   label: string;
   @Field(() => String, { nullable: true })
   description: string;
-  @Field(() => Boolean)
-  active: boolean;
   @Field(() => Int)
   creator_id: number;
   @Field(() => String)
@@ -147,24 +145,6 @@ export class AccountResolver {
     () => [AccountTypeModelResolver]
   )
   async accountTypes(): Promise<AccountTypeModelResolver[]> {
-    return [{
-      id: 1,
-      label: 'account.type-regular',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    },{
-      id: 2,
-      label: 'account.type-template',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    }];
+    return inversify.getAccountTypesUsecase.execute();
   }
 }

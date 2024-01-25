@@ -13,6 +13,7 @@ import { CryptServiceReal } from '@service/crypt/crypt.service.real';
 import { CreateAccountUsecase } from '@usecase/createAccount.usecase';
 import { UpdateAccountUsecase } from '@usecase/updateAccount.usecase';
 import { DeleteAccountUsecase } from '@usecase/deleteAccount.usecase';
+import { GetAccountTypesUsecase } from '@usecase/getAccountTypes.usecase';
 
 export class Inversify {
   loggerService: any;
@@ -27,6 +28,7 @@ export class Inversify {
   createAccountUsecase: CreateAccountUsecase;
   updateAccountUsecase: UpdateAccountUsecase;
   deleteAccountUsecase: DeleteAccountUsecase;
+  getAccountTypesUsecase: GetAccountTypesUsecase;
 
   constructor() {
     this.cryptService = new CryptServiceReal();
@@ -39,6 +41,7 @@ export class Inversify {
     this.createAccountUsecase = new CreateAccountUsecase(this);
     this.updateAccountUsecase = new UpdateAccountUsecase(this);
     this.deleteAccountUsecase = new DeleteAccountUsecase(this);
+    this.getAccountTypesUsecase = new GetAccountTypesUsecase(this);
 
     if (config.env.mode === 'prod') {
       this.loggerService = logger;
