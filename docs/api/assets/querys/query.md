@@ -15,6 +15,6 @@ type Query {
   operationStatus: [OperationStatutModelResolver!]!
   operationThirds: [OperationThirdsModelResolver!]!
   operationLinks(dto: GetOperationInputResolver!): [OperationLinkModelResolver!]!
-  auth(dto: AuthInput!): AuthType!
+  auth(dto: AuthInput!): AuthModelResolver!
 }
 ```
