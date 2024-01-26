@@ -3,6 +3,9 @@ import { Field, ObjectType, Mutation, Query, Resolver, Int, Args, InputType, Par
 
 import { GetAccountInputResolver } from '../account/account.resolver';
 import { GqlAuthGuard } from '../guard/auth.guard';
+import inversify from '../../inversify/investify';
+import { CurrentSession } from '../guard/userSession.decorator';
+import { UserSession } from '../auth/jwt.strategy';
 
 @ObjectType()
 export class OperationModelResolver {
@@ -18,8 +21,6 @@ export class OperationModelResolver {
   date: string;
   @Field(() => Int)
   status_id: number;
-  @Field(() => Boolean)
-  sign: boolean;
   @Field(() => Int)
   type_id: number;
   @Field(() => Int, { nullable: true })
@@ -58,24 +59,22 @@ export class CreateOperationInputResolver {
   date: string;
   @Field(() => Int)
   status_id: number;
-  @Field(() => Boolean)
-  sign: boolean;
   @Field(() => Int)
   type_id: number;
   @Field(() => Int, { nullable: true })
   third_id: number;
   @Field(() => Int, { nullable: true })
   category_id: number;
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   description: string;
 }
 
 @InputType()
 export class CreateOperationLinkInputResolver {
   @Field(() => Int)
-  operationA_id: number;
+  operation_id: number;
   @Field(() => Int)
-  operationB_id: number;
+  operation_ref_id: number;
 }
 
 @ObjectType()
@@ -83,9 +82,9 @@ export class OperationLinkModelResolver {
   @Field(() => Int)
   id: number;
   @Field(() => Int)
-  operationA_id: number;
+  operation_id: number;
   @Field(() => Int)
-  operationB_id: number;
+  operation_ref_id: number;
   @Field(() => Boolean)
   active: boolean;
   @Field(() => Int)
@@ -165,7 +164,7 @@ export class OperationStatutModelResolver {
 }
 
 @ObjectType()
-export class OperationThirdsModelResolver {
+export class OperationThirdModelResolver {
   @Field(() => Int)
   id: number;
   @Field(() => String)
@@ -197,8 +196,11 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => [OperationModelResolver]
   )
-  async operations(@Args('dto') dto: GetAccountInputResolver): Promise<OperationModelResolver[]> {
-    return [];
+  async operations(@CurrentSession() session: UserSession, @Args('dto') dto: GetAccountInputResolver): Promise<OperationModelResolver[]> {
+    return inversify.getOperationsUsecase.execute({
+      user_id: session.id,
+      ... dto
+    });
   }
 
   @UseGuards(GqlAuthGuard)
@@ -206,25 +208,11 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => OperationModelResolver
   )
-  async operation(@Args('dto') dto: GetOperationInputResolver): Promise<OperationModelResolver> {
-    return {
-      id: 1,
-      account_id: 1,
-      account_id_dest: null,
-      amount: 42.42,
-      date: 'now',
-      status_id: 1,
-      sign: true,
-      type_id: 1,
-      third_id: 1,
-      category_id: null,
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null,
-    };
+  async operation(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationInputResolver): Promise<OperationModelResolver> {
+    return inversify.getOperationUsecase.execute({
+      user_id: session.id,
+      ... dto
+    });
   }
 
   @UseGuards(GqlAuthGuard)
@@ -232,25 +220,11 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => OperationModelResolver
   )
-  async createOperation(@Args('dto') dto: CreateOperationInputResolver): Promise<OperationModelResolver> {
-    return {
-      id: 1,
-      account_id: 1,
-      account_id_dest: null,
-      amount: 42.42,
-      date: 'now',
-      status_id: 1,
-      sign: true,
-      type_id: 1,
-      third_id: 1,
-      category_id: null,
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null,
-    };
+  async createOperation(@CurrentSession() session: UserSession, @Args('dto') dto: CreateOperationInputResolver): Promise<OperationModelResolver> {
+    return inversify.createOperationUsecase.execute({
+      user_id: session.id,
+      ... dto
+    });
   }
 
   @UseGuards(GqlAuthGuard)
@@ -258,25 +232,11 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => OperationModelResolver
   )
-  async updateOperation(@Args('dto') dto: UpdateOperationInputResolver): Promise<OperationModelResolver> {
-    return {
-      id: 1,
-      account_id: 1,
-      account_id_dest: null,
-      amount: 42.42,
-      date: 'now',
-      status_id: 1,
-      sign: true,
-      type_id: 1,
-      third_id: 1,
-      category_id: null,
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null,
-    };
+  async updateOperation(@CurrentSession() session: UserSession, @Args('dto') dto: UpdateOperationInputResolver): Promise<OperationModelResolver> {
+    return inversify.updateOperationUsecase.execute({
+      user_id: session.id,
+      ... dto
+    });
   }
 
   @UseGuards(GqlAuthGuard)
@@ -284,8 +244,11 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => Boolean
   )
-  async deleteOperation(@Args('dto') dto: GetOperationInputResolver): Promise<boolean> {
-    return true;
+  async deleteOperation(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationInputResolver): Promise<boolean> {
+    return inversify.deleteOperationUsecase.execute({
+      user_id: session.id,
+      operation_id: dto.operation_id
+    });
   }
 
   @UseGuards(GqlAuthGuard)
@@ -294,34 +257,7 @@ export class OperationResolver {
     () => [OperationTypeModelResolver]
   )
   async operationTypes(): Promise<OperationTypeModelResolver[]> {
-    return [{
-      id: 1,
-      label: 'operation.type-credit',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    },{
-      id: 2,
-      label: 'operation.type-debit',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    },{
-      id: 3,
-      label: 'operation.type-vire',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    }];
+    return inversify.getOperationTypesUsecase.execute();
   }
 
   @UseGuards(GqlAuthGuard)
@@ -330,34 +266,7 @@ export class OperationResolver {
     () => [OperationCategoryModelResolver]
   )
   async operationCategories(): Promise<OperationCategoryModelResolver[]> {
-    return [{
-      id: 1,
-      label: 'operation.category-other',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    },{
-      id: 2,
-      label: 'Alimentation',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    },{
-      id: 3,
-      label: 'Santé',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    }];
+    return inversify.getOperationCategoriesUsecase.execute();
   }
 
   @UseGuards(GqlAuthGuard)
@@ -366,52 +275,16 @@ export class OperationResolver {
     () => [OperationStatutModelResolver]
   )
   async operationStatus(): Promise<OperationStatutModelResolver[]> {
-    return [{
-      id: 1,
-      label: 'operation.status-follow',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    },{
-      id: 2,
-      label: 'operation.status-reconciled',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    }];
+    return inversify.getOperationStatusUsecase.execute();
   }
 
   @UseGuards(GqlAuthGuard)
   @Query(
     /* istanbul ignore next */
-    () => [OperationThirdsModelResolver]
+    () => [OperationThirdModelResolver]
   )
-  async operationThirds(): Promise<OperationThirdsModelResolver[]> {
-    return [{
-      id: 1,
-      label: 'operation.third-otherCredit',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    },{
-      id: 2,
-      label: 'operation.third-otherDebit',
-      description: 'description',
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null
-    }];
+  async operationThirds(): Promise<OperationThirdModelResolver[]> {
+    return inversify.getOperationTypesUsecase.execute();
   }
 
   @UseGuards(GqlAuthGuard)
@@ -419,17 +292,11 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => [OperationLinkModelResolver]
   )
-  async operationLinks(@Args('dto') dto: GetOperationInputResolver): Promise<OperationLinkModelResolver[]> {
-    return [{
-      id: 1,
-      operationA_id: 1,
-      operationB_id: 2,
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null,
-    }];
+  async operationLinks(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationInputResolver): Promise<OperationLinkModelResolver[]> {
+    return inversify.getOperationLinksUsecase.execute({
+      user_id: session.id,
+      operation_id: dto.operation_id
+    });
   }
 
   @UseGuards(GqlAuthGuard)
@@ -437,17 +304,11 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => OperationLinkModelResolver
   )
-  async createOperationLink(@Args('dto') dto: CreateOperationLinkInputResolver): Promise<OperationLinkModelResolver> {
-    return {
-      id: 1,
-      operationA_id: 1,
-      operationB_id: 2,
-      active: true,
-      creator_id: 1,
-      creation_date: 'now',
-      modificator_id: null,
-      modification_date: null,
-    };
+  async createOperationLink(@CurrentSession() session: UserSession, @Args('dto') dto: CreateOperationLinkInputResolver): Promise<OperationLinkModelResolver> {
+    return inversify.createOperationLinkUsecase.execute({
+      user_id: session.id,
+      ... dto
+    });
   }
 
   @UseGuards(GqlAuthGuard)
@@ -455,7 +316,10 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => Boolean
   )
-  async deleteOperationLink(@Args('dto') dto: GetOperationLinkInputResolver): Promise<boolean> {
-    return true;
+  async deleteOperationLink(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationLinkInputResolver): Promise<boolean> {
+    return inversify.deleteOperationLinkUsecase.execute({
+      user_id: session.id,
+      operation_link_id: dto.operation_link_id
+    });
   }
 }

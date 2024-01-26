@@ -113,22 +113,22 @@ CREATE TABLE `operation_category_list` (
 
 CREATE TABLE `operation_link` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `operationA_id` int(11) NOT NULL,
-  `operationB_id` int(11) NOT NULL,
+  `operation_id` int(11) NOT NULL,
+  `operation_ref_id` int(11) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `creator_id` int(11) NOT NULL,
   `creation_date` datetime NOT CURRENT_TIMESTAMP,
   `modificator_id` int(11) DEFAULT NULL,
   `modification_date` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `operation_link-operationA` (`operationA_id`),
-  KEY `operation_link-operationB` (`operationB_id`),
+  KEY `operation_link-operationA` (`operation_id`),
+  KEY `operation_link-operationB` (`operation_ref_id`),
   KEY `operation_link-creator` (`creator_id`),
   KEY `operation_link-modificator` (`modificator_id`),
   CONSTRAINT `operation_link-creator` FOREIGN KEY (`creator_id`) REFERENCES `api_tab_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `operation_link-modificator` FOREIGN KEY (`modificator_id`) REFERENCES `api_tab_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `operation_link-operationA_id` FOREIGN KEY (`operationA_id`) REFERENCES `operation` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `operation_link-operationB_id` FOREIGN KEY (`operationB_id`) REFERENCES `operation` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `operation_link-operation_id` FOREIGN KEY (`operation_id`) REFERENCES `operation` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `operation_link-operation_ref_id` FOREIGN KEY (`operation_ref_id`) REFERENCES `operation` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 CREATE TABLE `operation_status_list` (
