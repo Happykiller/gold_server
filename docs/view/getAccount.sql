@@ -1,5 +1,5 @@
-USE gold2;
-SET @account_id := 4;
+USE gold;
+SET @account_id := 2;
 SELECT 
     h.id,
     h.account_id,
@@ -10,6 +10,8 @@ SELECT
     h.category,
     h.status,
     h.thrid,
+    h.type_id,
+	h.type_id_cal,
     h.type,
     h.move as amount
 FROM
@@ -62,15 +64,15 @@ FROM
         operation_third_list d, 
         operation_type_list e, 
         account i,
-        account j,
         operation a
+	LEFT OUTER JOIN account j
+		ON a.account_id_dest = j.id
     WHERE 1 = 1 
 			AND a.category_id = b.id
             AND a.status_id = c.id
             AND a.third_id = d.id
             AND a.type_id = e.id
             AND a.account_id = i.id
-            AND a.account_id_dest = j.id
             AND a.account_id = @account_id
             AND a.active = 1 
 	UNION SELECT 
@@ -108,5 +110,4 @@ FROM
             AND a.account_id_dest = @account_id
             AND a.active = 1) g) h
 WHERE 1=1
-AND h.status_id = 1
 ORDER BY h.id DESC

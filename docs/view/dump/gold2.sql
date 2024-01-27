@@ -5,9 +5,7 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
-DROP DATABASE IF EXISTS `gold2`;
-CREATE DATABASE `gold2` /*!40100 DEFAULT CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci */;
-USE `gold2`;
+USE `gold`;
 
 DROP TABLE IF EXISTS `account`;
 CREATE TABLE `account` (
