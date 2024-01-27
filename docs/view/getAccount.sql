@@ -1,0 +1,112 @@
+USE gold2;
+SET @account_id := 4;
+SELECT 
+    h.id,
+    h.account_id,
+    h.account_label,
+    h.account_id_dest,
+    h.account_dest_label,
+    h.description,
+    h.category,
+    h.status,
+    h.thrid,
+    h.type,
+    h.move as amount
+FROM
+    (SELECT 
+        g.id,
+		g.amount,
+		g.account_id,
+        g.account_label,
+		g.account_id_dest,
+		g.account_dest_label,
+		g.description,
+        g.category_id,
+        g.status_id,
+        g.third_id,
+        g.type_id,
+		g.category,
+		g.status,
+		g.thrid,
+		g.type,
+		g.type_id_cal,
+		CASE g.type_id_cal
+			WHEN 1 THEN g.amount
+			WHEN 2 THEN (g.amount * - 1)
+		END AS move
+    FROM
+        (SELECT 
+        a.id,
+		a.amount,
+		a.account_id,
+        i.label as account_label,
+		a.account_id_dest,
+        j.label as account_dest_label,
+		a.description,
+        a.category_id,
+		b.label AS category,
+        a.status_id,
+		c.label AS status,
+        a.third_id,
+		d.label AS thrid,
+        a.type_id,
+		e.label AS type,
+		CASE a.type_id
+			WHEN 1 THEN 1
+			WHEN 2 THEN 2
+			WHEN 3 THEN 2
+		END AS type_id_cal
+    FROM
+        operation_category_list b, 
+        operation_status_list c, 
+        operation_third_list d, 
+        operation_type_list e, 
+        account i,
+        account j,
+        operation a
+    WHERE 1 = 1 
+			AND a.category_id = b.id
+            AND a.status_id = c.id
+            AND a.third_id = d.id
+            AND a.type_id = e.id
+            AND a.account_id = i.id
+            AND a.account_id_dest = j.id
+            AND a.account_id = @account_id
+            AND a.active = 1 
+	UNION SELECT 
+        a.id,
+		a.amount,
+		a.account_id,
+        i.label as account_label,
+		a.account_id_dest,
+        j.label as account_dest_label,
+		a.description,
+        a.category_id,
+		b.label AS category,
+        a.status_id,
+		c.label AS status,
+        a.third_id,
+		d.label AS thrid,
+        a.type_id,
+		e.label AS type,
+		1 AS type_id_cal
+    FROM
+        operation_category_list b, 
+        operation_status_list c, 
+        operation_third_list d, 
+        operation_type_list e, 
+        account i,
+        account j,
+        operation a
+    WHERE 1 = 1 
+			AND a.category_id = b.id
+            AND a.status_id = c.id
+            AND a.third_id = d.id
+            AND a.type_id = e.id
+            AND a.account_id = i.id
+            AND a.account_id_dest = j.id
+            AND a.account_id_dest = @account_id
+            AND a.active = 1) g) h
+WHERE 1=1
+AND h.status_id = 1
+ORDER BY h.id DESC
