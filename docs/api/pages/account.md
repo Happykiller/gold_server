@@ -24,8 +24,9 @@
 | type_id |Int |false |1, regular by default | |
 | parent_account_id |Int |true | | |
 | label |String |false | | |
-| description |String |false | | |
-| active |Boolean |false | | |
+| description |String |true | | |
+| balance_reconcilied |Float |true | | |
+| balance_not_reconcilied |Float |true | | |
 | creator_id |Int |false | | |
 | creation_date |String |false | | |
 | modificator_id |Int |true | | |
@@ -46,7 +47,8 @@ query {
     parent_account_id
     label
     description
-    active
+    balance_reconcilied
+    balance_not_reconcilied
     creator_id
     creation_date
     modificator_id
@@ -64,7 +66,8 @@ query {
       "parent_account_id": 0,
       "label": "Bob",
       "description": "Bob",
-      "active": true,
+      "balance_reconcilied": 42,
+      "balance_not_reconcilied": 42,
       "creator_id": 0,
       "creation_date": "Bob",
       "modificator_id": 0,

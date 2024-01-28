@@ -2,7 +2,7 @@
 
 
 ```graphql
-type OperationThirdsModelResolver {
+type OperationThirdModelResolver {
   id: Int!
   label: String!
   description: String!

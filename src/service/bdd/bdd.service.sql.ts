@@ -19,6 +19,7 @@ import { AccountTypeServiceModel } from '@service/bdd/model/accountType.service.
 import { CreateOperationServiceDto } from '@service/bdd/dto/createOperation.service.dto';
 import { UpdateOperationServiceDto } from '@service/bdd/dto/updateOperation.service.dto';
 import { DeleteOperationServiceDto } from '@service/bdd/dto/deleteOperation.service.dto';
+import { GetOperationLinkServiceDto } from '@service/bdd/dto/getOperationLink.service.dto';
 import { OperationLinkServiceModel } from '@service/bdd/model/operationLink.service.model';
 import { OperationTypeServiceModel } from '@service/bdd/model/operationType.service.model';
 import { OperationThridServiceModel } from '@service/bdd/model/operationThrid.service.model';
@@ -27,7 +28,6 @@ import { OperationStatutServiceModel } from '@service/bdd/model/operationStatut.
 import { DeleteOperationLinkServiceDto } from '@service/bdd/dto/deleteOperationLink.service.dto';
 import { CreateOperationLinkServiceDto } from '@service/bdd/dto/createOperationLink.service.dto';
 import { OperationCategoryServiceModel } from '@service/bdd/model/operationCategory.service.model';
-import { GetOperationLinkServiceDto } from './dto/getOperationLink.service.dto';
 
 export class BddServiceSQL implements BddService {
 
@@ -76,7 +76,9 @@ export class BddServiceSQL implements BddService {
         type_id, 
         parent_account_id, 
         label, 
-        description, 
+        description,
+        getBalance(a.id, true) as balance_reconcilied,
+        getBalance(a.id, false) as balance_not_reconcilied,
         creator_id, 
         creation_date, 
         modificator_id, 
@@ -95,7 +97,9 @@ export class BddServiceSQL implements BddService {
         type_id, 
         parent_account_id, 
         label, 
-        description, 
+        description,
+        getBalance(a.id, true) as balance_reconcilied,
+        getBalance(a.id, false) as balance_not_reconcilied,
         creator_id, 
         creation_date, 
         modificator_id, 
@@ -211,7 +215,11 @@ export class BddServiceSQL implements BddService {
     const query = `SELECT id,
         account_id,
         account_id_dest,
-        amount,
+        CASE a.type_id
+          WHEN 1 THEN a.amount
+          WHEN 2 THEN (a.amount * - 1)
+          WHEN 3 THEN (a.amount * - 1)
+        END AS amount,
         date,
         status_id,
         type_id,
@@ -237,27 +245,97 @@ export class BddServiceSQL implements BddService {
   }
 
   async getOperations(dto: GetOperationsServiceDto): Promise<OperationServiceModel[]> {
-    const query = `SELECT id,
-        account_id,
-        account_id_dest,
-        amount,
-        date,
-        status_id,
-        type_id,
-        third_id,
-        category_id,
-        description,
-        creator_id,
-        creation_date,
-        modificator_id,
-        modification_date
+    const query = `SELECT 
+    h.id,
+    h.account_id,
+    h.account_id_dest,
+    h.move as amount,
+    h.date,
+    h.status_id,
+    h.type_id,
+    h.third_id,
+    h.category_id,
+    h.description,
+    h.creator_id,
+    h.creation_date,
+    h.modificator_id,
+    h.modification_date
+  FROM (
+    SELECT 
+      g.id,
+      g.amount,
+      g.account_id,
+      g.account_id_dest,
+      g.description,
+      g.category_id,
+      g.status_id,
+      g.third_id,
+      g.type_id,
+      g.type_id_cal,
+      CASE g.type_id_cal
+        WHEN 1 THEN g.amount
+        WHEN 2 THEN (g.amount * - 1)
+      END AS move,
+      g.date,
+      g.creator_id,
+      g.creation_date,
+      g.modificator_id,
+      g.modification_date
+    FROM (
+      SELECT 
+        a.id,
+        a.amount,
+        a.account_id,
+        a.account_id_dest,
+        a.description,
+        a.category_id,
+        a.status_id,
+        a.third_id,
+        a.type_id,
+        CASE a.type_id
+          WHEN 1 THEN 1
+          WHEN 2 THEN 2
+          WHEN 3 THEN 2
+        END AS type_id_cal,
+        a.date,
+        a.creator_id,
+        a.creation_date,
+        a.modificator_id,
+        a.modification_date
       FROM operation a
-      WHERE 1=1
-      AND a.active = 1
-      AND a.id = ${dto.account_id}
-      AND a.creator_id = ${dto.user_id}
-    ;`;
-    const [results] = await this.pool.execute(query);
+      WHERE 1 = 1 
+        AND a.account_id = ${dto.account_id}
+        AND a.creator_id = ${dto.user_id}
+        AND a.active = 1 
+      UNION 
+      SELECT 
+        a.id,
+        a.amount,
+        a.account_id,
+        a.account_id_dest,
+        a.description,
+        a.category_id,
+        a.status_id,
+        a.third_id,
+        a.type_id,
+        1 AS type_id_cal,
+        a.date,
+        a.creator_id,
+        a.creation_date,
+        a.modificator_id,
+        a.modification_date
+      FROM operation a
+      WHERE 1 = 1
+        AND a.account_id_dest = ${dto.account_id}
+        AND a.creator_id = ${dto.user_id}
+        AND a.active = 1
+    ) g
+  ) h
+  WHERE 1=1
+  ORDER BY h.date DESC, h.id DESC
+  LIMIT ${dto.limit} OFFSET ${dto.offset}; 
+;`;
+    const [results] = await this.pool.execute(query, []);
     return results;
   }
 

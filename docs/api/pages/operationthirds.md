@@ -1,6 +1,6 @@
 [back](../tableOfContent.md)
 * [Output](#output)
-  * [[OperationThirdsModelResolver]](#[operationthirdsmodelresolver]-optionable-false)
+  * [[OperationThirdModelResolver]](#[operationthirdmodelresolver]-optionable-false)
 * [Errors](#errors)
 * [Example](#example)
   * [Request](#request)
@@ -9,7 +9,7 @@
 # query operationThirds
  
 ## Output
-### [[OperationThirdsModelResolver]](../assets/types/operationthirdsmodelresolver.md) `optionable: false`
+### [[OperationThirdModelResolver]](../assets/types/operationthirdmodelresolver.md) `optionable: false`
 | fields |types |nullable |descriptions |deprecated |
 | :----:  |:---:  |:--------:  |:----------:  |:--------:  |
 | id |Int |false | | |

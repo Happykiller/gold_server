@@ -7,5 +7,6 @@ input CreateAccountInputResolver {
   type_id: Int!
   parent_account_id: Int
   label: String!
+  description: String
 }
 ```

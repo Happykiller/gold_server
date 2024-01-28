@@ -3,7 +3,7 @@
 
 ```graphql
 input CreateOperationLinkInputResolver {
-  operationA_id: Int!
-  operationB_id: Int!
+  operation_id: Int!
+  operation_ref_id: Int!
 }
 ```

@@ -11,9 +11,11 @@ query {
     parent_account_id
     label
     description
+    balance_reconcilied
+    balance_not_reconcilied
     creator_id
-    modificator_id
     creation_date
+    modificator_id
     modification_date
   }
 }

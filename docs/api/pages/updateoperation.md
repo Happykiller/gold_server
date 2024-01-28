@@ -19,7 +19,6 @@
 | amount |Float |true | | | |
 | date |String |true | | | |
 | status_id |Int |true | | | |
-| sign |Boolean |true | | | |
 | type_id |Int |true | | | |
 | third_id |Int |true | | | |
 | category_id |Int |true | | | |
@@ -36,7 +35,6 @@
 | amount |Float |false | | |
 | date |String |false | | |
 | status_id |Int |false | | |
-| sign |Boolean |false | | |
 | type_id |Int |false | | |
 | third_id |Int |true | | |
 | category_id |Int |true | | |
@@ -59,7 +57,6 @@ mutation {
       amount: 42
       date: "Bob"
       status_id: 0
-      sign: true
       type_id: 0
       third_id: 0
       category_id: 0
@@ -73,7 +70,6 @@ mutation {
     amount
     date
     status_id
-    sign
     type_id
     third_id
     category_id
@@ -97,7 +93,6 @@ mutation {
       "amount": 42,
       "date": "Bob",
       "status_id": 0,
-      "sign": true,
       "type_id": 0,
       "third_id": 0,
       "category_id": 0,

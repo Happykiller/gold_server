@@ -9,8 +9,9 @@ type AccountModelResolver {
   type_id: Int!
   parent_account_id: Int
   label: String!
-  description: String!
-  active: Boolean!
+  description: String
+  balance_reconcilied: Float
+  balance_not_reconcilied: Float
   creator_id: Int!
   creation_date: String!
   modificator_id: Int

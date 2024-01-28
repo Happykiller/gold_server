@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Field, ObjectType, Mutation, Query, Resolver, Int, Args, InputType, PartialType } from '@nestjs/graphql';
+import { Field, ObjectType, Mutation, Query, Resolver, Int, Args, InputType, PartialType, Float } from '@nestjs/graphql';
 
 import inversify from '@src/inversify/investify';
 import { GqlAuthGuard } from '@src/presentation/guard/auth.guard';
@@ -18,6 +18,10 @@ export class AccountModelResolver {
   label: string;
   @Field(() => String, { nullable: true })
   description: string;
+  @Field(() => Float, { nullable: true })
+  balance_reconcilied: number;
+  @Field(() => Float, { nullable: true })
+  balance_not_reconcilied: number;
   @Field(() => Int)
   creator_id: number;
   @Field(() => String)

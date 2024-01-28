@@ -1,4 +1,3 @@
-USE gold;
 DROP FUNCTION IF EXISTS getBalance;
 DELIMITER $$
 CREATE FUNCTION getBalance($account_id INT, $reconcilied BOOLEAN)

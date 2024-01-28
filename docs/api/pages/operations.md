@@ -1,6 +1,6 @@
 [back](../tableOfContent.md)
 * [Input](#input)
-  * [GetAccountInputResolver](#getaccountinputresolver-optionable-false)
+  * [GetOperationsInputResolver](#getoperationsinputresolver-optionable-false)
 * [Output](#output)
   * [[OperationModelResolver]](#[operationmodelresolver]-optionable-false)
 * [Errors](#errors)
@@ -11,10 +11,12 @@
 # query operations
  
 ## Input
-### [GetAccountInputResolver](../assets/inputs/getaccountinputresolver.md) `optionable: false`
+### [GetOperationsInputResolver](../assets/inputs/getoperationsinputresolver.md) `optionable: false`
 | fields |types |optionable |default |descriptions |deprecated |
 | :----:  |:---:  |:--------:  |:-----:  |:----------:  |:--------:  |
-| account_id |Int |false | | | 
+| account_id |Int |false | | | |
+| limit |Int |true |100 | | |
+| offset |Int |true |0 | | 
 
 ## Output
 ### [[OperationModelResolver]](../assets/types/operationmodelresolver.md) `optionable: false`
@@ -26,7 +28,6 @@
 | amount |Float |false | | |
 | date |String |false | | |
 | status_id |Int |false | | |
-| sign |Boolean |false | | |
 | type_id |Int |false | | |
 | third_id |Int |true | | |
 | category_id |Int |true | | |
@@ -45,6 +46,8 @@ query {
   operations (
     dto: {
       account_id: 0
+      limit: 0
+      offset: 0
     }
   ) {
     id
@@ -53,7 +56,6 @@ query {
     amount
     date
     status_id
-    sign
     type_id
     third_id
     category_id
@@ -78,7 +80,6 @@ query {
         "amount": 42,
         "date": "Bob",
         "status_id": 0,
-        "sign": true,
         "type_id": 0,
         "third_id": 0,
         "category_id": 0,

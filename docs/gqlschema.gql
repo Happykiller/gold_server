@@ -18,6 +18,8 @@ type AccountModelResolver {
   parent_account_id: Int
   label: String!
   description: String
+  balance_reconcilied: Float
+  balance_not_reconcilied: Float
   creator_id: Int!
   creation_date: String!
   modificator_id: Int
@@ -131,7 +133,7 @@ type Query {
   accounts: [AccountModelResolver!]!
   account(dto: GetAccountInputResolver!): AccountModelResolver!
   accountTypes: [AccountTypeModelResolver!]!
-  operations(dto: GetAccountInputResolver!): [OperationModelResolver!]!
+  operations(dto: GetOperationsInputResolver!): [OperationModelResolver!]!
   operation(dto: GetOperationInputResolver!): OperationModelResolver!
   operationTypes: [OperationTypeModelResolver!]!
   operationCategories: [OperationCategoryModelResolver!]!
@@ -143,6 +145,12 @@ type Query {
 
 input GetAccountInputResolver {
   account_id: Int!
+}
+
+input GetOperationsInputResolver {
+  account_id: Int!
+  limit: Int = 100
+  offset: Int = 0
 }
 
 input GetOperationInputResolver {

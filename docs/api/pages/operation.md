@@ -26,7 +26,6 @@
 | amount |Float |false | | |
 | date |String |false | | |
 | status_id |Int |false | | |
-| sign |Boolean |false | | |
 | type_id |Int |false | | |
 | third_id |Int |true | | |
 | category_id |Int |true | | |
@@ -53,7 +52,6 @@ query {
     amount
     date
     status_id
-    sign
     type_id
     third_id
     category_id
@@ -77,7 +75,6 @@ query {
       "amount": 42,
       "date": "Bob",
       "status_id": 0,
-      "sign": true,
       "type_id": 0,
       "third_id": 0,
       "category_id": 0,

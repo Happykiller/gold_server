@@ -15,7 +15,6 @@
 | id |Int |false | | |
 | label |String |false | | |
 | description |String |true | | |
-| active |Boolean |false | | |
 | creator_id |Int |false | | |
 | creation_date |String |false | | |
 | modificator_id |Int |true | | |
@@ -30,7 +29,6 @@ query {
     id
     label
     description
-    active
     creator_id
     creation_date
     modificator_id
@@ -47,7 +45,6 @@ query {
         "id": 0,
         "label": "Bob",
         "description": "Bob",
-        "active": true,
         "creator_id": 0,
         "creation_date": "Bob",
         "modificator_id": 0,

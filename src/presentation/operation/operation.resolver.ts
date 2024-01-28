@@ -77,6 +77,16 @@ export class CreateOperationLinkInputResolver {
   operation_ref_id: number;
 }
 
+@InputType()
+export class GetOperationsInputResolver {
+  @Field(() => Int)
+  account_id: number;
+  @Field(() => Int, { nullable: true })
+  limit: number = 100;
+  @Field(() => Int, { nullable: true })
+  offset: number = 0;
+}
+
 @ObjectType()
 export class OperationLinkModelResolver {
   @Field(() => Int)
@@ -196,7 +206,7 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => [OperationModelResolver]
   )
-  async operations(@CurrentSession() session: UserSession, @Args('dto') dto: GetAccountInputResolver): Promise<OperationModelResolver[]> {
+  async operations(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationsInputResolver): Promise<OperationModelResolver[]> {
     return inversify.getOperationsUsecase.execute({
       user_id: session.id,
       ... dto
