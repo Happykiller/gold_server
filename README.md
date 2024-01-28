@@ -46,7 +46,6 @@ Create a `.env` file in the project root and configure the necessary environment
 ```env
 # Sample .env file
 APP_PORT=3000
-TOKEN_CLIENT=token
 ```
 
 4. Run the application:

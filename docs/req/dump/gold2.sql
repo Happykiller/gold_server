@@ -12603,25 +12603,3 @@ INSERT INTO `operation_type_list` (`id`, `label`, `active`, `creator_id`, `creat
 (1,	'operation.type-credit',	1,	0,	'0000-00-00 00:00:00',	NULL,	'0000-00-00 00:00:00'),
 (2,	'operation.type-debit',	1,	0,	'0000-00-00 00:00:00',	NULL,	'0000-00-00 00:00:00'),
 (3,	'operation.type-vire',	1,	0,	'0000-00-00 00:00:00',	NULL,	'0000-00-00 00:00:00');
-
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `name_first` varchar(20) NOT NULL,
-  `name_last` varchar(20) NOT NULL,
-  `description` text NOT NULL,
-  `mail` varchar(100) NOT NULL,
-  `active` int(2) NOT NULL DEFAULT 1,
-  `creation` datetime DEFAULT current_timestamp(),
-  `modification` datetime DEFAULT current_timestamp(),
-  `language` varchar(50) NOT NULL DEFAULT 'fr',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `code_unique` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
-
-INSERT INTO `user` (`id`, `code`, `password`, `name_first`, `name_last`, `description`, `mail`, `active`, `creation`, `modification`, `language`) VALUES
-(1,	'ropo',	'WV5FXp063tPBcccZbqAHH0B93s2Wzf/nTXu8UaU2TeCMh+F0OsXUX02HNsI1Ytd2yowsT707bKCV0KC5uA0usQ==',	'Robert',	'Paulson',	'',	'r.paulson@bob.com',	1,	'2024-01-26 13:14:41',	'2024-01-26 13:14:41',	'fr');
-
--- 2024-01-27 09:19:36

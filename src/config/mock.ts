@@ -10,9 +10,6 @@ const conf: Configuration = {
     introspection: true,
     installSubscriptionHandlers: true,
   },
-  client: {
-    token: 'token'
-  },
   bdd: {
     host: 'localhost',
     user: 'root',

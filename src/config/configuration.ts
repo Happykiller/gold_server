@@ -13,10 +13,6 @@ export class Configuration {
     installSubscriptionHandlers: boolean;
   };
 
-  public client?: {
-    token?: string;
-  }
-
   public bdd?: {
     host?: string;
     user?: string;
