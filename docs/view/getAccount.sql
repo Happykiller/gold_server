@@ -1,19 +1,16 @@
 USE gold;
-SET @account_id := 2;
+SET @account_id := 23;
 SELECT 
     h.id,
-    h.account_id,
-    h.account_label,
-    h.account_id_dest,
-    h.account_dest_label,
+    h.move as amount,
     h.description,
-    h.category,
+	h.date,
     h.status,
+    h.category,
     h.thrid,
-    h.type_id,
-	h.type_id_cal,
     h.type,
-    h.move as amount
+    h.account_label,
+    h.account_dest_label
 FROM
     (SELECT 
         g.id,
@@ -35,7 +32,8 @@ FROM
 		CASE g.type_id_cal
 			WHEN 1 THEN g.amount
 			WHEN 2 THEN (g.amount * - 1)
-		END AS move
+		END AS move,
+        g.date
     FROM
         (SELECT 
         a.id,
@@ -57,7 +55,8 @@ FROM
 			WHEN 1 THEN 1
 			WHEN 2 THEN 2
 			WHEN 3 THEN 2
-		END AS type_id_cal
+		END AS type_id_cal,
+        a.date
     FROM
         operation_category_list b, 
         operation_status_list c, 
@@ -91,7 +90,8 @@ FROM
 		d.label AS thrid,
         a.type_id,
 		e.label AS type,
-		1 AS type_id_cal
+		1 AS type_id_cal,
+        a.date
     FROM
         operation_category_list b, 
         operation_status_list c, 
@@ -110,4 +110,4 @@ FROM
             AND a.account_id_dest = @account_id
             AND a.active = 1) g) h
 WHERE 1=1
-ORDER BY h.id DESC
+ORDER BY h.date DESC

@@ -7,6 +7,5 @@ services:
       dockerfile: Dockerfile
     container_name: gold_back
     ports:
-      - '3000:3000'
-      - '5900:5900'
+      - '3001:3000'
     restart: always

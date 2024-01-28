@@ -1,0 +1,156 @@
+### Débit sur le courant
+POST {{host}}/graphql
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  createOperation (
+    dto: {
+      amount: 254.48
+      date: "2022-01-21"
+      description: "Vol pour portugal"
+      # 2 Courant
+      account_id: 2 
+      # 1	operation.status-follow
+      # 2	operation.status-reconciled
+      status_id: 2
+      # 1	operation.type-credit
+      # 2	operation.type-debit
+      # 3	operation.type-vire
+      type_id: 2
+      # 1	operation.third-otherCredit
+      # 2	operation.third-otherDebit
+      third_id: 2
+      # 1	operation.category-other
+      # 2	Alimentation
+      # 3	Santé
+      # 4	Cadeau
+      # 5	Prêt
+      # 6	Mobilité
+      # 7	Vacances
+      # 8	Illidan
+      # 9	Fabrice
+      # 10	Frais	banquaire, etc
+      # 11	Sortie
+      # 12	Revenue
+      # 13	Régulation
+      # 14	Jeux
+      # 15	Impôts
+      # 16	FAI
+      # 17	Immobilier
+      # 18	Salaire
+      # 19	Assurance
+      # 20	Charges
+      # 21	Geek
+      # 22	Régulation	équilibrage de compte
+      category_id: 7
+    }
+  ) {
+    id
+    account_id
+    account_id_dest
+    amount
+    date
+    status_id
+    type_id
+    third_id
+    category_id
+    description
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
+
+### vire vers le courant
+POST {{host}}/graphql
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  createOperation (
+    dto: {
+      amount: 255
+      date: "2025-01-21"
+      description: "Vol pour portugal"
+      # 4	Alimentation
+      # 5	Assurances
+      # 6	Charges
+      # 7	Distribution
+      # 8	Fabrice 
+      # 9	Geek
+      # 10	Régie Eau
+      # 11	Illidan
+      # 14	Jeux
+      # 15	Cadeaux
+      # 17	Capital risque
+      # 18	Mobilité
+      # 19	Sorties
+      # 20	Santé
+      # 21	Taxe foncière
+      # 22	Taxe habitation
+      # 23	Vacances
+      # 25	Mes templates
+      # 26	Salaire-Courant
+      # 27	Salaire-Livret
+      # 29	Prêts
+      # 33	Chap42
+      # 34	Impôts
+      # 37	Mes comptes
+      # 38	Cluses
+      account_id: 23
+      account_id_dest: 2
+      # 1	operation.status-follow
+      # 2	operation.status-reconciled
+      status_id: 2
+      # 1	operation.type-credit
+      # 2	operation.type-debit
+      # 3	operation.type-vire
+      type_id: 2
+      # 1	operation.third-otherCredit
+      # 2	operation.third-otherDebit
+      third_id: 2
+      # 1	operation.category-other
+      # 2	Alimentation
+      # 3	Santé
+      # 4	Cadeau
+      # 5	Prêt
+      # 6	Mobilité
+      # 7	Vacances
+      # 8	Illidan
+      # 9	Fabrice
+      # 10	Frais	banquaire, etc
+      # 11	Sortie
+      # 12	Revenue
+      # 13	Régulation
+      # 14	Jeux
+      # 15	Impôts
+      # 16	FAI
+      # 17	Immobilier
+      # 18	Salaire
+      # 19	Assurance
+      # 20	Charges
+      # 21	Geek
+      # 22	Régulation	équilibrage de compte
+      category_id: 7
+    }
+  ) {
+    id
+    account_id
+    account_id_dest
+    amount
+    date
+    status_id
+    type_id
+    third_id
+    category_id
+    description
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}

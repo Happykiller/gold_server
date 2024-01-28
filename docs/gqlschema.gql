@@ -17,8 +17,7 @@ type AccountModelResolver {
   type_id: Int!
   parent_account_id: Int
   label: String!
-  description: String!
-  active: Boolean!
+  description: String
   creator_id: Int!
   creation_date: String!
   modificator_id: Int
@@ -29,7 +28,6 @@ type AccountTypeModelResolver {
   id: Int!
   label: String!
   description: String
-  active: Boolean!
   creator_id: Int!
   creation_date: String!
   modificator_id: Int
@@ -43,7 +41,6 @@ type OperationModelResolver {
   amount: Float!
   date: String!
   status_id: Int!
-  sign: Boolean!
   type_id: Int!
   third_id: Int
   category_id: Int
@@ -57,8 +54,8 @@ type OperationModelResolver {
 
 type OperationLinkModelResolver {
   id: Int!
-  operationA_id: Int!
-  operationB_id: Int!
+  operation_id: Int!
+  operation_ref_id: Int!
   active: Boolean!
   creator_id: Int!
   creation_date: String!
@@ -99,7 +96,7 @@ type OperationStatutModelResolver {
   modification_date: String
 }
 
-type OperationThirdsModelResolver {
+type OperationThirdModelResolver {
   id: Int!
   label: String!
   description: String!
@@ -139,7 +136,7 @@ type Query {
   operationTypes: [OperationTypeModelResolver!]!
   operationCategories: [OperationCategoryModelResolver!]!
   operationStatus: [OperationStatutModelResolver!]!
-  operationThirds: [OperationThirdsModelResolver!]!
+  operationThirds: [OperationThirdModelResolver!]!
   operationLinks(dto: GetOperationInputResolver!): [OperationLinkModelResolver!]!
   auth(dto: AuthInput!): AuthModelResolver!
 }
@@ -176,14 +173,15 @@ input CreateAccountInputResolver {
   type_id: Int!
   parent_account_id: Int
   label: String!
+  description: String
 }
 
 input UpdateAccountInputResolver {
-  """1, regular by default"""
+  account_id: Int!
   type_id: Int
   parent_account_id: Int
   label: String
-  account_id: Int!
+  description: String
 }
 
 input CreateOperationInputResolver {
@@ -192,11 +190,10 @@ input CreateOperationInputResolver {
   amount: Float!
   date: String!
   status_id: Int!
-  sign: Boolean!
   type_id: Int!
   third_id: Int
   category_id: Int
-  description: String!
+  description: String
 }
 
 input UpdateOperationInputResolver {
@@ -205,7 +202,6 @@ input UpdateOperationInputResolver {
   amount: Float
   date: String
   status_id: Int
-  sign: Boolean
   type_id: Int
   third_id: Int
   category_id: Int
@@ -214,8 +210,8 @@ input UpdateOperationInputResolver {
 }
 
 input CreateOperationLinkInputResolver {
-  operationA_id: Int!
-  operationB_id: Int!
+  operation_id: Int!
+  operation_ref_id: Int!
 }
 
 input GetOperationLinkInputResolver {

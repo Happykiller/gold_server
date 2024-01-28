@@ -186,7 +186,7 @@ export class BddServiceSQL implements BddService {
   }
 
   async createOperation(dto: CreateOperationServiceDto): Promise<OperationServiceModel> {
-    const query = `INSERT INTO operation (account_id, account_id_dest, amount, 'date', status_id, type_id, third_id, category_id, description, creator_id)
+    const query = `INSERT INTO operation (account_id, account_id_dest, amount, date, status_id, type_id, third_id, category_id, description, creator_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ;`;
     const [results] = await this.pool.execute(query, [
