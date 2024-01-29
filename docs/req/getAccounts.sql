@@ -12,7 +12,7 @@ AND a.type_id = b.id
 AND a.active = 1
 AND a.type_id = 1
 AND a.id not in (1,2,3,31,36)
-ORDER BY b.id, a.label ASC;
+ORDER BY a.label ASC;
 
 -- Comptes
 SELECT a.id, 
@@ -27,7 +27,7 @@ WHERE 1=1
 AND a.type_id = b.id
 AND a.active = 1
 AND a.id in (2,31,36)
-ORDER BY b.id, a.label ASC;
+ORDER BY a.label ASC;
 
 -- Templates
 SELECT a.id, 
@@ -43,4 +43,4 @@ AND a.type_id = b.id
 AND a.type_id = 2
 AND a.active = 1
 AND a.id not in (25)
-ORDER BY b.id, a.label ASC;
+ORDER BY a.label ASC;

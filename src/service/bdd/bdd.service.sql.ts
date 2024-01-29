@@ -212,24 +212,20 @@ export class BddServiceSQL implements BddService {
   }
 
   async getOperation(dto: GetOperationServiceDto): Promise<OperationServiceModel> {
-    const query = `SELECT id,
-        account_id,
-        account_id_dest,
-        CASE a.type_id
-          WHEN 1 THEN a.amount
-          WHEN 2 THEN (a.amount * - 1)
-          WHEN 3 THEN (a.amount * - 1)
-        END AS amount,
-        date,
-        status_id,
-        type_id,
-        third_id,
-        category_id,
-        description,
-        creator_id,
-        creation_date,
-        modificator_id,
-        modification_date
+    const query = `SELECT a.id,
+        a.account_id,
+        a.account_id_dest,
+        a.amount,
+        a.date,
+        a.status_id,
+        a.type_id,
+        a.third_id,
+        a.category_id,
+        a.description,
+        a.creator_id,
+        a.creation_date,
+        a.modificator_id,
+        a.modification_date
       FROM operation a
       WHERE 1=1
       AND a.active = 1
@@ -249,7 +245,7 @@ export class BddServiceSQL implements BddService {
     h.id,
     h.account_id,
     h.account_id_dest,
-    h.move as amount,
+    h.amount,
     h.date,
     h.status_id,
     h.type_id,
@@ -263,7 +259,6 @@ export class BddServiceSQL implements BddService {
   FROM (
     SELECT 
       g.id,
-      g.amount,
       g.account_id,
       g.account_id_dest,
       g.description,
@@ -271,11 +266,7 @@ export class BddServiceSQL implements BddService {
       g.status_id,
       g.third_id,
       g.type_id,
-      g.type_id_cal,
-      CASE g.type_id_cal
-        WHEN 1 THEN g.amount
-        WHEN 2 THEN (g.amount * - 1)
-      END AS move,
+      g.amount,
       g.date,
       g.creator_id,
       g.creation_date,
@@ -292,11 +283,6 @@ export class BddServiceSQL implements BddService {
         a.status_id,
         a.third_id,
         a.type_id,
-        CASE a.type_id
-          WHEN 1 THEN 1
-          WHEN 2 THEN 2
-          WHEN 3 THEN 2
-        END AS type_id_cal,
         a.date,
         a.creator_id,
         a.creation_date,
@@ -318,7 +304,6 @@ export class BddServiceSQL implements BddService {
         a.status_id,
         a.third_id,
         a.type_id,
-        1 AS type_id_cal,
         a.date,
         a.creator_id,
         a.creation_date,

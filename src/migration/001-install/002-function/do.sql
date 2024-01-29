@@ -45,8 +45,10 @@ BEGIN
             a.type_id,
 			1 AS type_id_cal
 		FROM
-			operation a
+			operation a,
+            account b
 		WHERE 1 = 1
+			AND a.account_id = b.id
 				AND a.account_id_dest = $account_id
                 AND ( 
                   CASE 
@@ -56,6 +58,8 @@ BEGIN
 					a.status_id in (1,2)
                   END
                 ) 
-				AND a.active = 1) g) h;
+				AND a.active = 1
+                AND b.type_id = 1
+                ) g) h;
   RETURN balance;
 END

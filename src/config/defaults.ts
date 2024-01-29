@@ -20,7 +20,7 @@ const defaults: Configuration = {
     installSubscriptionHandlers: true,
   },
   jwt: {
-    refreshTokenName: 'thomyris-refresh-token',
+    refreshTokenName: 'gold-refresh-token',
     secret: 'secretKey',
     signOptions: {
       expiresIn: '8h'

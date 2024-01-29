@@ -1,5 +1,4 @@
-USE gold;
-SET @account_id := 23;
+SET @account_id := 2;
 SELECT 
     h.id,
     h.move as amount,
@@ -9,7 +8,9 @@ SELECT
     h.category,
     h.thrid,
     h.type,
+    h.account_id,
     h.account_label,
+    h.account_id_dest,
     h.account_dest_label
 FROM
     (SELECT 

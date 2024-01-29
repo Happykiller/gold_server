@@ -28,7 +28,7 @@ query {
 }
 
 ###
-POST http://localhost:3000/graphql
+POST {{host}}/graphql
 Content-Type: application/json
 Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
