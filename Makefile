@@ -5,14 +5,14 @@ startall:
 	docker compose up --build -d
 
 down:
-	docker stop lilith_back
+	docker stop gold_server
 
 reset: down
-	docker rm lilith_back
+	docker rm gold_server
 
 help:
 	@echo ""
-	@echo "~~ Lilith_back Makefile ~~"
+	@echo "~~ Gold_server Makefile ~~"
 	@echo ""
 	@echo "\033[33m make start\033[39m    : Démarre le projet"
 	@echo "\033[33m make startall\033[39m : Build et démarre le projet"
