@@ -1,7 +1,7 @@
--- Livret Cap Region
+-- Détails Livret Cap Region
 SELECT a.id, 
 	a.label, 
-    b.label as type,
+  b.label as type,
 	getBalance(a.id, true) as balance_reconcilied,
 	getBalance(a.id, false) as balance_not_reconcilied
 FROM 
@@ -14,10 +14,10 @@ AND a.type_id = 1
 AND a.id not in (1,2,3,31,36)
 ORDER BY a.label ASC;
 
--- Comptes
+-- Balance des comptes
 SELECT a.id, 
 	a.label, 
-    b.label as type,
+  b.label as type,
 	getBalance(a.id, true) as balance_reconcilied,
 	getBalance(a.id, false) as balance_not_reconcilied
 FROM 
@@ -27,7 +27,19 @@ WHERE 1=1
 AND a.type_id = b.id
 AND a.active = 1
 AND a.id in (2,31,36)
-ORDER BY a.label ASC;
+UNION
+SELECT 0, 'Livret Cap Region', 'real', SUM(balance_reconcilied) as total_reconcilied, SUM(balance_not_reconcilied) as total_not_reconcilied
+FROM (
+	SELECT a.id, 
+		a.label, 
+		getBalance(a.id, true) as balance_reconcilied,
+		getBalance(a.id, false) as balance_not_reconcilied
+	FROM account a
+	WHERE 1=1
+	AND a.active = 1
+	AND a.type_id = 1
+	AND a.id not in (1,2,3,31,36)
+) c
 
 -- Templates
 SELECT a.id, 
