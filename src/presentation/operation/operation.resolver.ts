@@ -87,6 +87,16 @@ export class GetOperationsInputResolver {
   offset: number = 0;
 }
 
+@InputType()
+export class CloneOperationInputResolver {
+  @Field(() => Int)
+  account_id: number;
+  @Field(() => Int)
+  template_account_id: number;
+  @Field(() => String)
+  date: string;
+}
+
 @ObjectType()
 export class OperationLinkModelResolver {
   @Field(() => Int)
@@ -330,6 +340,18 @@ export class OperationResolver {
     return inversify.deleteOperationLinkUsecase.execute({
       user_id: session.id,
       operation_link_id: dto.operation_link_id
+    });
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(
+    /* istanbul ignore next */
+    () => [OperationModelResolver]
+  )
+  async cloneOperations(@CurrentSession() session: UserSession, @Args('dto') dto: CloneOperationInputResolver): Promise<OperationModelResolver[]> {
+    return inversify.cloneOperationsUsecase.execute({
+      user_id: session.id,
+      ...dto
     });
   }
 }

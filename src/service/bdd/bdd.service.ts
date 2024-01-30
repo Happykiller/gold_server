@@ -13,6 +13,7 @@ import { AccountTypeServiceModel } from '@service/bdd/model/accountType.service.
 import { CreateOperationServiceDto } from '@service/bdd/dto/createOperation.service.dto';
 import { UpdateOperationServiceDto } from '@service/bdd/dto/updateOperation.service.dto';
 import { DeleteOperationServiceDto } from '@service/bdd/dto/deleteOperation.service.dto';
+import { CloneOperationsServiceDto } from '@service/bdd/dto/cloneOperations.service.dto';
 import { GetOperationLinkServiceDto } from '@service/bdd/dto/getOperationLink.service.dto';
 import { OperationLinkServiceModel } from '@service/bdd/model/operationLink.service.model';
 import { OperationTypeServiceModel } from '@service/bdd/model/operationType.service.model';
@@ -51,4 +52,6 @@ export interface BddService {
   getOperationLink(dto: GetOperationLinkServiceDto): Promise<OperationLinkServiceModel>;
   getOperationLinks(dto: GetOperationLinksServiceDto): Promise<OperationLinkServiceModel[]>;
   deleteOperationLink(dto: DeleteOperationLinkServiceDto): Promise<boolean>;
+
+  cloneOperations(dto: CloneOperationsServiceDto): Promise<OperationServiceModel[]>;
 }

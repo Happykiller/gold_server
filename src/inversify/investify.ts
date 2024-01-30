@@ -15,6 +15,7 @@ import { GetOperationsUsecase } from '@usecase/getOperations.usecase';
 import { CreateAccountUsecase } from '@usecase/createAccount.usecase';
 import { UpdateAccountUsecase } from '@usecase/updateAccount.usecase';
 import { DeleteAccountUsecase } from '@usecase/deleteAccount.usecase';
+import { CloneOperationsUsecase } from '@usecase/cloneOperations.usecase';
 import { DeleteOperationUsecase } from '@usecase/deleteOperation.usecase';
 import { GetAccountTypesUsecase } from '@usecase/getAccountTypes.usecase';
 import { UpdateOperationUsecase } from '@usecase/UpdateOperation.usecase';
@@ -26,6 +27,7 @@ import { GetOperationThridsUsecase } from '@usecase/getOperationThrids.usecase';
 import { CreateOperationLinkUsecase } from '@usecase/createOperationLink.usecase';
 import { DeleteOperationLinkUsecase } from '@usecase/deleteOperationLink.usecase';
 import { GetOperationCategoriesUsecase } from '@usecase/getOperationCategories.usecase';
+
 export class Inversify {
   loggerService: any;
   bddService: BddService;
@@ -45,6 +47,7 @@ export class Inversify {
   createOperationUsecase: CreateOperationUsecase;
   updateOperationUsecase: UpdateOperationUsecase;
   deleteOperationUsecase: DeleteOperationUsecase;
+  cloneOperationsUsecase: CloneOperationsUsecase;
   getOperationTypesUsecase: GetOperationTypesUsecase;
   getOperationLinksUsecase: GetOperationLinksUsecase;
   getOperationThridsUsecase: GetOperationThridsUsecase;
@@ -66,6 +69,7 @@ export class Inversify {
     this.updateAccountUsecase = new UpdateAccountUsecase(this);
     this.deleteAccountUsecase = new DeleteAccountUsecase(this);
     this.getOperationsUsecase = new GetOperationsUsecase(this);
+    this.cloneOperationsUsecase = new CloneOperationsUsecase(this);
     this.getAccountTypesUsecase = new GetAccountTypesUsecase(this);
     this.createOperationUsecase = new CreateOperationUsecase(this);
     this.updateOperationUsecase = new UpdateOperationUsecase(this);

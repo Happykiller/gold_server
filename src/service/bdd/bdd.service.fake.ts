@@ -12,6 +12,7 @@ import { CreateAccountServiceDto } from '@service/bdd/dto/createAccount.service.
 import { UpdateAccountServiceDto } from '@service/bdd/dto/updateAccount.service.dto';
 import { DeleteAccountServiceDto } from '@service/bdd/dto/deleteAccount.service.dto';
 import { AccountTypeServiceModel } from '@service/bdd/model/accountType.service.model';
+import { CloneOperationsServiceDto } from '@service/bdd/dto/cloneOperations.service.dto';
 import { CreateOperationServiceDto } from '@service/bdd/dto/createOperation.service.dto';
 import { UpdateOperationServiceDto } from '@service/bdd/dto/updateOperation.service.dto';
 import { DeleteOperationServiceDto } from '@service/bdd/dto/deleteOperation.service.dto';
@@ -350,5 +351,25 @@ export class BddServiceFake implements BddService {
     elt.modification_date = (new Date()).getTime().toString();
 
     return Promise.resolve(true);
+  }
+
+  cloneOperations(dto: CloneOperationsServiceDto): Promise<OperationServiceModel[]> {
+    return Promise.resolve([{
+      id: 1,
+      account_id: 1,
+      account_id_dest: null,
+      amount: 42.42,
+      date: 'now',
+      status_id: 1,
+      type_id: 1,
+      third_id: 1,
+      category_id: null,
+      description: 'description',
+      active: true,
+      creator_id: 1,
+      creation_date: 'now',
+      modificator_id: null,
+      modification_date: null,
+    }]);
   }
 }

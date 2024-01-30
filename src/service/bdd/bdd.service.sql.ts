@@ -16,6 +16,7 @@ import { CreateAccountServiceDto } from '@service/bdd/dto/createAccount.service.
 import { UpdateAccountServiceDto } from '@service/bdd/dto/updateAccount.service.dto';
 import { DeleteAccountServiceDto } from '@service/bdd/dto/deleteAccount.service.dto';
 import { AccountTypeServiceModel } from '@service/bdd/model/accountType.service.model';
+import { CloneOperationsServiceDto } from '@service/bdd/dto/cloneOperations.service.dto';
 import { CreateOperationServiceDto } from '@service/bdd/dto/createOperation.service.dto';
 import { UpdateOperationServiceDto } from '@service/bdd/dto/updateOperation.service.dto';
 import { DeleteOperationServiceDto } from '@service/bdd/dto/deleteOperation.service.dto';
@@ -519,5 +520,47 @@ export class BddServiceSQL implements BddService {
       dto.operation_link_id
     ]);
     return true;
+  }
+
+  async cloneOperations(dto: CloneOperationsServiceDto): Promise<OperationServiceModel[]> {
+    let query = `INSERT INTO operation (account_id, account_id_dest, amount, date, status_id, type_id, third_id, category_id, description, creator_id)
+    SELECT ?, a.account_id_dest, a.amount, ?, a.status_id, a.type_id, a.third_id, a.category_id, a.description, ?
+      FROM operation a, account b
+    WHERE 1=1
+      AND a.active = 1
+      AND a.account_id = b.id
+      AND b.id = ?
+    ;`;
+    let [results] = await this.pool.execute(query, [
+      dto.account_id,
+      dto.date,
+      dto.user_id,
+      dto.template_account_id
+    ]);
+    query = `SELECT a.id,
+        a.account_id,
+        a.account_id_dest,
+        a.amount,
+        a.date,
+        a.status_id,
+        a.type_id,
+        a.third_id,
+        a.category_id,
+        a.description,
+        a.creator_id,
+        a.creation_date,
+        a.modificator_id,
+        a.modification_date
+      FROM operation a
+      WHERE 1=1
+        AND a.id >= ?
+      ORDER BY a.id DESC
+      LIMIT ?
+    ;`;
+    [results] = await this.pool.execute(query, [
+      results.insertId,
+      results.affectedRows
+    ]);
+    return results;
   }
 }

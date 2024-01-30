@@ -244,3 +244,34 @@ mutation {
     }
   )
 }
+
+###
+POST {{host}}/graphql
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  cloneOperations (
+    dto: {
+      account_id: 2
+      template_account_id: 29
+      date: "2024-01-30"
+    }
+  ) {
+    id
+    account_id
+    account_id_dest
+    amount
+    date
+    status_id
+    type_id
+    third_id
+    category_id
+    description
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
