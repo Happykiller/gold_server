@@ -338,7 +338,7 @@ export class BddServiceSQL implements BddService {
       category_id = ?,
       description = ?,
       modificator_id = ?,
-      modification_date = ?
+      modification_date = current_date()
     WHERE 1=1
       AND id = ?
     ;`;
@@ -347,17 +347,16 @@ export class BddServiceSQL implements BddService {
       (dto.account_id_dest)?dto.account_id_dest:old.account_id_dest, 
       (dto.amount)?dto.amount:old.amount, 
       (dto.date)?dto.date:old.date, 
-      (dto.status_id)?dto.date:old.status_id, 
-      (dto.type_id)?dto.date:old.type_id, 
-      (dto.third_id)?dto.date:old.third_id, 
-      (dto.category_id)?dto.date:old.category_id, 
-      (dto.description)?dto.date:old.description, 
+      (dto.status_id)?dto.status_id:old.status_id, 
+      (dto.type_id)?dto.type_id:old.type_id, 
+      (dto.third_id)?dto.third_id:old.third_id, 
+      (dto.category_id)?dto.category_id:old.category_id, 
+      (dto.description)?dto.description:old.description, 
       dto.user_id,
-      'now',
       dto.operation_id
     ]);
     return await this.getOperation({
-      operation_id: results.updateId,
+      operation_id: dto.operation_id,
       user_id: dto.user_id
     });
   }

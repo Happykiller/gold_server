@@ -69,7 +69,6 @@ mutation {
       amount: 42.2
       date: "now"
       status_id: 1
-      sign: true
       type_id: 1
       third_id: 1
       category_id: 1
@@ -91,6 +90,24 @@ mutation {
     creation_date
     modificator_id
     modification_date
+  }
+}
+
+###
+POST {{host}}/graphql
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  updateOperation (
+    dto: {
+      operation_id: 1
+      date: "2024-02-02"
+      status_id: 2
+    }
+  ) {
+    id
   }
 }
 

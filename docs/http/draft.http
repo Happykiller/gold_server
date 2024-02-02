@@ -7,21 +7,46 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   createOperation (
     dto: {
-      amount: 254.48
-      date: "2022-01-21"
-      description: "Vol pour portugal"
+      amount: 60
+      date: "2024-01-31"
+      description: "Voyage illidan vers bordeaux"
+      #
       # 2 Courant
-      account_id: 2 
+      # 4	Alimentation
+      # 5	Assurances
+      # 15 Cadeaux
+      # 17 Capital
+      # 33 Chap42
+      # 6	Charges
+      # 38 Cluses
+      # 7	Distribution
+      # 8	Fabrice
+      # 9	Geek
+      # 11 Illidan
+      # 34 Impôts
+      # 14 Jeux
+      # 18 Mobilité
+      # 10 Régie Eau
+      # 20 Santé
+      # 19 Sorties
+      # 21 Taxe foncière
+      # 22 Taxe habitation
+      # 23 Vacances
+      account_id: 11
+      #
       # 1	operation.status-follow
       # 2	operation.status-reconciled
       status_id: 2
+      #
       # 1	operation.type-credit
       # 2	operation.type-debit
       # 3	operation.type-vire
       type_id: 2
+      #
       # 1	operation.third-otherCredit
       # 2	operation.third-otherDebit
       third_id: 2
+      #
       # 1	operation.category-other
       # 2	Alimentation
       # 3	Santé
@@ -44,7 +69,7 @@ mutation {
       # 20	Charges
       # 21	Geek
       # 22	Régulation	équilibrage de compte
-      category_id: 7
+      category_id: 8
     }
   ) {
     id
@@ -73,9 +98,9 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   createOperation (
     dto: {
-      amount: 255
-      date: "2025-01-21"
-      description: "Vol pour portugal"
+      amount: 100
+      date: "2024-01-30"
+      description: "Regul pour parking, viking"
       # 4	Alimentation
       # 5	Assurances
       # 6	Charges
@@ -101,7 +126,7 @@ mutation {
       # 34	Impôts
       # 37	Mes comptes
       # 38	Cluses
-      account_id: 23
+      account_id: 19
       account_id_dest: 2
       # 1	operation.status-follow
       # 2	operation.status-reconciled
@@ -109,7 +134,7 @@ mutation {
       # 1	operation.type-credit
       # 2	operation.type-debit
       # 3	operation.type-vire
-      type_id: 2
+      type_id: 3
       # 1	operation.third-otherCredit
       # 2	operation.third-otherDebit
       third_id: 2
@@ -135,7 +160,59 @@ mutation {
       # 20	Charges
       # 21	Geek
       # 22	Régulation	équilibrage de compte
-      category_id: 7
+      category_id: 11
+    }
+  ) {
+    id
+    account_id
+    account_id_dest
+    amount
+    date
+    status_id
+    type_id
+    third_id
+    category_id
+    description
+    creator_id
+    creation_date
+    modificator_id
+    modification_date
+  }
+}
+
+###
+POST {{host}}/graphql
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  updateOperation (
+    dto: {
+      operation_id: 10432
+      date: "2024-02-02"
+      #
+      # 1	operation.status-follow
+      # 2	operation.status-reconciled
+      status_id: 2
+    }
+  ) {
+    id
+  }
+}
+
+###
+POST {{host}}/graphql
+Content-Type: application/json
+Authorization: Bearer {{token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  cloneOperations (
+    dto: {
+      account_id: 2
+      template_account_id: 26
+      date: "2024-02-02"
     }
   ) {
     id

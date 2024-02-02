@@ -6,8 +6,8 @@ X-REQUEST-TYPE: GraphQL
 query {
   auth (
     dto: {
-      login: "ropo"
-      password: "password"
+      login: "{{login}}"
+      password: "{{password}}"
     }
   ) {
     accessToken

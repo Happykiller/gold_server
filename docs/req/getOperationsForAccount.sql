@@ -1,4 +1,4 @@
-SET @account_id := 2;
+SET @account_id := 31;
 SELECT 
     h.id,
     h.move as amount,
@@ -111,4 +111,6 @@ FROM
             AND a.account_id_dest = @account_id
             AND a.active = 1) g) h
 WHERE 1=1
-ORDER BY h.date DESC
+ORDER BY h.date DESC, h.id DESC
+LIMIT 100
+;
