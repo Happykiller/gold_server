@@ -1,4 +1,5 @@
 -- Détails Livret Cap Region
+CREATE OR REPLACE VIEW livret_cap AS
 SELECT a.id, 
 	a.label, 
   b.label as type,
@@ -15,6 +16,7 @@ AND a.id not in (1,2,3,31,36)
 ORDER BY a.label ASC;
 
 -- Balance des comptes
+CREATE OR REPLACE VIEW accounts_balance AS
 SELECT a.id, 
 	a.label, 
   b.label as type,
@@ -42,6 +44,7 @@ FROM (
 ) c
 
 -- Templates
+CREATE OR REPLACE VIEW templates_balance AS
 SELECT a.id, 
 	a.label, 
     b.label as type,

@@ -1,4 +1,11 @@
-SET @account_id := 31;
+--- Details accounts
+
+SET @p1 := 31;
+SELECT * FROM accounts_histo;
+
+create function p1() returns INTEGER DETERMINISTIC NO SQL return @p1;
+
+CREATE OR REPLACE VIEW accounts_histo AS
 SELECT 
     h.id,
     h.move as amount,
@@ -73,7 +80,7 @@ FROM
             AND a.third_id = d.id
             AND a.type_id = e.id
             AND a.account_id = i.id
-            AND a.account_id = @account_id
+            AND a.account_id = p1()
             AND a.active = 1 
 	UNION SELECT 
         a.id,
@@ -108,7 +115,7 @@ FROM
             AND a.type_id = e.id
             AND a.account_id = i.id
             AND a.account_id_dest = j.id
-            AND a.account_id_dest = @account_id
+            AND a.account_id_dest = p1()
             AND a.active = 1) g) h
 WHERE 1=1
 ORDER BY h.date DESC, h.id DESC

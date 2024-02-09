@@ -7,9 +7,9 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   createOperation (
     dto: {
-      amount: 400
-      date: "2024-02-05"
-      description: "Snif régule forcé"
+      amount: 100
+      date: "2024-02-09"
+      description: "Pour écouteur cadeau illidan"
       #
       # 2 Courant
       # 4	Alimentation
@@ -33,7 +33,7 @@ mutation {
       # 21 Taxe foncière
       # 22 Taxe habitation
       # 23 Vacances
-      account_id: 17
+      account_id: 2
       #
       # 1	operation.status-follow
       # 2	operation.status-reconciled
@@ -70,7 +70,7 @@ mutation {
       # 20	Charges
       # 21	Geek
       # 22	Régulation	équilibrage de compte
-      category_id: 13
+      category_id: 4
     }
   ) {
     id
@@ -99,9 +99,9 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   createOperation (
     dto: {
-      amount: 889.17
-      date: "2024-02-05"
-      description: "Régul pour anneaux, 10477"
+      amount: 100
+      date: "2024-02-09"
+      description: "Régul pour écouteur, 10488"
       #
       # 2 Courant
       # 4	Alimentation
@@ -129,7 +129,7 @@ mutation {
       # 34	Impôts
       # 37	Mes comptes
       # 38	Cluses
-      account_id: 8
+      account_id: 15
       account_id_dest: 2
       #
       # 1	operation.status-follow
@@ -167,7 +167,7 @@ mutation {
       # 20	Charges
       # 21	Geek
       # 22	Régulation	équilibrage de compte
-      category_id: 9
+      category_id: 4
     }
   ) {
     id
@@ -196,9 +196,8 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   updateOperation (
     dto: {
-      operation_id: 10434
-      amount: 59.36
-      date: "2024-02-05"
+      operation_id: 10428
+      date: "2024-02-09"
       #
       # 1	operation.status-follow
       # 2	operation.status-reconciled
