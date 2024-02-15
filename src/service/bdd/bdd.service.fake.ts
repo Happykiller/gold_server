@@ -73,7 +73,7 @@ export class BddServiceFake implements BddService {
       password: 'WV5FXp063tPBcccZbqAHH0B93s2Wzf/nTXu8UaU2TeCMh+F0OsXUX02HNsI1Ytd2yowsT707bKCV0KC5uA0usQ==',
       name_first: 'Robert',
       name_last: 'Paulson',
-      description: 'His name is Robert Paulson',
+      description: 'password with secret secretKey',
       mail: 'r.paulson@bob.com',
       active: true,
       creation: (new Date()).getTime().toString(),

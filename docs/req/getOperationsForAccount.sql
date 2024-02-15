@@ -1,6 +1,5 @@
 --- Details accounts
-
-SET @p1 := 31;
+SET @p1 := 2;
 SELECT * FROM accounts_histo;
 
 create function p1() returns INTEGER DETERMINISTIC NO SQL return @p1;
