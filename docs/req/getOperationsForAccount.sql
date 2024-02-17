@@ -8,7 +8,7 @@ CREATE OR REPLACE VIEW accounts_histo AS
 SELECT 
     h.id,
     h.move as amount,
-    h.description,
+    SUBSTRING(h.description, 1, 20) as description,
 	h.date,
     h.status,
     h.category,
