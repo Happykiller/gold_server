@@ -2,7 +2,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { Inject, UseGuards } from '@nestjs/common';
 import { Field, ObjectType, Query, Resolver, Subscription } from '@nestjs/graphql';
 
-import { PubSubHandler } from '@src/pubSub/pubSubHandler';
+import { PubSubHandler } from '@src/presentation/pubSub/pubSubHandler';
 import { GqlAuthGuard } from '../guard/auth.guard';
 
 @ObjectType()

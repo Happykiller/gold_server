@@ -1,4 +1,4 @@
-
+/* istanbul ignore file */
 import { config } from '@src/config';
 import inversify from '@src/inversify/investify';
 

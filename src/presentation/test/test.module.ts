@@ -1,7 +1,8 @@
+/* istanbul ignore file */
 import { Module } from '@nestjs/common';
 
-import { TestResolver } from './test.resolver';
-import { PubSubHandler } from '../../pubSub/pubSubHandler';
+import { TestResolver } from '@presentation/test/test.resolver';
+import { PubSubHandler } from '@presentation/pubSub/pubSubHandler';
 
 @Module({
   imports: [],

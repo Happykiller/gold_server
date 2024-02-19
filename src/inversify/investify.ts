@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { config } from '@src/config';
 import { logger } from '@src/common/logger/logger';
 import { AuthUsecase } from '@src/usecase/auth.usecase';

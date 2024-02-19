@@ -1,15 +1,16 @@
+/* istanbul ignore file */
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
-import { config } from './config';
-import { HelloModule } from './presentation/hello/hello.module';
-import { TestModule } from './presentation/test/test.module';
-import { AccountModule } from './presentation/account/account.module';
-import { OperationModule } from './presentation/operation/operation.module';
-import { AuthModule } from './presentation/auth/auth.module';
+import { config } from '@src/config';
+import { TestModule } from '@presentation/test/test.module';
+import { AuthModule } from '@presentation/auth/auth.module';
+import { HelloModule } from '@presentation/hello/hello.module';
+import { AccountModule } from '@presentation/account/account.module';
+import { OperationModule } from '@presentation/operation/operation.module';
 
 @Module({
   imports: [

@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 

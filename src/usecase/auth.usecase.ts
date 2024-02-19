@@ -1,7 +1,7 @@
 import { Inversify } from '@src/inversify/investify';
-import { AuthUsecaseDto } from '@src/usecase/dto/auth.usecase.dto';
-import { UserUsecaseModel } from '@src/usecase/model/user.usecase.model';
-import { UserSessionUsecaseModel } from '@src/usecase/model/userSession.usecase.model';
+import { AuthUsecaseDto } from '@usecase/dto/auth.usecase.dto';
+import { UserUsecaseModel } from '@usecase/model/user.usecase.model';
+import { UserSessionUsecaseModel } from '@usecase/model/userSession.usecase.model';
 
 export class AuthUsecase {
 

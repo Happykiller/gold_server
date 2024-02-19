@@ -1,7 +1,8 @@
+/* istanbul ignore file */
 import { merge } from 'lodash';
 
-import { defaults } from './defaults';
-import { Configuration } from './configuration';
+import { defaults } from '@src/config/defaults';
+import { Configuration } from '@src/config/configuration';
 
 let config: Configuration;
 

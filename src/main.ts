@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { Logger } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { NestFactory } from '@nestjs/core';

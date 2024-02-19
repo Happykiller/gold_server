@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import * as jwt from 'jsonwebtoken';
 import { ExtractJwt } from 'passport-jwt';
 import { AuthGuard } from '@nestjs/passport';
@@ -6,8 +7,8 @@ import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/com
 
 import { config } from '@src/config';
 import inversify from '@src/inversify/investify';
-import { UserSession } from '@src/presentation/auth/jwt.strategy';
-import { UserUsecaseModel } from '@src/usecase/model/user.usecase.model';
+import { UserSession } from '@presentation/auth/jwt.strategy';
+import { UserUsecaseModel } from '@usecase/model/user.usecase.model';
 
 export class Context {
   req: any;// eslint-disable-line @typescript-eslint/no-explicit-any

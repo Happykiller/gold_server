@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export class Configuration {
   public version?: string;
 

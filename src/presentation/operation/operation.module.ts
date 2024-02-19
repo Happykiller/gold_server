@@ -1,5 +1,7 @@
+/* istanbul ignore file */
 import { Module } from '@nestjs/common';
-import { OperationResolver } from './operation.resolver';
+
+import { OperationResolver } from '@presentation/operation/operation.resolver';
 
 @Module({
   imports: [],

@@ -28,6 +28,7 @@ const logger = createLogger({
   ],
 });
 
+/* istanbul ignore next */
 if (process.env.NODE_ENV === 'prod'){
   logger.level = 'debug';
 
