@@ -1,5 +1,4 @@
 import { version } from '../../package.json';
-import { release } from '../../package.json';
 import { Configuration } from './configuration';
 
 const dotenv = require('dotenv').config().parsed;
@@ -8,7 +7,7 @@ const dotenvlocal = require('dotenv').config({ path: `.env.local`, override: tru
 const merged = Object.assign({}, dotenv, dotenvlocal);
 
 const defaults: Configuration = {
-  version: `${version}-${release}`,
+  version,
   env: {
     mode: 'defaults',
     port: parseInt(merged.APP_PORT) ?? 3001

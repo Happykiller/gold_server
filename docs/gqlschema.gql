@@ -141,6 +141,7 @@ type Query {
   operationThirds: [OperationThirdModelResolver!]!
   operationLinks(dto: GetOperationInputResolver!): [OperationLinkModelResolver!]!
   auth(dto: AuthInput!): AuthModelResolver!
+  getSessionInfo: AuthModelResolver!
 }
 
 input GetAccountInputResolver {

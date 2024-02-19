@@ -22,3 +22,24 @@ query {
     language
   }
 }
+
+###
+POST {{host}}/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+Authorization: Bearer {{token}}
+
+query {
+  getSessionInfo {
+    accessToken
+    id
+    code
+    name_first
+    name_last
+    description
+    mail
+    creation
+    modification
+    language
+  }
+}

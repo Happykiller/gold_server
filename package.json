@@ -1,8 +1,6 @@
 {
   "name": "gold_server",
-  "private": true,
-  "version": "0.1.0",
-  "release": 1,
+  "version": "0.2.0",
   "description": "gold_server",
   "license": "MIT",
   "scripts": {

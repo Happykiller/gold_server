@@ -1,11 +1,10 @@
 import { UseGuards } from '@nestjs/common';
 import { Field, ObjectType, Mutation, Query, Resolver, Int, Args, InputType, PartialType, Float } from '@nestjs/graphql';
 
-import { GetAccountInputResolver } from '../account/account.resolver';
-import { GqlAuthGuard } from '../guard/auth.guard';
-import inversify from '../../inversify/investify';
-import { CurrentSession } from '../guard/userSession.decorator';
-import { UserSession } from '../auth/jwt.strategy';
+import inversify from '@src/inversify/investify';
+import { GqlAuthGuard } from '@presentation/guard/auth.guard';
+import { UserSession } from '@presentation/auth/jwt.strategy';
+import { CurrentSession } from '@presentation/guard/userSession.decorator';
 
 @ObjectType()
 export class OperationModelResolver {

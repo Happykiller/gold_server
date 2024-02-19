@@ -8,10 +8,13 @@ import {
   Resolver
 } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException, UseGuards } from '@nestjs/common';
 
 import inversify from '@src/inversify/investify';
-import { UserSessionUsecaseModel } from '@src/usecase/model/userSession.usecase.model';
+import { GqlAuthGuard } from '@presentation/guard/auth.guard';
+import { UserSession } from '@presentation/auth/jwt.strategy';
+import { CurrentSession } from '@presentation/guard/userSession.decorator';
+import { UserSessionUsecaseModel } from '@usecase/model/userSession.usecase.model';
 
 @ObjectType()
 export class AuthModelResolver {
@@ -58,6 +61,31 @@ export class AuthResolver {
   )
   async auth(@Args('dto') dto: AuthInput): Promise<AuthModelResolver> {
     const userSession:UserSessionUsecaseModel = await inversify.authUsecase.execute(dto);
+
+    if (!userSession) {
+      throw new UnauthorizedException('Credentials wrong');
+    }
+
+    const token = this.jwtService.sign({ 
+      code: userSession.code,
+      id: userSession.id
+    });
+    return {
+      accessToken: token,
+      ... userSession
+    };
+  }
+
+  
+  @UseGuards(GqlAuthGuard)
+  @Query(
+    /* istanbul ignore next */
+    (): typeof AuthModelResolver => AuthModelResolver
+  )
+  async getSessionInfo(@CurrentSession() session: UserSession): Promise<AuthModelResolver> {
+    const userSession:UserSessionUsecaseModel = await inversify.getUserUsecase.execute({
+      id: session.id
+    });
 
     if (!userSession) {
       throw new UnauthorizedException('Credentials wrong');
