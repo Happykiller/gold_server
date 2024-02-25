@@ -1,4 +1,4 @@
-# Lilith Planning Poker APIs
+# Gold Apis
 
 Back Planning Poker is a project that leverages TypeScript, NestJS, and GraphQL subscriptions to facilitate efficient back-end planning sessions using the popular Planning Poker technique. This project aims to streamline the estimation process for development tasks, ensuring better accuracy and collaboration among team members.
 
@@ -29,13 +29,13 @@ Back Planning Poker is a project that leverages TypeScript, NestJS, and GraphQL 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Happykiller/lilith_back.git
+git clone https://github.com/Happykiller/gold_server.git
 ```
 
 2. Install dependencies:
 
 ```bash
-cd lilith_back
+cd gold_server
 npm install
 ```
 
