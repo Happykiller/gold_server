@@ -1,215 +1,106 @@
 import { UseGuards } from '@nestjs/common';
-import { Field, ObjectType, Mutation, Query, Resolver, Int, Args, InputType, PartialType, Float } from '@nestjs/graphql';
+import { Mutation, Query, Resolver, Args, ResolveField, Parent } from '@nestjs/graphql';
 
 import inversify from '@src/inversify/investify';
 import { GqlAuthGuard } from '@presentation/guard/auth.guard';
 import { UserSession } from '@presentation/auth/jwt.strategy';
 import { CurrentSession } from '@presentation/guard/userSession.decorator';
+import { AccountModelResolver } from '@presentation/account/account.resolver';
+import { OperationStatutUsecaseModel } from '@usecase/model/operationStatut.usecase.model';
+import { OperationModelResolver } from '@presentation/operation/model/operation.resolver.model';
+import { GetOperationInputResolver } from '@presentation/operation/dto/get.operation.resolver.dto';
+import { GetOperationsInputResolver } from '@presentation/operation/dto/getAll.operation.resolver.dto';
+import { CloneOperationInputResolver } from '@presentation/operation/dto/clone.operation.resolver.dto';
+import { OperationLinkModelResolver } from '@presentation/operation/model/operationLink.resolver.model';
+import { OperationTypeModelResolver } from '@presentation/operation/model/operationType.resolver.model';
+import { CreateOperationInputResolver } from '@presentation/operation/dto/create.operation.resolver.dto';
+import { UpdateOperationInputResolver } from '@presentation/operation/dto/update.operation.resolver.dto';
+import { OperationThirdModelResolver } from '@presentation/operation/model/operationThrid.resolver.model';
+import { GetOperationLinkInputResolver } from '@presentation/operation/dto/get.operationLink.resolver.dto';
+import { OperationStatutModelResolver } from '@presentation/operation/model/operationStatut.resolver.model';
+import { OperationCategoryModelResolver } from '@presentation/operation/model/operationCategory.resolver.model';
+import { CreateOperationLinkInputResolver } from '@presentation/operation/dto/create.operationLink.resolver.dto';
 
-@ObjectType()
-export class OperationModelResolver {
-  @Field(() => Int)
-  id: number;
-  @Field(() => Int)
-  account_id: number;
-  @Field(() => Int, { nullable: true })
-  account_id_dest: number;
-  @Field(() => Float)
-  amount: number;
-  @Field(() => String)
-  date: string;
-  @Field(() => Int)
-  status_id: number;
-  @Field(() => Int)
-  type_id: number;
-  @Field(() => Int, { nullable: true })
-  third_id: number;
-  @Field(() => Int, { nullable: true })
-  category_id: number;
-  @Field(() => String)
-  description: string;
-  @Field(() => Boolean)
-  active: boolean;
-  @Field(() => Int)
-  creator_id: number;
-  @Field(() => String)
-  creation_date: string;
-  @Field(() => Int, { nullable: true })
-  modificator_id: number;
-  @Field(() => String, { nullable: true })
-  modification_date: string;
-}
-
-@InputType()
-export class GetOperationInputResolver {
-  @Field(() => Int)
-  operation_id: number;
-}
-
-@InputType()
-export class CreateOperationInputResolver {
-  @Field(() => Int)
-  account_id: number;
-  @Field(() => Int, { nullable: true })
-  account_id_dest: number;
-  @Field(() => Float)
-  amount: number;
-  @Field(() => String)
-  date: string;
-  @Field(() => Int)
-  status_id: number;
-  @Field(() => Int)
-  type_id: number;
-  @Field(() => Int, { nullable: true })
-  third_id: number;
-  @Field(() => Int, { nullable: true })
-  category_id: number;
-  @Field(() => String, { nullable: true })
-  description: string;
-}
-
-@InputType()
-export class CreateOperationLinkInputResolver {
-  @Field(() => Int)
-  operation_id: number;
-  @Field(() => Int)
-  operation_ref_id: number;
-}
-
-@InputType()
-export class GetOperationsInputResolver {
-  @Field(() => Int)
-  account_id: number;
-  @Field(() => Int, { nullable: true })
-  limit: number = 100;
-  @Field(() => Int, { nullable: true })
-  offset: number = 0;
-}
-
-@InputType()
-export class CloneOperationInputResolver {
-  @Field(() => Int)
-  account_id: number;
-  @Field(() => Int)
-  template_account_id: number;
-  @Field(() => String)
-  date: string;
-}
-
-@ObjectType()
-export class OperationLinkModelResolver {
-  @Field(() => Int)
-  id: number;
-  @Field(() => Int)
-  operation_id: number;
-  @Field(() => Int)
-  operation_ref_id: number;
-  @Field(() => Boolean)
-  active: boolean;
-  @Field(() => Int)
-  creator_id: number;
-  @Field(() => String)
-  creation_date: string;
-  @Field(() => Int, { nullable: true })
-  modificator_id: number;
-  @Field(() => String, { nullable: true })
-  modification_date: string;
-}
-
-@InputType()
-export class UpdateOperationInputResolver extends PartialType(CreateOperationInputResolver) {
-  @Field(() => Int)
-  operation_id: number;
-}
-
-@ObjectType()
-export class OperationTypeModelResolver {
-  @Field(() => Int)
-  id: number;
-  @Field(() => String)
-  label: string;
-  @Field(() => String)
-  description: string;
-  @Field(() => Boolean)
-  active: boolean;
-  @Field(() => Int)
-  creator_id: number;
-  @Field(() => String)
-  creation_date: string;
-  @Field(() => Int, { nullable: true })
-  modificator_id: number;
-  @Field(() => String, { nullable: true })
-  modification_date: string;
-}
-
-@ObjectType()
-export class OperationCategoryModelResolver {
-  @Field(() => Int)
-  id: number;
-  @Field(() => String)
-  label: string;
-  @Field(() => String)
-  description: string;
-  @Field(() => Boolean)
-  active: boolean;
-  @Field(() => Int)
-  creator_id: number;
-  @Field(() => String)
-  creation_date: string;
-  @Field(() => Int, { nullable: true })
-  modificator_id: number;
-  @Field(() => String, { nullable: true })
-  modification_date: string;
-}
-
-@ObjectType()
-export class OperationStatutModelResolver {
-  @Field(() => Int)
-  id: number;
-  @Field(() => String)
-  label: string;
-  @Field(() => String)
-  description: string;
-  @Field(() => Boolean)
-  active: boolean;
-  @Field(() => Int)
-  creator_id: number;
-  @Field(() => String)
-  creation_date: string;
-  @Field(() => Int, { nullable: true })
-  modificator_id: number;
-  @Field(() => String, { nullable: true })
-  modification_date: string;
-}
-
-@ObjectType()
-export class OperationThirdModelResolver {
-  @Field(() => Int)
-  id: number;
-  @Field(() => String)
-  label: string;
-  @Field(() => String)
-  description: string;
-  @Field(() => Boolean)
-  active: boolean;
-  @Field(() => Int)
-  creator_id: number;
-  @Field(() => String)
-  creation_date: string;
-  @Field(() => Int, { nullable: true })
-  modificator_id: number;
-  @Field(() => String, { nullable: true })
-  modification_date: string;
-}
-
-@InputType()
-export class GetOperationLinkInputResolver {
-  @Field(() => Int)
-  operation_link_id: number;
-}
-
-@Resolver('OperationResolver')
+@Resolver((of) => OperationModelResolver)
 export class OperationResolver {
+
+  statusEntities:OperationStatutModelResolver[];
+  typeEntities:OperationTypeModelResolver[];
+  categoryEntities:OperationCategoryModelResolver[];
+  thirdEntities:OperationCategoryModelResolver[];
+
+  @ResolveField((of) => AccountModelResolver)
+  async account(
+    @Parent() parent: OperationModelResolver,
+    @CurrentSession() session: UserSession,
+  ): Promise<AccountModelResolver> {
+    const entity: AccountModelResolver = await inversify.getAccountUsecase.execute(
+      {
+        user_id: session.id,
+        account_id: parent.account_id
+      },
+    );
+    return entity;
+  }
+
+  @ResolveField((of) => AccountModelResolver, { nullable: true })
+  async account_dest(
+    @Parent() parent: OperationModelResolver,
+    @CurrentSession() session: UserSession,
+  ): Promise<AccountModelResolver> {
+    if (parent.account_id_dest !== null) {
+      const entity: AccountModelResolver = await inversify.getAccountUsecase.execute(
+        {
+          user_id: session.id,
+          account_id: parent.account_id_dest
+        },
+      );
+      return entity;
+    } else {
+      return null;
+    }
+  }
+
+  @ResolveField((of) => OperationStatutModelResolver)
+  async status(
+    @Parent() parent: OperationModelResolver
+  ): Promise<OperationStatutModelResolver> {
+    if (!this.statusEntities) {
+      this.statusEntities = await inversify.getOperationStatusUsecase.execute();
+    }
+    return this.statusEntities.find(elt => parent.status_id === elt.id);
+  }
+
+  @ResolveField((of) => OperationTypeModelResolver)
+  async type(
+    @Parent() parent: OperationModelResolver
+  ): Promise<OperationTypeModelResolver> {
+    if (!this.typeEntities) {
+      this.typeEntities = await inversify.getOperationTypesUsecase.execute();
+    }
+    return this.typeEntities.find(elt => parent.type_id === elt.id);
+  }
+
+  @ResolveField((of) => OperationThirdModelResolver)
+  async third(
+    @Parent() parent: OperationModelResolver
+  ): Promise<OperationThirdModelResolver> {
+    if (!this.thirdEntities) {
+      this.thirdEntities = await inversify.getOperationThridsUsecase.execute();
+    }
+    return this.thirdEntities.find(elt => parent.third_id === elt.id);
+  }
+
+  @ResolveField((of) => OperationCategoryModelResolver)
+  async category(
+    @Parent() parent: OperationModelResolver
+  ): Promise<OperationCategoryModelResolver> {
+    if (!this.categoryEntities) {
+      this.categoryEntities = await inversify.getOperationCategoriesUsecase.execute();
+    }
+    return this.categoryEntities.find(elt => parent.category_id === elt.id);
+  }
+
   @UseGuards(GqlAuthGuard)
   @Query(
     /* istanbul ignore next */

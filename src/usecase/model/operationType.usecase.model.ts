@@ -1,7 +1,6 @@
 export interface OperationTypeUsecaseModel {
   id: number;
   label: string;
-  description: string;
   active: boolean;
   creator_id: number;
   creation_date: string;

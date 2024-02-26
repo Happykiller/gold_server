@@ -29,7 +29,7 @@ X-REQUEST-TYPE: GraphQL
 query {
   account (
     dto: {
-      account_id: 1
+      account_id: 2
     }
   ) {
     id
@@ -37,6 +37,8 @@ query {
     parent_account_id
     label
     description
+    balance_reconcilied
+    balance_not_reconcilied
     creator_id
     modificator_id
     creation_date

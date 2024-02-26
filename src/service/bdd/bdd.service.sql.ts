@@ -380,8 +380,7 @@ export class BddServiceSQL implements BddService {
 
   async getOperationTypes(): Promise<OperationTypeServiceModel[]> {
     const query = `SELECT id,
-        label, 
-        description, 
+        label,
         creator_id, 
         creation_date, 
         modificator_id, 
@@ -412,11 +411,10 @@ export class BddServiceSQL implements BddService {
 
   async getOperationStatus(): Promise<OperationStatutServiceModel[]> {
     const query = `SELECT id,
-        label, 
-        description, 
-        creator_id, 
-        creation_date, 
-        modificator_id, 
+        label,
+        creator_id,
+        creation_date,
+        modificator_id,
         modification_date
       FROM operation_status_list a
       WHERE 1=1

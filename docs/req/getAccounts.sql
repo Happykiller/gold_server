@@ -30,7 +30,7 @@ AND a.type_id = b.id
 AND a.active = 1
 AND a.id in (2,31,36)
 UNION
-SELECT 0, 'Livret Cap Region', 'real', SUM(balance_reconcilied) as total_reconcilied, SUM(balance_not_reconcilied) as total_not_reconcilied
+SELECT 3, 'Livret Cap Region', 'real', SUM(balance_reconcilied) as total_reconcilied, SUM(balance_not_reconcilied) as total_not_reconcilied
 FROM (
 	SELECT a.id, 
 		a.label, 

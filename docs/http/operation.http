@@ -11,14 +11,32 @@ query {
     }
   ) {
     id
-    account_id
-    account_id_dest
+    account {
+      id
+      label
+    }
+    account_dest {
+      id
+      label
+    }
     amount
     date
-    status_id
-    type_id
-    third_id
-    category_id
+    status {
+      id
+      label
+    }
+    type {
+      id
+      label
+    }
+    third {
+      id
+      label
+    }
+    category {
+      id
+      label
+    }
     description
     creator_id
     creation_date

@@ -2,12 +2,30 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type HelloModelResolver {
-  message: String
-}
-
 type TestModelResolver {
   resultat: Boolean
+}
+
+type AuthModelResolver {
+  """Session token"""
+  accessToken: String!
+
+  """Id of the user"""
+  id: Int!
+
+  """Code of the user"""
+  code: String!
+  name_first: String!
+  name_last: String!
+  description: String!
+  mail: String!
+  creation: String!
+  modification: String
+  language: String!
+}
+
+type HelloModelResolver {
+  message: String
 }
 
 type AccountModelResolver {
@@ -52,6 +70,12 @@ type OperationModelResolver {
   creation_date: String!
   modificator_id: Int
   modification_date: String
+  account: AccountModelResolver!
+  account_dest: AccountModelResolver
+  status: OperationStatutModelResolver!
+  type: OperationTypeModelResolver!
+  third: OperationThirdModelResolver!
+  category: OperationCategoryModelResolver!
 }
 
 type OperationLinkModelResolver {
@@ -68,7 +92,26 @@ type OperationLinkModelResolver {
 type OperationTypeModelResolver {
   id: Int!
   label: String!
-  description: String!
+  active: Boolean!
+  creator_id: Int!
+  creation_date: String!
+  modificator_id: Int
+  modification_date: String
+}
+
+type OperationThirdModelResolver {
+  id: Int!
+  label: String!
+  active: Boolean!
+  creator_id: Int!
+  creation_date: String!
+  modificator_id: Int
+  modification_date: String
+}
+
+type OperationStatutModelResolver {
+  id: Int!
+  label: String!
   active: Boolean!
   creator_id: Int!
   creation_date: String!
@@ -85,46 +128,6 @@ type OperationCategoryModelResolver {
   creation_date: String!
   modificator_id: Int
   modification_date: String
-}
-
-type OperationStatutModelResolver {
-  id: Int!
-  label: String!
-  description: String!
-  active: Boolean!
-  creator_id: Int!
-  creation_date: String!
-  modificator_id: Int
-  modification_date: String
-}
-
-type OperationThirdModelResolver {
-  id: Int!
-  label: String!
-  description: String!
-  active: Boolean!
-  creator_id: Int!
-  creation_date: String!
-  modificator_id: Int
-  modification_date: String
-}
-
-type AuthModelResolver {
-  """Session token"""
-  accessToken: String!
-
-  """Id of the user"""
-  id: Int!
-
-  """Code of the user"""
-  code: String!
-  name_first: String!
-  name_last: String!
-  description: String!
-  mail: String!
-  creation: String!
-  modification: String
-  language: String!
 }
 
 type Query {
