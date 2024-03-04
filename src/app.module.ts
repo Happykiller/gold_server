@@ -9,6 +9,7 @@ import { config } from '@src/config';
 import { TestModule } from '@presentation/test/test.module';
 import { AuthModule } from '@presentation/auth/auth.module';
 import { HelloModule } from '@presentation/hello/hello.module';
+import { SystemModule } from '@presentation/system/system.module';
 import { AccountModule } from '@presentation/account/account.module';
 import { OperationModule } from '@presentation/operation/operation.module';
 
@@ -16,6 +17,7 @@ import { OperationModule } from '@presentation/operation/operation.module';
   imports: [
     TestModule,
     HelloModule,
+    SystemModule,
     AccountModule,
     OperationModule,
     AuthModule,
