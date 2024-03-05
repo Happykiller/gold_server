@@ -28,6 +28,10 @@ type HelloModelResolver {
   message: String
 }
 
+type SystemInfoResolverModel {
+  version: String!
+}
+
 type AccountModelResolver {
   id: Int!
 
@@ -133,6 +137,7 @@ type OperationCategoryModelResolver {
 type Query {
   testBdd: TestModelResolver!
   hello: HelloModelResolver!
+  systemInfo: SystemInfoResolverModel!
   accounts: [AccountModelResolver!]!
   account(dto: GetAccountInputResolver!): AccountModelResolver!
   accountTypes: [AccountTypeModelResolver!]!
