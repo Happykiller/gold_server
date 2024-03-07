@@ -365,14 +365,13 @@ export class BddServiceSQL implements BddService {
     const query = `UPDATE operation SET
       active = 0,
       modificator_id = ?,
-      modification_date = ?
+      modification_date = current_date()
     WHERE 1=1
       AND id = ?
       AND active = 1
     ;`;
     const [results] = await this.pool.execute(query, [
       dto.user_id,
-      'now',
       dto.operation_id
     ]);
     return true;
@@ -471,7 +470,6 @@ export class BddServiceSQL implements BddService {
     ;`;
     const [results] = await this.pool.execute(query, [
       dto.user_id,
-      'now',
       dto.operation_link_id
     ]);
     if(results.length > 0) {
@@ -506,14 +504,13 @@ export class BddServiceSQL implements BddService {
     const query = `UPDATE operation_link SET
       active = 0,
       modificator_id = ?,
-      modification_date = ?
+      modification_date = current_date()
     WHERE 1=1
       AND id = ?
       AND active = 1
     ;`;
     const [results] = await this.pool.execute(query, [
       dto.user_id,
-      'now',
       dto.operation_link_id
     ]);
     return true;
