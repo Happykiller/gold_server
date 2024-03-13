@@ -23,11 +23,6 @@ import { CreateOperationLinkInputResolver } from '@presentation/operation/dto/cr
 @Resolver((of) => OperationModelResolver)
 export class OperationResolver {
 
-  statusEntities:OperationStatutModelResolver[];
-  typeEntities:OperationTypeModelResolver[];
-  categoryEntities:OperationCategoryModelResolver[];
-  thirdEntities:OperationThirdModelResolver[];
-
   @ResolveField((of) => AccountModelResolver)
   async account(
     @Parent() parent: OperationModelResolver,
@@ -64,40 +59,32 @@ export class OperationResolver {
   async status(
     @Parent() parent: OperationModelResolver
   ): Promise<OperationStatutModelResolver> {
-    if (!this.statusEntities) {
-      this.statusEntities = await inversify.getOperationStatusUsecase.execute();
-    }
-    return this.statusEntities.find(elt => parent.status_id === elt.id);
+    const statusEntities = await inversify.getOperationStatusUsecase.execute();
+    return statusEntities.find(elt => parent.status_id === elt.id);
   }
 
   @ResolveField((of) => OperationTypeModelResolver)
   async type(
     @Parent() parent: OperationModelResolver
   ): Promise<OperationTypeModelResolver> {
-    if (!this.typeEntities) {
-      this.typeEntities = await inversify.getOperationTypesUsecase.execute();
-    }
-    return this.typeEntities.find(elt => parent.type_id === elt.id);
+    const typeEntities = await inversify.getOperationTypesUsecase.execute();
+    return typeEntities.find(elt => parent.type_id === elt.id);
   }
 
   @ResolveField((of) => OperationThirdModelResolver)
   async third(
     @Parent() parent: OperationModelResolver
   ): Promise<OperationThirdModelResolver> {
-    if (!this.thirdEntities) {
-      this.thirdEntities = await inversify.getOperationThridsUsecase.execute();
-    }
-    return this.thirdEntities.find(elt => parent.third_id === elt.id);
+    const thirdEntities = await inversify.getOperationThridsUsecase.execute();
+    return thirdEntities.find(elt => parent.third_id === elt.id);
   }
 
   @ResolveField((of) => OperationCategoryModelResolver)
   async category(
     @Parent() parent: OperationModelResolver
   ): Promise<OperationCategoryModelResolver> {
-    if (!this.categoryEntities) {
-      this.categoryEntities = await inversify.getOperationCategoriesUsecase.execute();
-    }
-    return this.categoryEntities.find(elt => parent.category_id === elt.id);
+    const categoryEntities = await inversify.getOperationCategoriesUsecase.execute();
+    return categoryEntities.find(elt => parent.category_id === elt.id);
   }
 
   @UseGuards(GqlAuthGuard)
