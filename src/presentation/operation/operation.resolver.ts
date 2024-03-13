@@ -6,7 +6,6 @@ import { GqlAuthGuard } from '@presentation/guard/auth.guard';
 import { UserSession } from '@presentation/auth/jwt.strategy';
 import { CurrentSession } from '@presentation/guard/userSession.decorator';
 import { AccountModelResolver } from '@presentation/account/account.resolver';
-import { OperationStatutUsecaseModel } from '@usecase/model/operationStatut.usecase.model';
 import { OperationModelResolver } from '@presentation/operation/model/operation.resolver.model';
 import { GetOperationInputResolver } from '@presentation/operation/dto/get.operation.resolver.dto';
 import { GetOperationsInputResolver } from '@presentation/operation/dto/getAll.operation.resolver.dto';
@@ -27,7 +26,7 @@ export class OperationResolver {
   statusEntities:OperationStatutModelResolver[];
   typeEntities:OperationTypeModelResolver[];
   categoryEntities:OperationCategoryModelResolver[];
-  thirdEntities:OperationCategoryModelResolver[];
+  thirdEntities:OperationThirdModelResolver[];
 
   @ResolveField((of) => AccountModelResolver)
   async account(
@@ -194,7 +193,7 @@ export class OperationResolver {
     () => [OperationThirdModelResolver]
   )
   async operationThirds(): Promise<OperationThirdModelResolver[]> {
-    return inversify.getOperationTypesUsecase.execute();
+    return inversify.getOperationThridsUsecase.execute();
   }
 
   @UseGuards(GqlAuthGuard)

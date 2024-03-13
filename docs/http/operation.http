@@ -153,12 +153,6 @@ query {
   operationTypes {
     id
     label
-    description
-    active
-    creator_id
-    creation_date
-    modificator_id
-    modification_date
   }
 }
 
@@ -173,11 +167,6 @@ query {
     id
     label
     description
-    active
-    creator_id
-    creation_date
-    modificator_id
-    modification_date
   }
 }
 
@@ -210,12 +199,7 @@ query {
   operationThirds {
     id
     label
-    description
-    active
     creator_id
-    creation_date
-    modificator_id
-    modification_date
   }
 }
 
