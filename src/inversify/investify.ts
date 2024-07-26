@@ -16,6 +16,7 @@ import { GetOperationsUsecase } from '@usecase/getOperations.usecase';
 import { CreateAccountUsecase } from '@usecase/createAccount.usecase';
 import { UpdateAccountUsecase } from '@usecase/updateAccount.usecase';
 import { DeleteAccountUsecase } from '@usecase/deleteAccount.usecase';
+import { AuthPasskeyUsecase } from '@usecase/auth/passkey.auth.usecase';
 import { CloneOperationsUsecase } from '@usecase/cloneOperations.usecase';
 import { DeleteOperationUsecase } from '@usecase/deleteOperation.usecase';
 import { GetAccountTypesUsecase } from '@usecase/getAccountTypes.usecase';
@@ -23,11 +24,17 @@ import { UpdateOperationUsecase } from '@usecase/UpdateOperation.usecase';
 import { CreateOperationUsecase } from '@usecase/createOperation.usecase';
 import { GetOperationTypesUsecase } from '@usecase/getOperationTypes.usecase';
 import { GetOperationLinksUsecase } from '@usecase/getOperationLinks.usecase';
+import { DeletePasskeyUsecase } from '@usecase/passkey/delete.passkey.usecase';
+import { CreatePasskeyUsecase } from '@usecase/passkey/create.passkey.usecase';
 import { GetOperationStatusUsecase } from '@usecase/getOperationStatus.usecase';
 import { GetOperationThridsUsecase } from '@usecase/getOperationThrids.usecase';
+import { PasswordLessService } from '@service/passwordless/passwordless.service';
 import { CreateOperationLinkUsecase } from '@usecase/createOperationLink.usecase';
 import { DeleteOperationLinkUsecase } from '@usecase/deleteOperationLink.usecase';
 import { GetOperationCategoriesUsecase } from '@usecase/getOperationCategories.usecase';
+import { GetByUserIdPasskeyUsecase } from '@usecase/passkey/getByUserId.passkey.usecase';
+import { PasswordLessServiceFake } from '@service/passwordless/passwordless.service.fake';
+import { PasswordLessServiceReal } from '@service/passwordless/passwordlless.service.real';
 
 export class Inversify {
   loggerService: any;
@@ -39,11 +46,15 @@ export class Inversify {
   getUserUsecase: GetUserUsecase;
   getAccountUsecase: GetAccountUsecase;
   getAccountsUsecase: GetAccountsUsecase;
+  authPasskeyUsecase: AuthPasskeyUsecase;
   getOperationUsecase: GetOperationUsecase;
+  passwordLessService: PasswordLessService;
   getOperationsUsecase: GetOperationsUsecase;
   createAccountUsecase: CreateAccountUsecase;
   updateAccountUsecase: UpdateAccountUsecase;
   deleteAccountUsecase: DeleteAccountUsecase;
+  deletePasskeyUsecase: DeletePasskeyUsecase;
+  createPasskeyUsecase: CreatePasskeyUsecase;
   getAccountTypesUsecase: GetAccountTypesUsecase;
   createOperationUsecase: CreateOperationUsecase;
   updateOperationUsecase: UpdateOperationUsecase;
@@ -51,6 +62,7 @@ export class Inversify {
   cloneOperationsUsecase: CloneOperationsUsecase;
   getOperationTypesUsecase: GetOperationTypesUsecase;
   getOperationLinksUsecase: GetOperationLinksUsecase;
+  getByUserIdPasskeyUsecase: GetByUserIdPasskeyUsecase;
   getOperationThridsUsecase: GetOperationThridsUsecase;
   getOperationStatusUsecase: GetOperationStatusUsecase;
   deleteOperationLinkUsecase: DeleteOperationLinkUsecase;
@@ -64,12 +76,15 @@ export class Inversify {
     this.testBddUsecase = new TestBddUsecase(this);
     this.getUserUsecase = new GetUserUsecase(this);
     this.getAccountUsecase = new GetAccountUsecase(this);
+    this.authPasskeyUsecase = new AuthPasskeyUsecase(this);
     this.getAccountsUsecase = new GetAccountsUsecase(this);
     this.getOperationUsecase = new GetOperationUsecase(this);
     this.createAccountUsecase = new CreateAccountUsecase(this);
     this.updateAccountUsecase = new UpdateAccountUsecase(this);
     this.deleteAccountUsecase = new DeleteAccountUsecase(this);
     this.getOperationsUsecase = new GetOperationsUsecase(this);
+    this.deletePasskeyUsecase = new DeletePasskeyUsecase(this);
+    this.createPasskeyUsecase = new CreatePasskeyUsecase(this);
     this.cloneOperationsUsecase = new CloneOperationsUsecase(this);
     this.getAccountTypesUsecase = new GetAccountTypesUsecase(this);
     this.createOperationUsecase = new CreateOperationUsecase(this);
@@ -79,18 +94,22 @@ export class Inversify {
     this.getOperationLinksUsecase = new GetOperationLinksUsecase(this);
     this.getOperationThridsUsecase = new GetOperationThridsUsecase(this);
     this.getOperationStatusUsecase = new GetOperationStatusUsecase(this);
+    this.getByUserIdPasskeyUsecase = new GetByUserIdPasskeyUsecase(this);
     this.deleteOperationLinkUsecase = new DeleteOperationLinkUsecase(this);
     this.createOperationLinkUsecase = new CreateOperationLinkUsecase(this);
     this.getOperationCategoriesUsecase = new GetOperationCategoriesUsecase(this);
 
     if (config.env.mode === 'prod') {
       this.loggerService = logger;
+      this.passwordLessService = new PasswordLessServiceReal();
       this.bddService = new BddServiceSQL();
     } else if (config.env.mode === 'dev') {
       this.loggerService = logger;
+      this.passwordLessService = new PasswordLessServiceReal();
       this.bddService = new BddServiceFake();
     } else {
       this.loggerService = logger;
+      this.passwordLessService = new PasswordLessServiceFake();
       this.bddService = new BddServiceFake();
     }
   }

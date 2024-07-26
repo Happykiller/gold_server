@@ -15,6 +15,7 @@ import { GqlAuthGuard } from '@presentation/guard/auth.guard';
 import { UserSession } from '@presentation/auth/jwt.strategy';
 import { CurrentSession } from '@presentation/guard/userSession.decorator';
 import { UserSessionUsecaseModel } from '@usecase/model/userSession.usecase.model';
+import { PasskeyAuthResolverDto } from '@presentation/auth/dto/passkey.auth.resolver.dto';
 
 @ObjectType()
 export class AuthModelResolver {
@@ -98,6 +99,30 @@ export class AuthResolver {
     return {
       accessToken: token,
       ... userSession
+    };
+  }
+
+  @Query(
+    /* istanbul ignore next */
+    (): typeof AuthModelResolver => AuthModelResolver,
+  )
+  async auth_passkey(
+    @Args('dto') dto: PasskeyAuthResolverDto,
+  ): Promise<AuthModelResolver> {
+    const userSession: UserSessionUsecaseModel =
+      await inversify.authPasskeyUsecase.execute(dto);
+
+    if (!userSession) {
+      throw new UnauthorizedException('Credentials wrong');
+    }
+
+    const token = this.jwtService.sign({
+      code: userSession.code,
+      id: userSession.id,
+    });
+    return {
+      accessToken: token,
+      ...userSession,
     };
   }
 }

@@ -1,5 +1,9 @@
 /* istanbul ignore file */
 import { BddService } from '@src/service/bdd/bdd.service';
+import PasskeyDbModel from '@service/bdd/model/passkey.db.model';
+import { GetPasskeyDbDto } from '@service/bdd/dto/get.passkey.db.dto';
+import CreatePasskeyDbDto from '@service/bdd/dto/create.passkey.db.dto';
+import { DeletePasskeyDbDto } from '@service/bdd/dto/delete.passkey.db.dto';
 import { UserServiceModel } from '@src/service/bdd/model/user.service.model';
 import { GetUserServiceDto } from '@src/service/bdd/dto/getUser.service.dto';
 import { AccountServiceModel } from '@service/bdd/model/account.service.model';
@@ -11,6 +15,7 @@ import { GetOperationsServiceDto } from '@service/bdd/dto/getOperations.service.
 import { CreateAccountServiceDto } from '@service/bdd/dto/createAccount.service.dto';
 import { UpdateAccountServiceDto } from '@service/bdd/dto/updateAccount.service.dto';
 import { DeleteAccountServiceDto } from '@service/bdd/dto/deleteAccount.service.dto';
+import { GetPasskeyByUserIdDbDto } from '@service/bdd/dto/getByUserId.passkey.db.dto';
 import { AccountTypeServiceModel } from '@service/bdd/model/accountType.service.model';
 import { CloneOperationsServiceDto } from '@service/bdd/dto/cloneOperations.service.dto';
 import { CreateOperationServiceDto } from '@service/bdd/dto/createOperation.service.dto';
@@ -371,5 +376,18 @@ export class BddServiceFake implements BddService {
       modificator_id: null,
       modification_date: null,
     }]);
+  }
+
+  createPasskey(dto: CreatePasskeyDbDto): Promise<PasskeyDbModel> {
+    throw new Error('Method not implemented.');
+  }
+  getPasskeyByUserId(dto: GetPasskeyByUserIdDbDto): Promise<PasskeyDbModel[]> {
+    throw new Error('Method not implemented.');
+  }
+  getPasskey(dto: GetPasskeyDbDto): Promise<PasskeyDbModel> {
+    throw new Error('Method not implemented.');
+  }
+  deletePasskey(dto: DeletePasskeyDbDto): Promise<boolean> {
+    throw new Error('Method not implemented.');
   }
 }
