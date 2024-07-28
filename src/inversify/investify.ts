@@ -102,15 +102,15 @@ export class Inversify {
     if (config.env.mode === 'prod') {
       this.loggerService = logger;
       this.passwordLessService = new PasswordLessServiceReal();
-      this.bddService = new BddServiceSQL();
+      this.bddService = new BddServiceSQL() as unknown as BddService;
     } else if (config.env.mode === 'dev') {
       this.loggerService = logger;
       this.passwordLessService = new PasswordLessServiceReal();
-      this.bddService = new BddServiceFake();
+      this.bddService = new BddServiceFake() as unknown as BddService;
     } else {
       this.loggerService = logger;
       this.passwordLessService = new PasswordLessServiceFake();
-      this.bddService = new BddServiceFake();
+      this.bddService = new BddServiceFake() as unknown as BddService;
     }
   }
 

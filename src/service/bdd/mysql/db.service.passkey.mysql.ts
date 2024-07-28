@@ -1,0 +1,97 @@
+import { BddService } from '@service/bdd/bdd.service';
+import PasskeyDbModel from '@service/bdd/model/passkey.db.model';
+import { GetPasskeyDbDto } from '@service/bdd/dto/get.passkey.db.dto';
+import CreatePasskeyDbDto from '@service/bdd/dto/create.passkey.db.dto';
+import { DeletePasskeyDbDto } from '@service/bdd/dto/delete.passkey.db.dto';
+import { GetPasskeyByUserIdDbDto } from '@service/bdd/dto/getByUserId.passkey.db.dto';
+
+export class BddServicePasskeyMysql
+  implements
+    Pick<BddService, 'createPasskey' | 'getPasskeyByUserId' | 'getPasskey'>
+{
+
+  pool: any;
+
+  async createPasskey(dto: CreatePasskeyDbDto): Promise<PasskeyDbModel> {
+    const query = `INSERT INTO passkeys (user_id, user_code, label, hostname, challenge, registration) 
+    VALUES (?, ?, ?, ?, ?, ?)
+    ;`;
+    const [results] = await this.pool.execute(query, [dto.user_id, dto.user_code, dto.label, dto.hostname, dto.challenge, JSON.stringify(dto.registration)]);
+    return await this.getPasskey({
+      passkey_id: results.insertId
+    });
+  }
+
+  async getPasskeyByUserId(dto: GetPasskeyByUserIdDbDto): Promise<PasskeyDbModel[]> {
+    const query = `SELECT id, 
+        user_id, 
+        user_code, 
+        label, 
+        hostname,
+        challenge,
+        registration
+      FROM passkeys a
+      WHERE 1=1
+      and a.active = 1
+      AND a.user_id = ${dto.user_id}
+    ;`;
+    let [results] = await this.pool.execute(query);
+    results = results.map((elt) => {
+      return {
+        ...elt,
+        registration: JSON.parse(elt.registration)
+      }
+    });
+    return results;
+  }
+
+  async getPasskey(dto: GetPasskeyDbDto): Promise<PasskeyDbModel> {
+
+    let filter = 'AND false';
+    if (dto.passkey_id) {
+      filter = `AND a.id = ${dto.passkey_id}`
+    } else if (dto.credential_id) {
+      filter = `AND a.registration like '%${dto.credential_id}%'`
+    }
+
+    const query = `SELECT id, 
+        user_id, 
+        user_code, 
+        label, 
+        hostname,
+        challenge,
+        registration
+      FROM passkeys a
+      WHERE 1=1
+      AND a.active = 1
+      ${filter}
+    ;`;
+    let [results] = await this.pool.execute(query);
+    
+    results = results.map((elt) => {
+      return {
+        ...elt,
+        registration: JSON.parse(elt.registration)
+      }
+    });
+
+    if(results.length > 0) {
+      return results[0];
+    } else {
+      return null;
+    }
+  }
+
+  async deletePasskey(dto: DeletePasskeyDbDto): Promise<boolean> {
+    const query = `UPDATE passkeys SET
+      active = 0
+    WHERE 1=1
+      AND id = ?
+      AND active = 1
+    ;`;
+    const [results] = await this.pool.execute(query, [
+      dto.passkey_id
+    ]);
+    return true;
+  }
+}

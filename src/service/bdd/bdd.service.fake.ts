@@ -1,21 +1,17 @@
 /* istanbul ignore file */
-import { BddService } from '@src/service/bdd/bdd.service';
-import PasskeyDbModel from '@service/bdd/model/passkey.db.model';
-import { GetPasskeyDbDto } from '@service/bdd/dto/get.passkey.db.dto';
-import CreatePasskeyDbDto from '@service/bdd/dto/create.passkey.db.dto';
-import { DeletePasskeyDbDto } from '@service/bdd/dto/delete.passkey.db.dto';
+import { applyMixins } from '@src/common/applyMixins';
 import { UserServiceModel } from '@src/service/bdd/model/user.service.model';
 import { GetUserServiceDto } from '@src/service/bdd/dto/getUser.service.dto';
 import { AccountServiceModel } from '@service/bdd/model/account.service.model';
 import { GetAccountServiceDto } from '@service/bdd/dto/getAccount.service.dto';
 import { GetAccountsServiceDto } from '@service/bdd/dto/getAccounts.service.dto';
+import { BddServicePasskeyFake } from '@service/bdd/fake/db.service.passkey.fake';
 import { OperationServiceModel } from '@service/bdd/model/operation.service.model';
 import { GetOperationServiceDto } from '@service/bdd/dto/getOperation.service.dto';
 import { GetOperationsServiceDto } from '@service/bdd/dto/getOperations.service.dto';
 import { CreateAccountServiceDto } from '@service/bdd/dto/createAccount.service.dto';
 import { UpdateAccountServiceDto } from '@service/bdd/dto/updateAccount.service.dto';
 import { DeleteAccountServiceDto } from '@service/bdd/dto/deleteAccount.service.dto';
-import { GetPasskeyByUserIdDbDto } from '@service/bdd/dto/getByUserId.passkey.db.dto';
 import { AccountTypeServiceModel } from '@service/bdd/model/accountType.service.model';
 import { CloneOperationsServiceDto } from '@service/bdd/dto/cloneOperations.service.dto';
 import { CreateOperationServiceDto } from '@service/bdd/dto/createOperation.service.dto';
@@ -31,7 +27,7 @@ import { DeleteOperationLinkServiceDto } from '@service/bdd/dto/deleteOperationL
 import { CreateOperationLinkServiceDto } from '@service/bdd/dto/createOperationLink.service.dto';
 import { OperationCategoryServiceModel } from '@service/bdd/model/operationCategory.service.model';
 
-export class BddServiceFake implements BddService {
+class BddServiceFake {
   collectionAccount:AccountServiceModel[] = [{
     id: 1,
     type_id: 1,
@@ -66,6 +62,8 @@ export class BddServiceFake implements BddService {
   }];
 
   collectionOperationLink:OperationLinkServiceModel[] = [];
+
+  collectionPasskey
 
   test(): Promise<boolean> {
     return Promise.resolve(true);
@@ -377,17 +375,10 @@ export class BddServiceFake implements BddService {
       modification_date: null,
     }]);
   }
-
-  createPasskey(dto: CreatePasskeyDbDto): Promise<PasskeyDbModel> {
-    throw new Error('Method not implemented.');
-  }
-  getPasskeyByUserId(dto: GetPasskeyByUserIdDbDto): Promise<PasskeyDbModel[]> {
-    throw new Error('Method not implemented.');
-  }
-  getPasskey(dto: GetPasskeyDbDto): Promise<PasskeyDbModel> {
-    throw new Error('Method not implemented.');
-  }
-  deletePasskey(dto: DeletePasskeyDbDto): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
 }
+
+applyMixins(BddServiceFake, [
+  BddServicePasskeyFake,
+]);
+
+export { BddServiceFake };
