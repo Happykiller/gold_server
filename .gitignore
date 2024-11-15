@@ -405,3 +405,4 @@ src/config/prod.ts
 /test.http
 .vscode
 logs
+*.tar

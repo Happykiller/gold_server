@@ -10,6 +10,17 @@ down:
 reset: down
 	docker rm gold_back
 
+tar: 
+	docker build -t gold_back -f Dockerfile .
+	docker save gold_back -o gold_back.tar
+
+install:
+	docker stop gold_back
+	docker rm gold_back
+	docker image rm gold_back
+	docker load -i gold_back.tar
+	docker compose -f docker-compose.prod.yml up -d
+
 help:
 	@echo ""
 	@echo "~~ Gold Apis Makefile ~~"

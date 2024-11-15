@@ -7,9 +7,9 @@ import {
   Query,
   Resolver
 } from '@nestjs/graphql';
-import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
 
+import { config } from '@src/config';
 import inversify from '@src/inversify/investify';
 import { GqlAuthGuard } from '@presentation/guard/auth.guard';
 import { UserSession } from '@presentation/auth/jwt.strategy';
@@ -52,10 +52,6 @@ export class AuthInput {
 @Resolver('AuthResolver')
 export class AuthResolver {
 
-  constructor(
-    private jwtService: JwtService
-  ) {}
-
   @Query(
     /* istanbul ignore next */
     (): typeof AuthModelResolver => AuthModelResolver
@@ -67,10 +63,11 @@ export class AuthResolver {
       throw new UnauthorizedException('Credentials wrong');
     }
 
-    const token = this.jwtService.sign({ 
+    const token = inversify.jwtService.sign({ 
       code: userSession.code,
       id: userSession.id
     });
+
     return {
       accessToken: token,
       ... userSession
@@ -91,11 +88,14 @@ export class AuthResolver {
     if (!userSession) {
       throw new UnauthorizedException('Credentials wrong');
     }
-
-    const token = this.jwtService.sign({ 
-      code: userSession.code,
-      id: userSession.id
-    });
+    
+    const token: string = inversify.jwtService.sign(
+      {
+        code: userSession.code,
+        id: userSession.id
+      }
+    );
+    
     return {
       accessToken: token,
       ... userSession
@@ -116,7 +116,7 @@ export class AuthResolver {
       throw new UnauthorizedException('Credentials wrong');
     }
 
-    const token = this.jwtService.sign({
+    const token = inversify.jwtService.sign({
       code: userSession.code,
       id: userSession.id,
     });

@@ -1,5 +1,4 @@
 /* istanbul ignore file */
-import * as jwt from 'jsonwebtoken';
 import { ExtractJwt } from 'passport-jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -28,7 +27,7 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
 
     let userSession: UserSession;
     try {
-      userSession = jwt.verify(accessToken, config.jwt.secret) as UserSession;
+      userSession = inversify.jwtService.verify(accessToken) as UserSession;
     } catch (err) {
       throw new UnauthorizedException('Token expired');
     }
@@ -38,14 +37,10 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
     });
 
     if (user) {
-      const refreshToken: string = jwt.sign(
+      const refreshToken: string = inversify.jwtService.sign(
         {
           code: userSession.code,
           id: userSession.id
-        },
-        config.jwt.secret,
-        {
-          expiresIn: config.jwt.signOptions.expiresIn
         }
       );
 

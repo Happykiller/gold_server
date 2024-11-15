@@ -35,10 +35,13 @@ import { GetOperationCategoriesUsecase } from '@usecase/getOperationCategories.u
 import { GetByUserIdPasskeyUsecase } from '@usecase/passkey/getByUserId.passkey.usecase';
 import { PasswordLessServiceFake } from '@service/passwordless/passwordless.service.fake';
 import { PasswordLessServiceReal } from '@service/passwordless/passwordlless.service.real';
+import { JwtServiceReal } from '../service/jwt/jwt.service.real';
+import { JwtService } from '../service/jwt/jwt.service';
 
 export class Inversify {
   loggerService: any;
   bddService: BddService;
+  jwtService: JwtService;
   cryptService: CryptService;
 
   authUsecase: AuthUsecase;
@@ -70,6 +73,7 @@ export class Inversify {
   getOperationCategoriesUsecase: GetOperationCategoriesUsecase;
 
   constructor() {
+    this.jwtService = new JwtServiceReal();
     this.cryptService = new CryptServiceReal();
 
     this.authUsecase = new AuthUsecase(this);
