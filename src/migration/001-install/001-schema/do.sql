@@ -5,5 +5,6 @@ CREATE TABLE `passkeys` (
   `hostname` int(250) NOT NULL,
   `challenge` int(250) NOT NULL,
   `registration` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`registration`)),
+  `registration_parsed` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`registration_parsed`)),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;

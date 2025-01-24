@@ -1,5 +1,6 @@
-import { AuthenticationEncoded, CredentialKey, AuthenticationParsed } from '@service/passwordless/lib/types';
+import { AuthenticationInfo, AuthenticationJSON, CredentialInfo, RegistrationInfo, RegistrationJSON } from '@passwordless-id/webauthn/dist/esm/types';
 
 export interface PasswordLessService {
-  verifyAuthentication(authenticationRaw: AuthenticationEncoded, credential: CredentialKey, expected: any): Promise<AuthenticationParsed>;
+  verifyRegistration(registrationJson: RegistrationJSON, expected: any): Promise<RegistrationInfo>;
+  verifyAuthentication(authenticationJson: AuthenticationJSON, credential: CredentialInfo, expected: any): Promise<AuthenticationInfo>;
 }

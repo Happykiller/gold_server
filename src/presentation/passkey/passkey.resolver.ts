@@ -37,7 +37,7 @@ export class PasskeyResolver {
       hostname: response.hostname,
       user_code: response.user_code,
       challenge: response.challenge,
-      credential_id: response.registration.credential.id,
+      credential_id: response.registration.id,
     };
   }
 
@@ -58,7 +58,7 @@ export class PasskeyResolver {
         hostname: passkey.hostname,
         user_code: passkey.user_code,
         challenge: passkey.challenge,
-        credential_id: passkey.registration.credential.id,
+        credential_id: passkey.registration.id,
       };
     });
   }

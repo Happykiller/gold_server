@@ -13,10 +13,10 @@ export class BddServicePasskeyMysql
   pool: any;
 
   async createPasskey(dto: CreatePasskeyDbDto): Promise<PasskeyDbModel> {
-    const query = `INSERT INTO passkeys (user_id, user_code, label, hostname, challenge, registration) 
-    VALUES (?, ?, ?, ?, ?, ?)
+    const query = `INSERT INTO passkeys (user_id, user_code, label, hostname, challenge, registration, registration_parsed) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     ;`;
-    const [results] = await this.pool.execute(query, [dto.user_id, dto.user_code, dto.label, dto.hostname, dto.challenge, JSON.stringify(dto.registration)]);
+    const [results] = await this.pool.execute(query, [dto.user_id, dto.user_code, dto.label, dto.hostname, dto.challenge, JSON.stringify(dto.registration), JSON.stringify(dto.registrationParsed)]);
     return await this.getPasskey({
       passkey_id: results.insertId
     });
@@ -29,7 +29,8 @@ export class BddServicePasskeyMysql
         label, 
         hostname,
         challenge,
-        registration
+        registration,
+        registration_parsed
       FROM passkeys a
       WHERE 1=1
       and a.active = 1
@@ -39,7 +40,8 @@ export class BddServicePasskeyMysql
     results = results.map((elt) => {
       return {
         ...elt,
-        registration: JSON.parse(elt.registration)
+        registration: JSON.parse(elt.registration),
+        registrationParsed: JSON.parse((!elt.registration_parsed || elt.registration_parsed==='')?null:elt.registration_parsed)
       }
     });
     return results;
@@ -60,7 +62,8 @@ export class BddServicePasskeyMysql
         label, 
         hostname,
         challenge,
-        registration
+        registration,
+        registration_parsed
       FROM passkeys a
       WHERE 1=1
       AND a.active = 1
@@ -71,7 +74,8 @@ export class BddServicePasskeyMysql
     results = results.map((elt) => {
       return {
         ...elt,
-        registration: JSON.parse(elt.registration)
+        registration: JSON.parse(elt.registration),
+        registrationParsed: JSON.parse(elt.registration_parsed)
       }
     });
 

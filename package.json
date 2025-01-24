@@ -1,6 +1,6 @@
 {
   "name": "gold_server",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "gold_server",
   "license": "MIT",
   "scripts": {
@@ -28,6 +28,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/schedule": "^2.2.1",
     "@nestjs/throttler": "^3.1.0",
+    "@passwordless-id/webauthn": "^2.1.2",
     "@types/passport": "^1.0.16",
     "@types/passport-jwt": "^4.0.0",
     "crypto-js": "^4.2.0",

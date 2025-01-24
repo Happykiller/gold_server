@@ -1,37 +1,68 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { RegistrationJSON } from '@passwordless-id/webauthn/dist/esm/types';
 
 @InputType()
-export class CreatePasskeyRegistrationCredentialResolverDto {
+class RegisterResponsePasskeyResolverDto {
   @Field(() => String)
-  id: string;
+  attestationObject: string;
+
+  @Field(() => String)
+  authenticatorData: string;
+
+  @Field(() => String)
+  clientDataJSON: string;
+
   @Field(() => String)
   publicKey: string;
-  @Field(() => String)
-  algorithm: string;
+
+  @Field(() => Number)
+  publicKeyAlgorithm: number;
+
+  @Field(() => [String])
+  transports: string[];
 }
 
 @InputType()
-export class CreatePasskeyRegistrationResolverDto {
+class RegisterUserPasskeyResolverDto {
   @Field(() => String)
-  username: string;
-  @Field(() => CreatePasskeyRegistrationCredentialResolverDto)
-  credential: CreatePasskeyRegistrationCredentialResolverDto;
+  name: string;
+
   @Field(() => String)
-  authenticatorData: string;
+  id: string;
+}
+
+@InputType()
+class RegisterPasskeyResolverDto {
   @Field(() => String)
-  clientData: string;
+  type: string;
+
   @Field(() => String)
-  attestationData: string;
+  id: string;
+
+  @Field(() => String)
+  rawId: string;
+
+  @Field(() => String)
+  authenticatorAttachment?: string;
+
+  @Field(() => RegisterResponsePasskeyResolverDto)
+  response: RegisterResponsePasskeyResolverDto;
+
+  @Field(() => RegisterUserPasskeyResolverDto)
+  user: RegisterUserPasskeyResolverDto;
 }
 
 @InputType()
 export class CreatePasskeyResolverDto {
   @Field(() => String)
   label: string;
+
   @Field(() => String)
   hostname: string;
+
   @Field(() => String)
   challenge: string;
-  @Field(() => CreatePasskeyRegistrationResolverDto)
-  registration: CreatePasskeyRegistrationResolverDto;
+
+  @Field(() => RegisterPasskeyResolverDto)
+  registration: RegistrationJSON;
 }

@@ -1,9 +1,15 @@
-import * as server from '@service/passwordless/lib/server';
+import { server } from '@passwordless-id/webauthn';
+import { AuthenticationInfo, AuthenticationJSON, CredentialInfo, RegistrationInfo, RegistrationJSON } from '@passwordless-id/webauthn/dist/esm/types';
+
 import { PasswordLessService } from '@service/passwordless/passwordless.service';
-import { AuthenticationEncoded, CredentialKey, AuthenticationParsed } from '@service/passwordless/lib/types';
+
 
 export class PasswordLessServiceReal implements PasswordLessService {
-  verifyAuthentication(authenticationRaw: AuthenticationEncoded, credential: CredentialKey, expected: any): Promise<AuthenticationParsed> {
-    return server.verifyAuthentication(authenticationRaw, credential, expected);
+  verifyRegistration(registrationJson: RegistrationJSON, expected: any): Promise<RegistrationInfo> {
+    return server.verifyRegistration(registrationJson, expected);
+  }
+  
+  verifyAuthentication(authenticationJson: AuthenticationJSON, credential: CredentialInfo, expected: any): Promise<AuthenticationInfo> {
+    return server.verifyAuthentication(authenticationJson, credential, expected);
   }
 }

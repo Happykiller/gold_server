@@ -1,3 +1,6 @@
+import { RegistrationInfo } from '@passwordless-id/webauthn/dist/esm/types';
+
+import { ERRORS } from '@src/common/ERROR';
 import { Inversify } from '@src/inversify/investify';
 import PasskeyUsecaseModel from '@usecase/passkey/model/passkey.usecase.model';
 import CreatePasskeyUsecaseDto from '@usecase/passkey/dto/create.passkey.usecase.dto';
@@ -9,7 +12,23 @@ export class CreatePasskeyUsecase {
     this.inversify = inversify;
   }
 
-  execute(dto: CreatePasskeyUsecaseDto): Promise<PasskeyUsecaseModel> {
-    return this.inversify.bddService.createPasskey(dto);
+  async execute(dto: CreatePasskeyUsecaseDto): Promise<PasskeyUsecaseModel> {
+    try {
+
+      const expected = {
+        challenge: dto.challenge,
+        origin: (origin) => origin.includes(dto.hostname),
+      }
+      const registrationParsed:RegistrationInfo = await this.inversify.passwordLessService.verifyRegistration(dto.registration, expected);
+      //this.inversify.loggerService.debug('registrationParsed', registrationParsed);
+
+      return this.inversify.bddService.createPasskey({
+        ...dto,
+        registrationParsed
+      });
+    } catch (e) {
+      this.inversify.loggerService.error(`AuthPasskeyUsecase => ${e.message}`);
+      throw new Error(ERRORS.CREATE_PASSKEY_USECASE_FAIL);
+    }
   }
 }

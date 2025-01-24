@@ -14,28 +14,24 @@ export class AuthPasskeyUsecase {
   async execute(dto: PasskeyAuthUsecaseDto): Promise<UserSessionUsecaseModel> {
     try {
 
-      const user: UserUsecaseModel =
-        await this.inversify.getUserUsecase.execute({
-          code: dto.user_code,
-        });
+      const user: UserUsecaseModel = await this.inversify.getUserUsecase.execute({
+        code: dto.user_code,
+      });
 
       const passkey = await this.inversify.bddService.getPasskey({
-        credential_id: dto.credentialId,
+        credential_id: dto.authentication.id,
       });
 
       /* istanbul ignore next */
-      const expected = {
+      const expected:any = {
         challenge: passkey.challenge,
         origin: (origin) => origin.includes(passkey.hostname),
         userVerified: true, // no function allowed here
         verbose: false, // optional, enables debug logs containing sensitive information
       };
 
-      await this.inversify.passwordLessService.verifyAuthentication(
-        dto,
-        passkey.registration.credential as any,
-        expected,
-      );
+      const authenticationParsed = await this.inversify.passwordLessService.verifyAuthentication(dto.authentication, passkey.registrationParsed.credential, expected);
+      //this.inversify.loggerService.debug('authenticationParsed', authenticationParsed);
 
       return {
         id: user.id,
@@ -44,8 +40,8 @@ export class AuthPasskeyUsecase {
         name_last: user.name_last,
         description: user.description,
         mail: user.mail,
-        creation: user.creation,
-        modification: user.modification,
+        creation: user.creation, 
+        modification: user.modification, 
         language: user.language
       };
     } catch (e) {

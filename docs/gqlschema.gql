@@ -188,11 +188,22 @@ input AuthInput {
 
 input PasskeyAuthResolverDto {
   user_code: String!
-  credentialId: String!
+  authentication: PasskeyAuthAuthenticationResolverDto!
+}
+
+input PasskeyAuthAuthenticationResolverDto {
+  id: String!
+  rawId: String!
+  type: String!
+  authenticatorAttachment: String
+  response: PasskeyAuthResponseResolverDto!
+}
+
+input PasskeyAuthResponseResolverDto {
   authenticatorData: String!
-  clientData: String!
+  clientDataJSON: String!
   signature: String!
-  userHandle: String!
+  userHandle: String
 }
 
 type Mutation {
@@ -229,21 +240,30 @@ input CreatePasskeyResolverDto {
   label: String!
   hostname: String!
   challenge: String!
-  registration: CreatePasskeyRegistrationResolverDto!
+  registration: RegisterPasskeyResolverDto!
 }
 
-input CreatePasskeyRegistrationResolverDto {
-  username: String!
-  credential: CreatePasskeyRegistrationCredentialResolverDto!
-  authenticatorData: String!
-  clientData: String!
-  attestationData: String!
-}
-
-input CreatePasskeyRegistrationCredentialResolverDto {
+input RegisterPasskeyResolverDto {
+  type: String!
   id: String!
+  rawId: String!
+  authenticatorAttachment: String!
+  response: RegisterResponsePasskeyResolverDto!
+  user: RegisterUserPasskeyResolverDto!
+}
+
+input RegisterResponsePasskeyResolverDto {
+  attestationObject: String!
+  authenticatorData: String!
+  clientDataJSON: String!
   publicKey: String!
-  algorithm: String!
+  publicKeyAlgorithm: Float!
+  transports: [String!]!
+}
+
+input RegisterUserPasskeyResolverDto {
+  name: String!
+  id: String!
 }
 
 input DeletePasskeyResolverDto {

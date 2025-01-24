@@ -42,7 +42,7 @@ export class BddServicePasskeyFake
       else if (dto.passkey_id) {
         return elt.id === dto.passkey_id;
       } else if (dto.credential_id) {
-        return elt.registration.credential.id === dto.credential_id;
+        return elt.registration.id === dto.credential_id;
       }
     });
 

@@ -1,8 +1,13 @@
-import { AuthenticationParsed } from '@service/passwordless/lib/types';
+import { AuthenticationInfo, AuthenticationJSON, CredentialInfo, RegistrationInfo, RegistrationJSON } from '@passwordless-id/webauthn/dist/esm/types';
+
 import { PasswordLessService } from '@service/passwordless/passwordless.service';
 
 export class PasswordLessServiceFake implements PasswordLessService {
-  verifyAuthentication(): Promise<AuthenticationParsed> {
+  verifyRegistration(registrationJson: RegistrationJSON, expected: any): Promise<RegistrationInfo> {
+    return Promise.resolve(null);
+  }
+
+  verifyAuthentication(authenticationJson: AuthenticationJSON, credential: CredentialInfo, expected: any): Promise<AuthenticationInfo> {
     return Promise.resolve(null);
   }
 }
