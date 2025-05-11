@@ -1,3 +1,4 @@
+// src\presentation\operation\operation.resolver.ts
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver, Args, ResolveField, Parent } from '@nestjs/graphql';
 

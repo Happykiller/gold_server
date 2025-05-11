@@ -1,10 +1,13 @@
+// src\inversify\investify.ts
 /* istanbul ignore file */
 import { config } from '@src/config';
 import { logger } from '@src/common/logger/logger';
+import { JwtService } from '@service/jwt/jwt.service';
 import { AuthUsecase } from '@src/usecase/auth.usecase';
 import { BddService } from '@src/service/bdd/bdd.service';
 import { GetUserUsecase } from '@src/usecase/getUser.usecase';
 import { TestBddUsecase } from '@src/usecase/testBdd.usecase';
+import { JwtServiceReal } from '@service/jwt/jwt.service.real';
 import { CryptService } from '@src/service/crypt/crypt.service';
 import { GetAccountUsecase } from '@usecase/getAccount.usecase';
 import { BddServiceSQL } from '@src/service/bdd/bdd.service.sql';
@@ -35,8 +38,6 @@ import { GetOperationCategoriesUsecase } from '@usecase/getOperationCategories.u
 import { GetByUserIdPasskeyUsecase } from '@usecase/passkey/getByUserId.passkey.usecase';
 import { PasswordLessServiceFake } from '@service/passwordless/passwordless.service.fake';
 import { PasswordLessServiceReal } from '@service/passwordless/passwordlless.service.real';
-import { JwtServiceReal } from '../service/jwt/jwt.service.real';
-import { JwtService } from '../service/jwt/jwt.service';
 
 export class Inversify {
   loggerService: any;
@@ -110,7 +111,7 @@ export class Inversify {
     } else if (config.env.mode === 'dev') {
       this.loggerService = logger;
       this.passwordLessService = new PasswordLessServiceReal();
-      this.bddService = new BddServiceFake() as unknown as BddService;
+      this.bddService = new BddServiceSQL() as unknown as BddService;
     } else {
       this.loggerService = logger;
       this.passwordLessService = new PasswordLessServiceFake();

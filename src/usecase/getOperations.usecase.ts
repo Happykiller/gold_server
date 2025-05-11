@@ -1,3 +1,4 @@
+// src\usecase\getOperations.usecase.ts
 import { Inversify } from '@src/inversify/investify';
 import { OperationUsecaseModel } from '@usecase/model/operation.usecase.model';
 import { GetOperationsUsecaseDto } from '@usecase/dto/getOperations.usecase.dto';

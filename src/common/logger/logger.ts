@@ -1,5 +1,6 @@
-import { createLogger, format, transports } from 'winston';
+// src\common\logger\logger.ts
 import 'winston-daily-rotate-file';
+import { createLogger, format, transports } from 'winston';
 
 /* istanbul ignore next */
 const myFormat = format.printf(info => {
@@ -34,7 +35,7 @@ if (process.env.NODE_ENV === 'prod'){
 
   const transport = new transports.DailyRotateFile({
     level: 'info',
-    filename: 'logs/switch-%DATE%.log',
+    filename: 'logs/gold-%DATE%.log',
     datePattern: 'YYYY-MM-DD',
     maxSize: '20m',
     maxFiles: '14d'

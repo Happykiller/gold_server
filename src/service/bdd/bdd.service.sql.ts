@@ -1,3 +1,4 @@
+// src\service\bdd\bdd.service.sql.ts
 /* istanbul ignore file */
 import * as mysql from 'mysql2/promise';
 
