@@ -1,3 +1,4 @@
+// src\app.module.ts
 /* istanbul ignore file */
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -6,19 +7,35 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 import { config } from '@src/config';
-import { AuthModule } from '@presentation/auth/auth.module';
-import { SystemModule } from '@presentation/system/system.module';
-import { PasskeyModule } from '@presentation/passkey/passkey.module';
+import { version } from '../package.json';
+import inversify from '@src/inversify/investify';
 import { AccountModule } from '@presentation/account/account.module';
 import { OperationModule } from '@presentation/operation/operation.module';
+import { AuthGuardModule, AuthModule, PasskeyModule, SystemModule, TestModule } from '@happykiller/sunny-apis';
 
 @Module({
   imports: [
-    SystemModule,
+    // Sunny
+    TestModule,
+    AuthGuardModule.forRoot({
+      appConfig: config,
+      inversify,
+    }),
+    AuthModule.forRoot({
+      jwtConfig: config.jwt,
+      appConfig: config,
+      inversify,
+    }),
+    PasskeyModule.forRoot({
+      inversify,
+    }),
+    SystemModule.forRoot({
+      version,
+      inversify,
+    }),
+    // Project
     AccountModule,
-    PasskeyModule,
     OperationModule,
-    AuthModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: config.graphQL.playground,
@@ -29,7 +46,9 @@ import { OperationModule } from '@presentation/operation/operation.module';
       },
     }),
     ScheduleModule.forRoot(),
-    ThrottlerModule.forRoot(config.ratelimit),
+    ThrottlerModule.forRoot({
+      throttlers: [config.ratelimit]
+    }),
   ]
 })
 export class AppModule {}

@@ -1,10 +1,9 @@
+// src\presentation\account\account.resolver.ts
 import { UseGuards } from '@nestjs/common';
-import { Field, ObjectType, Mutation, Query, Resolver, Int, Args, InputType, PartialType, Float } from '@nestjs/graphql';
+import { Field, ObjectType, Mutation, Query, Resolver, Int, Args, InputType, Float } from '@nestjs/graphql';
 
 import inversify from '@src/inversify/investify';
-import { GqlAuthGuard } from '@src/presentation/guard/auth.guard';
-import { UserSession } from '@src/presentation/auth/jwt.strategy';
-import { CurrentSession } from '@src/presentation/guard/userSession.decorator';
+import { CurrentSession, makeAuthGuard, USER_ROLE, UserSession } from '@happykiller/sunny-apis';
 
 @ObjectType()
 export class AccountModelResolver {
@@ -84,66 +83,66 @@ export class AccountTypeModelResolver {
 
 @Resolver('AccountResolver')
 export class AccountResolver {
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
     () => [AccountModelResolver]
   )
   async accounts(@CurrentSession() session: UserSession): Promise<AccountModelResolver[]> {
     return inversify.getAccountsUsecase.execute({
-      user_id: session.id
+      user_id: parseInt(session.id)
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
     () => AccountModelResolver
   )
   async account(@CurrentSession() session: UserSession, @Args('dto') dto: GetAccountInputResolver): Promise<AccountModelResolver> {
     return inversify.getAccountUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       account_id: dto.account_id
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
     () => AccountModelResolver
   )
   async createAccount(@CurrentSession() session: UserSession, @Args('dto') dto: CreateAccountInputResolver): Promise<AccountModelResolver> {
     return inversify.createAccountUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       ... dto
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
     () => AccountModelResolver
   )
   async updateAccount(@CurrentSession() session: UserSession, @Args('dto') dto: UpdateAccountInputResolver): Promise<AccountModelResolver> {
     return inversify.updateAccountUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       ... dto
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
     () => Boolean
   )
   async deleteAccount(@CurrentSession() session: UserSession, @Args('dto') dto: GetAccountInputResolver): Promise<boolean> {
     return inversify.deleteAccountUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       account_id: dto.account_id
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
     () => [AccountTypeModelResolver]

@@ -10,4 +10,5 @@ export interface UserServiceModel {
   creation: string;
   modification: string;
   language: string;
+  role: string;
 }

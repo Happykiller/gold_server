@@ -3,10 +3,8 @@ import { UseGuards } from '@nestjs/common';
 import { Mutation, Query, Resolver, Args, ResolveField, Parent } from '@nestjs/graphql';
 
 import inversify from '@src/inversify/investify';
-import { GqlAuthGuard } from '@presentation/guard/auth.guard';
-import { UserSession } from '@presentation/auth/jwt.strategy';
-import { CurrentSession } from '@presentation/guard/userSession.decorator';
 import { AccountModelResolver } from '@presentation/account/account.resolver';
+import { CurrentSession, makeAuthGuard, USER_ROLE, UserSession } from '@happykiller/sunny-apis';
 import { OperationModelResolver } from '@presentation/operation/model/operation.resolver.model';
 import { GetOperationInputResolver } from '@presentation/operation/dto/get.operation.resolver.dto';
 import { GetOperationsInputResolver } from '@presentation/operation/dto/getAll.operation.resolver.dto';
@@ -31,7 +29,7 @@ export class OperationResolver {
   ): Promise<AccountModelResolver> {
     const entity: AccountModelResolver = await inversify.getAccountUsecase.execute(
       {
-        user_id: session.id,
+        user_id: parseInt(session.id),
         account_id: parent.account_id
       },
     );
@@ -46,7 +44,7 @@ export class OperationResolver {
     if (parent.account_id_dest !== null) {
       const entity: AccountModelResolver = await inversify.getAccountUsecase.execute(
         {
-          user_id: session.id,
+          user_id: parseInt(session.id),
           account_id: parent.account_id_dest
         },
       );
@@ -88,67 +86,67 @@ export class OperationResolver {
     return categoryEntities.find(elt => parent.category_id === elt.id);
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
     () => [OperationModelResolver]
   )
   async operations(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationsInputResolver): Promise<OperationModelResolver[]> {
     return inversify.getOperationsUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       ... dto
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
     () => OperationModelResolver
   )
   async operation(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationInputResolver): Promise<OperationModelResolver> {
     return inversify.getOperationUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       ... dto
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
     () => OperationModelResolver
   )
   async createOperation(@CurrentSession() session: UserSession, @Args('dto') dto: CreateOperationInputResolver): Promise<OperationModelResolver> {
     return inversify.createOperationUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       ... dto
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
     () => OperationModelResolver
   )
   async updateOperation(@CurrentSession() session: UserSession, @Args('dto') dto: UpdateOperationInputResolver): Promise<OperationModelResolver> {
     return inversify.updateOperationUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       ... dto
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
     () => Boolean
   )
   async deleteOperation(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationInputResolver): Promise<boolean> {
     return inversify.deleteOperationUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       operation_id: dto.operation_id
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
     () => [OperationTypeModelResolver]
@@ -157,7 +155,7 @@ export class OperationResolver {
     return inversify.getOperationTypesUsecase.execute();
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
     () => [OperationCategoryModelResolver]
@@ -166,7 +164,7 @@ export class OperationResolver {
     return inversify.getOperationCategoriesUsecase.execute();
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
     () => [OperationStatutModelResolver]
@@ -175,7 +173,7 @@ export class OperationResolver {
     return inversify.getOperationStatusUsecase.execute();
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
     () => [OperationThirdModelResolver]
@@ -184,50 +182,50 @@ export class OperationResolver {
     return inversify.getOperationThridsUsecase.execute();
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
     () => [OperationLinkModelResolver]
   )
   async operationLinks(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationInputResolver): Promise<OperationLinkModelResolver[]> {
     return inversify.getOperationLinksUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       operation_id: dto.operation_id
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
     () => OperationLinkModelResolver
   )
   async createOperationLink(@CurrentSession() session: UserSession, @Args('dto') dto: CreateOperationLinkInputResolver): Promise<OperationLinkModelResolver> {
     return inversify.createOperationLinkUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       ... dto
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
     () => Boolean
   )
   async deleteOperationLink(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationLinkInputResolver): Promise<boolean> {
     return inversify.deleteOperationLinkUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       operation_link_id: dto.operation_link_id
     });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
     () => [OperationModelResolver]
   )
   async cloneOperations(@CurrentSession() session: UserSession, @Args('dto') dto: CloneOperationInputResolver): Promise<OperationModelResolver[]> {
     return inversify.cloneOperationsUsecase.execute({
-      user_id: session.id,
+      user_id: parseInt(session.id),
       ...dto
     });
   }

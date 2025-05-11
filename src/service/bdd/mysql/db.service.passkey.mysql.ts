@@ -1,10 +1,7 @@
 // src\service\bdd\mysql\db.service.passkey.mysql.ts
 import { BddService } from '@service/bdd/bdd.service';
-import PasskeyDbModel from '@service/bdd/model/passkey.db.model';
-import { GetPasskeyDbDto } from '@service/bdd/dto/get.passkey.db.dto';
-import CreatePasskeyDbDto from '@service/bdd/dto/create.passkey.db.dto';
-import { DeletePasskeyDbDto } from '@service/bdd/dto/delete.passkey.db.dto';
-import { GetPasskeyByUserIdDbDto } from '@service/bdd/dto/getByUserId.passkey.db.dto';
+import PasskeyDbModel from '@happykiller/sunny-apis/dist/services/db/model/passkey.db.model';
+import { CreatePasskeyDbDto, DeletePasskeyDbDto, GetPasskeyByUserIdDbDto, GetPasskeyDbDto, } from '@happykiller/sunny-apis';
 
 export class BddServicePasskeyMysql
   implements

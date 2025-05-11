@@ -1,23 +1,24 @@
 ###
-POST http://localhost:5900/graphql
+POST {{host}}/graphql
 Content-Type: application/json
 Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
 
-query {
-  hello {
-    message
+query {  
+  systemInfo {
+    version
   }
 }
 
 ###
-POST http://localhost:3000/graphql
+POST {{host}}/graphql
 Content-Type: application/json
 Authorization: Bearer {{token}}
 X-REQUEST-TYPE: GraphQL
 
-query {
-  testBdd {
-    resultat
+query {  
+  test_mail {
+    success
+    message
   }
 }
