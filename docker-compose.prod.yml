@@ -3,8 +3,10 @@ services:
   gold_back:
     container_name: gold_back
     image: gold_back
-    ports:
-      - '3001:3000'  
     restart: always
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+    networks:
+      - interservices
+
+networks:
+  interservices:
+    external: true
