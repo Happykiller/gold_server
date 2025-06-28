@@ -8,10 +8,11 @@ const dotenvlocal = require('dotenv').config({ path: `.env.local`, override: tru
 const merged = Object.assign({}, dotenv, dotenvlocal);
 
 const defaults: Configuration = {
+  app_name: 'gold',
   version,
   env: {
     mode: 'defaults',
-    port: parseInt(merged.APP_PORT) ?? 3001
+    port: parseInt(merged.APP_PORT) ?? 3000
   },
   graphQL: {
     schemaFileName: true,
@@ -21,11 +22,31 @@ const defaults: Configuration = {
   },
   jwt: {
     refreshTokenName: 'gold-refresh-token',
-    secret: 'secretKey',
+    secret: merged.JWT_SECRET ?? 'secretKey',
     signOptions: {
       expiresIn: '8h'
     }
-  }
+  },
+  bdd: {
+    host: 'localhost',
+    user: 'root',
+    password: 'password',
+    database: 'gold'
+  },
+  morgans: {
+    url: 'http://morgans:8000/graphql'
+  },
+  puppet: {
+    url: 'http://puppet:3000',
+    token: 'token'
+  },
+  throttle: [
+    {
+      ttl: 60000,
+      limit: 10,
+    },
+  ],
+  db: null,
 };
 
 export { defaults };

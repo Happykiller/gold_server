@@ -1,27 +1,9 @@
 /* istanbul ignore file */
+import { DeepPartial } from '@happykiller/sunny-apis';
 import { Configuration } from '@src/config/configuration';
 
-const conf: Configuration = {
+export const conf: DeepPartial<Configuration> = {
   env: {
-    mode: 'mock'
-  },
-  graphQL: {
-    schemaFileName: 'docs/gqlschema.gql',
-    playground: true,
-    introspection: true,
-    installSubscriptionHandlers: true,
-  },
-  bdd: {
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'gold'
-  },
-  jwt: {
-    signOptions: {
-      expiresIn: '8h',
-    },
+    mode: 'mock',
   },
 };
-
-export { conf };

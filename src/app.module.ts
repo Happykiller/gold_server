@@ -46,9 +46,7 @@ import { AuthGuardModule, AuthModule, PasskeyModule, SystemModule, TestModule } 
       },
     }),
     ScheduleModule.forRoot(),
-    ThrottlerModule.forRoot({
-      throttlers: [config.ratelimit]
-    }),
+    ThrottlerModule.forRoot(config.throttle),
   ]
 })
 export class AppModule {}

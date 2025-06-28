@@ -12,7 +12,6 @@ import { BddServiceSQL } from '@service/bdd/mysql/bdd.service.sql';
 import { GetAccountsUsecase } from '@usecase/getAccounts.usecase';
 import { GetOperationUsecase } from '@usecase/getOperation.usecase';
 import { BddServiceFake } from '@service/bdd/fake/bdd.service.fake';
-import { CryptServiceReal } from '@service/crypt/crypt.service.real';
 import { GetOperationsUsecase } from '@usecase/getOperations.usecase';
 import { CreateAccountUsecase } from '@usecase/createAccount.usecase';
 import { UpdateAccountUsecase } from '@usecase/updateAccount.usecase';
@@ -30,13 +29,18 @@ import { PasswordLessService } from '@service/passwordless/passwordless.service'
 import { CreateOperationLinkUsecase } from '@usecase/createOperationLink.usecase';
 import { DeleteOperationLinkUsecase } from '@usecase/deleteOperationLink.usecase';
 import { GetOperationCategoriesUsecase } from '@usecase/getOperationCategories.usecase';
-import { AuthPasskeyUsecase, AuthUsecase, CreatePasskeyUsecase, DeletePasskeyUsecase, GetByUserIdPasskeyUsecase, GetUserUsecase, PasswordLessServiceFake, PasswordLessServiceReal } from '@happykiller/sunny-apis';
+import { AuthPasskeyUsecase, AuthUsecase, CreatePasskeyUsecase, CryptServiceReal, 
+  DeletePasskeyUsecase, GetByUserIdPasskeyUsecase, GetUserUsecase, HttpService, 
+  HttpServiceReal, InversifyInterface, MorgansService, MorgansServiceReal, 
+  PasswordLessServiceFake, PasswordLessServiceReal } from '@happykiller/sunny-apis';
 
-export class Inversify {
+export class Inversify implements InversifyInterface {
   loggerService: any;
   bddService: BddService;
   jwtService: JwtService;
+  httpService: HttpService;
   cryptService: CryptService;
+  morgansService: MorgansService;
 
   authUsecase: AuthUsecase;
   getUserUsecase: GetUserUsecase;
@@ -66,21 +70,34 @@ export class Inversify {
   getOperationCategoriesUsecase: GetOperationCategoriesUsecase;
 
   constructor() {
+    /**
+     * Services
+     */
     this.jwtService = new JwtServiceReal();
-    this.cryptService = new CryptServiceReal();
+    this.httpService = new HttpServiceReal();
+    this.cryptService = new CryptServiceReal(config);
+    this.morgansService = new MorgansServiceReal(this, config.morgans.url);
 
+    /**
+     * Usecases sunny
+     */
     this.authUsecase = new AuthUsecase(this);
     this.getUserUsecase = new GetUserUsecase(this);
-    this.getAccountUsecase = new GetAccountUsecase(this);
     this.authPasskeyUsecase = new AuthPasskeyUsecase(this);
+    this.deletePasskeyUsecase = new DeletePasskeyUsecase(this);
+    this.createPasskeyUsecase = new CreatePasskeyUsecase(this);
+    this.getByUserIdPasskeyUsecase = new GetByUserIdPasskeyUsecase(this);
+
+    /**
+     * Usecases project
+     */
+    this.getAccountUsecase = new GetAccountUsecase(this);
     this.getAccountsUsecase = new GetAccountsUsecase(this);
     this.getOperationUsecase = new GetOperationUsecase(this);
     this.createAccountUsecase = new CreateAccountUsecase(this);
     this.updateAccountUsecase = new UpdateAccountUsecase(this);
     this.deleteAccountUsecase = new DeleteAccountUsecase(this);
     this.getOperationsUsecase = new GetOperationsUsecase(this);
-    this.deletePasskeyUsecase = new DeletePasskeyUsecase(this);
-    this.createPasskeyUsecase = new CreatePasskeyUsecase(this);
     this.cloneOperationsUsecase = new CloneOperationsUsecase(this);
     this.getAccountTypesUsecase = new GetAccountTypesUsecase(this);
     this.createOperationUsecase = new CreateOperationUsecase(this);
@@ -90,7 +107,6 @@ export class Inversify {
     this.getOperationLinksUsecase = new GetOperationLinksUsecase(this);
     this.getOperationThridsUsecase = new GetOperationThridsUsecase(this);
     this.getOperationStatusUsecase = new GetOperationStatusUsecase(this);
-    this.getByUserIdPasskeyUsecase = new GetByUserIdPasskeyUsecase(this);
     this.deleteOperationLinkUsecase = new DeleteOperationLinkUsecase(this);
     this.createOperationLinkUsecase = new CreateOperationLinkUsecase(this);
     this.getOperationCategoriesUsecase = new GetOperationCategoriesUsecase(this);
