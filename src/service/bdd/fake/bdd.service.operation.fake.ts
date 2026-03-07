@@ -2,6 +2,8 @@
 import { OperationServiceModel } from '@service/bdd/model/operation.service.model';
 import { GetOperationServiceDto } from '@service/bdd/dto/getOperation.service.dto';
 import { GetOperationsServiceDto } from '@service/bdd/dto/getOperations.service.dto';
+import { GetCashflowServiceDto } from '@service/bdd/dto/getCashflow.service.dto';
+import { CashflowServiceModel } from '@service/bdd/model/cashflow.service.model';
 import { CloneOperationsServiceDto } from '@service/bdd/dto/cloneOperations.service.dto';
 import { CreateOperationServiceDto } from '@service/bdd/dto/createOperation.service.dto';
 import { UpdateOperationServiceDto } from '@service/bdd/dto/updateOperation.service.dto';
@@ -14,10 +16,13 @@ import { GetOperationLinksServiceDto } from '@service/bdd/dto/getOperationLinks.
 import { OperationStatutServiceModel } from '@service/bdd/model/operationStatut.service.model';
 import { DeleteOperationLinkServiceDto } from '@service/bdd/dto/deleteOperationLink.service.dto';
 import { CreateOperationLinkServiceDto } from '@service/bdd/dto/createOperationLink.service.dto';
+import { GetOperationThridsServiceDto } from '@service/bdd/dto/getOperationThrids.service.dto';
+import { GetOperationTypesServiceDto } from '@service/bdd/dto/getOperationTypes.service.dto';
+import { GetOperationCategoriesServiceDto } from '@service/bdd/dto/getOperationCategories.service.dto';
 import { OperationCategoryServiceModel } from '@service/bdd/model/operationCategory.service.model';
 
 export class BddServiceOperationFake {
-  collectionOperation:OperationServiceModel[] = [{
+  collectionOperation: OperationServiceModel[] = [{
     id: 1,
     account_id: 1,
     account_id_dest: null,
@@ -35,10 +40,10 @@ export class BddServiceOperationFake {
     modification_date: null,
   }];
 
-  collectionOperationLink:OperationLinkServiceModel[] = [];
-  
+  collectionOperationLink: OperationLinkServiceModel[] = [];
+
   createOperation(dto: CreateOperationServiceDto): Promise<OperationServiceModel> {
-    const elt:OperationServiceModel = {
+    const elt: OperationServiceModel = {
       id: (this.collectionOperation.length++ - 1),
       account_id: 1,
       account_id_dest: dto.account_id_dest,
@@ -69,8 +74,12 @@ export class BddServiceOperationFake {
     return Promise.resolve(this.collectionOperation.filter(elt => elt.id === dto.account_id));
   }
 
+  getCashflow(dto: GetCashflowServiceDto): Promise<CashflowServiceModel[]> {
+    return Promise.resolve([]);
+  }
+
   async updateOperation(dto: UpdateOperationServiceDto): Promise<OperationServiceModel> {
-    let elt:OperationServiceModel = await this.getOperation(dto);
+    let elt: OperationServiceModel = await this.getOperation(dto);
     let objIndex = this.collectionOperation.findIndex((obj => obj.id == dto.operation_id));
 
     const input = dto;
@@ -98,7 +107,7 @@ export class BddServiceOperationFake {
     return Promise.resolve(true);
   }
 
-  getOperationTypes(): Promise<OperationTypeServiceModel[]> {
+  getOperationTypes(dto: GetOperationTypesServiceDto): Promise<OperationTypeServiceModel[]> {
     return Promise.resolve([{
       id: 1,
       label: 'operation.type-credit',
@@ -108,7 +117,7 @@ export class BddServiceOperationFake {
       creation_date: 'now',
       modificator_id: null,
       modification_date: null
-    },{
+    }, {
       id: 2,
       label: 'operation.type-debit',
       description: 'description',
@@ -117,7 +126,7 @@ export class BddServiceOperationFake {
       creation_date: 'now',
       modificator_id: null,
       modification_date: null
-    },{
+    }, {
       id: 3,
       label: 'operation.type-vire',
       description: 'description',
@@ -129,7 +138,7 @@ export class BddServiceOperationFake {
     }]);
   }
 
-  getOperationThrids(): Promise<OperationThridServiceModel[]> {
+  getOperationThrids(dto: GetOperationThridsServiceDto): Promise<OperationThridServiceModel[]> {
     return Promise.resolve([{
       id: 1,
       label: 'operation.third-otherCredit',
@@ -139,7 +148,7 @@ export class BddServiceOperationFake {
       creation_date: 'now',
       modificator_id: null,
       modification_date: null
-    },{
+    }, {
       id: 2,
       label: 'operation.third-otherDebit',
       description: 'description',
@@ -161,7 +170,7 @@ export class BddServiceOperationFake {
       creation_date: 'now',
       modificator_id: null,
       modification_date: null
-    },{
+    }, {
       id: 2,
       label: 'operation.status-reconciled',
       description: 'description',
@@ -173,7 +182,7 @@ export class BddServiceOperationFake {
     }]);
   }
 
-  getOperationCategories(): Promise<OperationCategoryServiceModel[]> {
+  getOperationCategories(dto: GetOperationCategoriesServiceDto): Promise<OperationCategoryServiceModel[]> {
     return Promise.resolve([{
       id: 1,
       label: 'operation.third-otherCredit',
@@ -183,7 +192,7 @@ export class BddServiceOperationFake {
       creation_date: 'now',
       modificator_id: null,
       modification_date: null
-    },{
+    }, {
       id: 2,
       label: 'operation.third-otherDebit',
       description: 'description',
@@ -196,7 +205,7 @@ export class BddServiceOperationFake {
   }
 
   createOperationLink(dto: CreateOperationLinkServiceDto): Promise<OperationLinkServiceModel> {
-    const elt:OperationLinkServiceModel = {
+    const elt: OperationLinkServiceModel = {
       id: (this.collectionOperationLink.length++ - 1),
       operation_id: dto.operation_id,
       operation_ref_id: dto.operation_ref_id,

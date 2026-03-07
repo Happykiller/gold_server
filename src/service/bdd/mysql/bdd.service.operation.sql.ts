@@ -2,6 +2,8 @@
 import { OperationServiceModel } from '@service/bdd/model/operation.service.model';
 import { GetOperationServiceDto } from '@service/bdd/dto/getOperation.service.dto';
 import { GetOperationsServiceDto } from '@service/bdd/dto/getOperations.service.dto';
+import { GetCashflowServiceDto } from '@service/bdd/dto/getCashflow.service.dto';
+import { CashflowServiceModel } from '@service/bdd/model/cashflow.service.model';
 import { CloneOperationsServiceDto } from '@service/bdd/dto/cloneOperations.service.dto';
 import { CreateOperationServiceDto } from '@service/bdd/dto/createOperation.service.dto';
 import { UpdateOperationServiceDto } from '@service/bdd/dto/updateOperation.service.dto';
@@ -14,6 +16,9 @@ import { GetOperationLinksServiceDto } from '@service/bdd/dto/getOperationLinks.
 import { OperationStatutServiceModel } from '@service/bdd/model/operationStatut.service.model';
 import { DeleteOperationLinkServiceDto } from '@service/bdd/dto/deleteOperationLink.service.dto';
 import { CreateOperationLinkServiceDto } from '@service/bdd/dto/createOperationLink.service.dto';
+import { GetOperationThridsServiceDto } from '@service/bdd/dto/getOperationThrids.service.dto';
+import { GetOperationTypesServiceDto } from '@service/bdd/dto/getOperationTypes.service.dto';
+import { GetOperationCategoriesServiceDto } from '@service/bdd/dto/getOperationCategories.service.dto';
 import { OperationCategoryServiceModel } from '@service/bdd/model/operationCategory.service.model';
 
 export class BddServiceOperationSQL {
@@ -29,15 +34,15 @@ export class BddServiceOperationSQL {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ;`;
     const [results] = await this.pool.execute(query, [
-      dto.account_id, 
-      (dto.account_id_dest)?dto.account_id_dest:null, 
+      dto.account_id,
+      (dto.account_id_dest) ? dto.account_id_dest : null,
       dto.amount,
       dto.date,
       dto.status_id,
       dto.type_id,
       dto.third_id,
       dto.category_id,
-      (dto.description)?dto.description:null, 
+      (dto.description) ? dto.description : null,
       dto.user_id
     ]);
     return await this.getOperation({
@@ -68,7 +73,7 @@ export class BddServiceOperationSQL {
       AND a.creator_id = ${dto.user_id}
     ;`;
     const [results] = await this.pool.execute(query);
-    if(results.length > 0) {
+    if (results.length > 0) {
       return results[0];
     } else {
       return null;
@@ -159,8 +164,126 @@ export class BddServiceOperationSQL {
     return results;
   }
 
+  async getCashflow(dto: GetCashflowServiceDto): Promise<CashflowServiceModel[]> {
+    if (!dto.account_ids || dto.account_ids.length === 0) {
+      return [];
+    }
+    const accountIdsJoined = dto.account_ids.join(',');
+
+    const query = `
+      WITH RECURSIVE dates AS (
+        SELECT CAST(? AS DATE) as date
+        UNION ALL
+        SELECT DATE_ADD(date, INTERVAL 1 DAY)
+        FROM dates
+        WHERE DATE_ADD(date, INTERVAL 1 DAY) <= CAST(? AS DATE)
+      ),
+      accounts AS (
+        -- Select only the valid requested accounts belonging to the user
+        SELECT id as account_id 
+        FROM account 
+        WHERE id IN (${accountIdsJoined})
+          AND creator_id = ?
+          AND active = 1
+      ),
+      account_dates AS (
+        -- Cross join to generate a continuous timeline for EVERY account
+        SELECT a.account_id, d.date
+        FROM accounts a
+        CROSS JOIN dates d
+      ),
+      operations AS (
+        SELECT 
+          a.account_id,
+          a.date,
+          CASE WHEN a.status_id = 2 THEN 
+            CASE a.type_id 
+              WHEN 1 THEN a.amount 
+              WHEN 2 THEN -a.amount 
+              WHEN 3 THEN -a.amount 
+            END
+          ELSE 0 END AS d_reconciled,
+          CASE a.type_id 
+            WHEN 1 THEN a.amount 
+            WHEN 2 THEN -a.amount 
+            WHEN 3 THEN -a.amount 
+          END AS d_total
+        FROM operation a
+        WHERE a.account_id IN (${accountIdsJoined})
+          AND a.creator_id = ?
+          AND a.active = 1
+          
+        UNION ALL
+        
+        SELECT 
+          a.account_id_dest as account_id,
+          a.date,
+          CASE WHEN a.status_id = 2 THEN a.amount ELSE 0 END AS d_reconciled,
+          a.amount AS d_total
+        FROM operation a
+        INNER JOIN account b ON a.account_id = b.id
+        WHERE a.account_id_dest IN (${accountIdsJoined})
+          AND a.creator_id = ?
+          AND a.active = 1
+          AND b.type_id = 1
+      ),
+      initial_balance AS (
+        SELECT 
+          account_id,
+          SUM(d_reconciled) as initial_reconciled,
+          SUM(d_total) as initial_total
+        FROM operations
+        WHERE date < CAST(? AS DATE)
+        GROUP BY account_id
+      ),
+      daily_movements AS (
+        SELECT 
+          account_id,
+          CAST(date AS DATE) as date_val,
+          SUM(d_reconciled) as move_reconciled,
+          SUM(d_total) as move_total
+        FROM operations
+        WHERE date >= CAST(? AS DATE) AND date <= CAST(? AS DATE)
+        GROUP BY account_id, CAST(date AS DATE)
+      )
+      SELECT 
+        ad.account_id,
+        DATE_FORMAT(ad.date, '%Y-%m-%d') as date,
+        COALESCE(
+          (SELECT initial_reconciled FROM initial_balance ib WHERE ib.account_id = ad.account_id), 0
+        ) + COALESCE(
+          SUM(m.move_reconciled) OVER (PARTITION BY ad.account_id ORDER BY ad.date ASC), 0
+        ) as reconciled_balance,
+        COALESCE(
+          (SELECT initial_total FROM initial_balance ib WHERE ib.account_id = ad.account_id), 0
+        ) + COALESCE(
+          SUM(m.move_total) OVER (PARTITION BY ad.account_id ORDER BY ad.date ASC), 0
+        ) as total_balance
+      FROM account_dates ad
+      LEFT JOIN daily_movements m ON m.account_id = ad.account_id AND m.date_val = ad.date
+      ORDER BY ad.account_id ASC, ad.date ASC;
+    `;
+
+    // Parameters: start_date, end_date (for RECURSIVE dates), user_id (for accounts CTE), 
+    // user_id, user_id (for operations CTEs), 
+    // start_date (for initial_balance), start_date, end_date (for daily_movements)
+    const [results] = await this.pool.execute(query, [
+      dto.start_date, dto.end_date,
+      dto.user_id,
+      dto.user_id, dto.user_id,
+      dto.start_date, dto.start_date, dto.end_date
+    ]);
+
+    return results.map((row: any) => ({
+      account_id: row.account_id,
+      date: row.date,
+      reconciled_balance: parseFloat(row.reconciled_balance || 0),
+      total_balance: parseFloat(row.total_balance || 0)
+    }));
+  }
+
   async updateOperation(dto: UpdateOperationServiceDto): Promise<OperationServiceModel> {
-    const old:OperationServiceModel = await this.getOperation(dto);
+    const old: OperationServiceModel = await this.getOperation(dto);
     const query = `UPDATE operation SET
       account_id = ?,
       account_id_dest = ?,
@@ -177,15 +300,15 @@ export class BddServiceOperationSQL {
       AND id = ?
     ;`;
     const [results] = await this.pool.execute(query, [
-      (dto.account_id)?dto.account_id:old.account_id, 
-      (dto.account_id_dest)?dto.account_id_dest:old.account_id_dest, 
-      (dto.amount)?dto.amount:old.amount, 
-      (dto.date)?dto.date:old.date, 
-      (dto.status_id)?dto.status_id:old.status_id, 
-      (dto.type_id)?dto.type_id:old.type_id, 
-      (dto.third_id)?dto.third_id:old.third_id, 
-      (dto.category_id)?dto.category_id:old.category_id, 
-      (dto.description)?dto.description:old.description, 
+      (dto.account_id) ? dto.account_id : old.account_id,
+      (dto.account_id_dest) ? dto.account_id_dest : old.account_id_dest,
+      (dto.amount) ? dto.amount : old.amount,
+      (dto.date) ? dto.date : old.date,
+      (dto.status_id) ? dto.status_id : old.status_id,
+      (dto.type_id) ? dto.type_id : old.type_id,
+      (dto.third_id) ? dto.third_id : old.third_id,
+      (dto.category_id) ? dto.category_id : old.category_id,
+      (dto.description) ? dto.description : old.description,
       dto.user_id,
       dto.operation_id
     ]);
@@ -211,7 +334,7 @@ export class BddServiceOperationSQL {
     return true;
   }
 
-  async getOperationTypes(): Promise<OperationTypeServiceModel[]> {
+  async getOperationTypes(dto: GetOperationTypesServiceDto): Promise<OperationTypeServiceModel[]> {
     const query = `SELECT id,
         label,
         creator_id, 
@@ -221,12 +344,13 @@ export class BddServiceOperationSQL {
       FROM operation_type_list a
       WHERE 1=1
       AND a.active = 1
+      AND (a.creator_id IS NULL OR a.creator_id = ?)
     ;`;
-    const [results] = await this.pool.execute(query);
+    const [results] = await this.pool.execute(query, [dto.user_id]);
     return results;
   }
 
-  async getOperationThrids(): Promise<OperationThridServiceModel[]> {
+  async getOperationThrids(dto: GetOperationThridsServiceDto): Promise<OperationThridServiceModel[]> {
     const query = `SELECT id,
         label, 
         description, 
@@ -237,8 +361,9 @@ export class BddServiceOperationSQL {
       FROM operation_third_list a
       WHERE 1=1
       AND a.active = 1
+      AND (a.creator_id IS NULL OR a.creator_id = ?)
     ;`;
-    const [results] = await this.pool.execute(query);
+    const [results] = await this.pool.execute(query, [dto.user_id]);
     return results;
   }
 
@@ -257,7 +382,7 @@ export class BddServiceOperationSQL {
     return results;
   }
 
-  async getOperationCategories(): Promise<OperationCategoryServiceModel[]> {
+  async getOperationCategories(dto: GetOperationCategoriesServiceDto): Promise<OperationCategoryServiceModel[]> {
     const query = `SELECT id,
         label, 
         description, 
@@ -268,8 +393,9 @@ export class BddServiceOperationSQL {
       FROM operation_category_list a
       WHERE 1=1
       AND a.active = 1
+      AND (a.creator_id IS NULL OR a.creator_id = ?)
     ;`;
-    const [results] = await this.pool.execute(query);
+    const [results] = await this.pool.execute(query, [dto.user_id]);
     return results;
   }
 
@@ -278,7 +404,7 @@ export class BddServiceOperationSQL {
     VALUES (?, ?, ?)
     ;`;
     const [results] = await this.pool.execute(query, [
-      dto.operation_id, 
+      dto.operation_id,
       dto.operation_ref_id,
       dto.user_id
     ]);
@@ -306,7 +432,7 @@ export class BddServiceOperationSQL {
       dto.user_id,
       dto.operation_link_id
     ]);
-    if(results.length > 0) {
+    if (results.length > 0) {
       return results[0];
     } else {
       return null;

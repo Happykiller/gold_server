@@ -1,5 +1,6 @@
 import { Inversify } from '@src/inversify/investify';
 import { OperationTypeUsecaseModel } from '@usecase/model/operationType.usecase.model';
+import { GetOperationTypesUsecaseDto } from '@usecase/dto/getOperationTypes.usecase.dto';
 
 export class GetOperationTypesUsecase {
 
@@ -9,7 +10,7 @@ export class GetOperationTypesUsecase {
     this.inversify = inversify;
   }
 
-  async execute(): Promise<OperationTypeUsecaseModel[]> {
-    return await this.inversify.bddService.getOperationTypes();
+  async execute(dto: GetOperationTypesUsecaseDto): Promise<OperationTypeUsecaseModel[]> {
+    return await this.inversify.bddService.getOperationTypes(dto);
   }
 }

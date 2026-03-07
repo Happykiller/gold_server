@@ -18,6 +18,8 @@ import { GetOperationLinkInputResolver } from '@presentation/operation/dto/get.o
 import { OperationStatutModelResolver } from '@presentation/operation/model/operationStatut.resolver.model';
 import { OperationCategoryModelResolver } from '@presentation/operation/model/operationCategory.resolver.model';
 import { CreateOperationLinkInputResolver } from '@presentation/operation/dto/create.operationLink.resolver.dto';
+import { CashflowModelResolver } from '@presentation/operation/model/cashflow.resolver.model';
+import { CashflowInputResolver } from '@presentation/operation/dto/cashflow.resolver.dto';
 
 @Resolver((of) => OperationModelResolver)
 export class OperationResolver {
@@ -64,25 +66,28 @@ export class OperationResolver {
 
   @ResolveField((of) => OperationTypeModelResolver)
   async type(
-    @Parent() parent: OperationModelResolver
+    @Parent() parent: OperationModelResolver,
+    @CurrentSession() session: UserSession,
   ): Promise<OperationTypeModelResolver> {
-    const typeEntities = await inversify.getOperationTypesUsecase.execute();
+    const typeEntities = await inversify.getOperationTypesUsecase.execute({ user_id: parseInt(session.id) });
     return typeEntities.find(elt => parent.type_id === elt.id);
   }
 
   @ResolveField((of) => OperationThirdModelResolver)
   async third(
-    @Parent() parent: OperationModelResolver
+    @Parent() parent: OperationModelResolver,
+    @CurrentSession() session: UserSession,
   ): Promise<OperationThirdModelResolver> {
-    const thirdEntities = await inversify.getOperationThridsUsecase.execute();
+    const thirdEntities = await inversify.getOperationThridsUsecase.execute({ user_id: parseInt(session.id) });
     return thirdEntities.find(elt => parent.third_id === elt.id);
   }
 
   @ResolveField((of) => OperationCategoryModelResolver)
   async category(
-    @Parent() parent: OperationModelResolver
+    @Parent() parent: OperationModelResolver,
+    @CurrentSession() session: UserSession,
   ): Promise<OperationCategoryModelResolver> {
-    const categoryEntities = await inversify.getOperationCategoriesUsecase.execute();
+    const categoryEntities = await inversify.getOperationCategoriesUsecase.execute({ user_id: parseInt(session.id) });
     return categoryEntities.find(elt => parent.category_id === elt.id);
   }
 
@@ -94,7 +99,19 @@ export class OperationResolver {
   async operations(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationsInputResolver): Promise<OperationModelResolver[]> {
     return inversify.getOperationsUsecase.execute({
       user_id: parseInt(session.id),
-      ... dto
+      ...dto
+    });
+  }
+
+  @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
+  @Query(
+    /* istanbul ignore next */
+    () => [CashflowModelResolver]
+  )
+  async cashflow(@CurrentSession() session: UserSession, @Args('dto') dto: CashflowInputResolver): Promise<CashflowModelResolver[]> {
+    return inversify.getCashflowUsecase.execute({
+      user_id: parseInt(session.id),
+      ...dto
     });
   }
 
@@ -106,7 +123,7 @@ export class OperationResolver {
   async operation(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationInputResolver): Promise<OperationModelResolver> {
     return inversify.getOperationUsecase.execute({
       user_id: parseInt(session.id),
-      ... dto
+      ...dto
     });
   }
 
@@ -118,7 +135,7 @@ export class OperationResolver {
   async createOperation(@CurrentSession() session: UserSession, @Args('dto') dto: CreateOperationInputResolver): Promise<OperationModelResolver> {
     return inversify.createOperationUsecase.execute({
       user_id: parseInt(session.id),
-      ... dto
+      ...dto
     });
   }
 
@@ -130,7 +147,7 @@ export class OperationResolver {
   async updateOperation(@CurrentSession() session: UserSession, @Args('dto') dto: UpdateOperationInputResolver): Promise<OperationModelResolver> {
     return inversify.updateOperationUsecase.execute({
       user_id: parseInt(session.id),
-      ... dto
+      ...dto
     });
   }
 
@@ -151,8 +168,8 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => [OperationTypeModelResolver]
   )
-  async operationTypes(): Promise<OperationTypeModelResolver[]> {
-    return inversify.getOperationTypesUsecase.execute();
+  async operationTypes(@CurrentSession() session: UserSession): Promise<OperationTypeModelResolver[]> {
+    return inversify.getOperationTypesUsecase.execute({ user_id: parseInt(session.id) });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
@@ -160,8 +177,8 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => [OperationCategoryModelResolver]
   )
-  async operationCategories(): Promise<OperationCategoryModelResolver[]> {
-    return inversify.getOperationCategoriesUsecase.execute();
+  async operationCategories(@CurrentSession() session: UserSession): Promise<OperationCategoryModelResolver[]> {
+    return inversify.getOperationCategoriesUsecase.execute({ user_id: parseInt(session.id) });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
@@ -178,8 +195,8 @@ export class OperationResolver {
     /* istanbul ignore next */
     () => [OperationThirdModelResolver]
   )
-  async operationThirds(): Promise<OperationThirdModelResolver[]> {
-    return inversify.getOperationThridsUsecase.execute();
+  async operationThirds(@CurrentSession() session: UserSession): Promise<OperationThirdModelResolver[]> {
+    return inversify.getOperationThridsUsecase.execute({ user_id: parseInt(session.id) });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
@@ -202,7 +219,7 @@ export class OperationResolver {
   async createOperationLink(@CurrentSession() session: UserSession, @Args('dto') dto: CreateOperationLinkInputResolver): Promise<OperationLinkModelResolver> {
     return inversify.createOperationLinkUsecase.execute({
       user_id: parseInt(session.id),
-      ... dto
+      ...dto
     });
   }
 
