@@ -18,6 +18,8 @@ export class CreateOperationInputResolver {
   third_id: number;
   @Field(() => Int, { nullable: true })
   category_id: number;
+  @Field(() => Float, { nullable: true })
+  vat_rate?: number;
   @Field(() => String, { nullable: true })
   description: string;
 }

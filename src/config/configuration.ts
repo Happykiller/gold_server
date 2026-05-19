@@ -5,6 +5,7 @@ import { ConfigurationBase } from '@happykiller/sunny-apis';
 export class Configuration extends ConfigurationBase {
   public bdd?: {
     host?: string;
+    port?: number;
     user?: string;
     password?: string;
     database?: string;

@@ -11,6 +11,7 @@ input CreateOperationInputResolver {
   type_id: Int!
   third_id: Int
   category_id: Int
+  vat_rate: Float
   description: String
 }
 ```

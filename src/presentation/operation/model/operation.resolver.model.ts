@@ -20,6 +20,8 @@ export class OperationModelResolver {
   third_id: number;
   @Field(() => Int, { nullable: true })
   category_id: number;
+  @Field(() => Float)
+  vat_rate: number;
   @Field(() => String)
   description: string;
   @Field(() => Boolean)

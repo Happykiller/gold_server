@@ -31,6 +31,7 @@
 | type_id |Int |false | | |
 | third_id |Int |true | | |
 | category_id |Int |true | | |
+| vat_rate |Float |false | | |
 | description |String |false | | |
 | active |Boolean |false | | |
 | creator_id |Int |false | | |
@@ -59,6 +60,7 @@ query {
     type_id
     third_id
     category_id
+    vat_rate
     description
     active
     creator_id
@@ -83,6 +85,7 @@ query {
         "type_id": 0,
         "third_id": 0,
         "category_id": 0,
+        "vat_rate": 20,
         "description": "Bob",
         "active": true,
         "creator_id": 0,

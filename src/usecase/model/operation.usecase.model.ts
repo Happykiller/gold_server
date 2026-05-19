@@ -8,6 +8,7 @@ export interface OperationUsecaseModel {
   type_id: number;
   third_id: number;
   category_id: number;
+  vat_rate: number;
   description: string;
   active: boolean;
   creator_id: number;

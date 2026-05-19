@@ -6,13 +6,15 @@ const dotenv = require('dotenv').config().parsed;
 const dotenvlocal = require('dotenv').config({ path: `.env.local`, override: true }).parsed;
 
 const merged = Object.assign({}, dotenv, dotenvlocal);
+const appPort = Number.parseInt(merged.APP_PORT ?? '', 10);
+const dbPort = Number.parseInt(merged.DB_PORT ?? '', 10);
 
 const defaults: Configuration = {
   app_name: 'gold',
   version,
   env: {
     mode: 'defaults',
-    port: parseInt(merged.APP_PORT) ?? 3000
+    port: Number.isNaN(appPort) ? 3000 : appPort
   },
   graphQL: {
     schemaFileName: true,
@@ -28,10 +30,11 @@ const defaults: Configuration = {
     }
   },
   bdd: {
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'gold'
+    host: merged.DB_HOST ?? 'localhost',
+    port: Number.isNaN(dbPort) ? 3306 : dbPort,
+    user: merged.DB_USER ?? 'root',
+    password: merged.DB_PASSWORD ?? 'password',
+    database: merged.DB_NAME ?? 'gold'
   },
   morgans: {
     url: 'http://morgans:8000/graphql'

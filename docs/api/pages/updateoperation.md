@@ -22,6 +22,7 @@
 | type_id |Int |true | | | |
 | third_id |Int |true | | | |
 | category_id |Int |true | | | |
+| vat_rate |Float |true | | | |
 | description |String |true | | | |
 | operation_id |Int |false | | | 
 
@@ -38,6 +39,7 @@
 | type_id |Int |false | | |
 | third_id |Int |true | | |
 | category_id |Int |true | | |
+| vat_rate |Float |false | | |
 | description |String |false | | |
 | active |Boolean |false | | |
 | creator_id |Int |false | | |
@@ -60,6 +62,7 @@ mutation {
       type_id: 0
       third_id: 0
       category_id: 0
+      vat_rate: 10
       description: "Bob"
       operation_id: 0
     }
@@ -73,6 +76,7 @@ mutation {
     type_id
     third_id
     category_id
+    vat_rate
     description
     active
     creator_id
@@ -96,6 +100,7 @@ mutation {
       "type_id": 0,
       "third_id": 0,
       "category_id": 0,
+      "vat_rate": 10,
       "description": "Bob",
       "active": true,
       "creator_id": 0,

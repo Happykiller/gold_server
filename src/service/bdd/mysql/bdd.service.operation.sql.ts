@@ -30,8 +30,8 @@ export class BddServiceOperationSQL {
   }
 
   async createOperation(dto: CreateOperationServiceDto): Promise<OperationServiceModel> {
-    const query = `INSERT INTO operation (account_id, account_id_dest, amount, date, status_id, type_id, third_id, category_id, description, creator_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    const query = `INSERT INTO operation (account_id, account_id_dest, amount, date, status_id, type_id, third_id, category_id, vat_rate, description, creator_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ;`;
     const [results] = await this.pool.execute(query, [
       dto.account_id,
@@ -42,6 +42,7 @@ export class BddServiceOperationSQL {
       dto.type_id,
       dto.third_id,
       dto.category_id,
+      dto.vat_rate ?? 20,
       (dto.description) ? dto.description : null,
       dto.user_id
     ]);
@@ -61,6 +62,7 @@ export class BddServiceOperationSQL {
         a.type_id,
         a.third_id,
         a.category_id,
+        a.vat_rate,
         a.description,
         a.creator_id,
         a.creation_date,
@@ -91,6 +93,7 @@ export class BddServiceOperationSQL {
     h.type_id,
     h.third_id,
     h.category_id,
+    h.vat_rate,
     h.description,
     h.creator_id,
     h.creation_date,
@@ -106,6 +109,7 @@ export class BddServiceOperationSQL {
       g.status_id,
       g.third_id,
       g.type_id,
+      g.vat_rate,
       g.amount,
       g.date,
       g.creator_id,
@@ -123,6 +127,7 @@ export class BddServiceOperationSQL {
         a.status_id,
         a.third_id,
         a.type_id,
+        a.vat_rate,
         a.date,
         a.creator_id,
         a.creation_date,
@@ -144,6 +149,7 @@ export class BddServiceOperationSQL {
         a.status_id,
         a.third_id,
         a.type_id,
+        a.vat_rate,
         a.date,
         a.creator_id,
         a.creation_date,
@@ -293,6 +299,7 @@ export class BddServiceOperationSQL {
       type_id = ?,
       third_id = ?,
       category_id = ?,
+      vat_rate = ?,
       description = ?,
       modificator_id = ?,
       modification_date = current_date()
@@ -300,15 +307,16 @@ export class BddServiceOperationSQL {
       AND id = ?
     ;`;
     const [results] = await this.pool.execute(query, [
-      (dto.account_id) ? dto.account_id : old.account_id,
-      (dto.account_id_dest) ? dto.account_id_dest : old.account_id_dest,
-      (dto.amount) ? dto.amount : old.amount,
-      (dto.date) ? dto.date : old.date,
-      (dto.status_id) ? dto.status_id : old.status_id,
-      (dto.type_id) ? dto.type_id : old.type_id,
-      (dto.third_id) ? dto.third_id : old.third_id,
-      (dto.category_id) ? dto.category_id : old.category_id,
-      (dto.description) ? dto.description : old.description,
+      dto.account_id !== undefined ? dto.account_id : old.account_id,
+      dto.account_id_dest !== undefined ? dto.account_id_dest : old.account_id_dest,
+      dto.amount !== undefined ? dto.amount : old.amount,
+      dto.date !== undefined ? dto.date : old.date,
+      dto.status_id !== undefined ? dto.status_id : old.status_id,
+      dto.type_id !== undefined ? dto.type_id : old.type_id,
+      dto.third_id !== undefined ? dto.third_id : old.third_id,
+      dto.category_id !== undefined ? dto.category_id : old.category_id,
+      dto.vat_rate !== undefined ? dto.vat_rate : old.vat_rate,
+      dto.description !== undefined ? dto.description : old.description,
       dto.user_id,
       dto.operation_id
     ]);
@@ -477,8 +485,8 @@ export class BddServiceOperationSQL {
   }
 
   async cloneOperations(dto: CloneOperationsServiceDto): Promise<OperationServiceModel[]> {
-    let query = `INSERT INTO operation (account_id, account_id_dest, amount, date, status_id, type_id, third_id, category_id, description, creator_id)
-    SELECT ?, a.account_id_dest, a.amount, ?, a.status_id, a.type_id, a.third_id, a.category_id, a.description, ?
+    let query = `INSERT INTO operation (account_id, account_id_dest, amount, date, status_id, type_id, third_id, category_id, vat_rate, description, creator_id)
+    SELECT ?, a.account_id_dest, a.amount, ?, a.status_id, a.type_id, a.third_id, a.category_id, a.vat_rate, a.description, ?
       FROM operation a, account b
     WHERE 1=1
       AND a.active = 1
@@ -500,6 +508,7 @@ export class BddServiceOperationSQL {
         a.type_id,
         a.third_id,
         a.category_id,
+        a.vat_rate,
         a.description,
         a.creator_id,
         a.creation_date,
