@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 22 : la version des images Docker du projet depuis le 2026-08-07,
+      # la 20 étant en fin de vie.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # `npm run lint` corrige en place (--fix) : en CI on veut constater, pas
+      # modifier. Le job échoue donc si le code n'est pas déjà conforme.
+      - run: npx eslint "{src,apps,libs,test}/**/*.ts"
+
+      # NODE_ENV=test câble BddServiceFake : aucune base n'est nécessaire.
+      - run: npm test
+
+      - run: npm run build
