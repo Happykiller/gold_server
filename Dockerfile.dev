@@ -1,0 +1,18 @@
+# Image de DÉVELOPPEMENT uniquement — la production, elle, se construit avec
+# `Dockerfile` (multi-étages, code copié et compilé dans l'image).
+#
+# Ici rien n'est copié : le code ET node_modules arrivent par bind mount depuis
+# l'hôte (voir ../docker-compose.dev.yml). L'image ne sert qu'à figer la version
+# de Node sur celle de la production — l'hôte tourne en Node 22, la prod en 20.
+#
+# Prérequis : `npm install` doit avoir été lancé sur l'hôte au préalable.
+# Le projet n'a aucune dépendance native compilée, donc le node_modules de
+# l'hôte est utilisable tel quel dans ce conteneur.
+FROM node:20-alpine
+
+WORKDIR /usr/src/app
+
+EXPOSE 3000
+
+# `start:dev` fixe lui-même NODE_ENV=dev et lance nest en watch.
+CMD ["npm", "run", "start:dev"]
