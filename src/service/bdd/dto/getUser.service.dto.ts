@@ -1,4 +1,4 @@
 export interface GetUserServiceDto {
-  code?: string
-  id?: number
+  code?: string;
+  id?: number;
 }

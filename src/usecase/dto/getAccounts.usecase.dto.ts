@@ -1,3 +1,3 @@
 export interface GetAccountsUsecaseDto {
-  user_id: number
+  user_id: number;
 }

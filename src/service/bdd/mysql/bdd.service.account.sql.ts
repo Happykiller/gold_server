@@ -8,7 +8,6 @@ import { DeleteAccountServiceDto } from '@service/bdd/dto/deleteAccount.service.
 import { AccountTypeServiceModel } from '@service/bdd/model/accountType.service.model';
 
 export class BddServiceAccountSQL {
-
   pool: any;
 
   constructor(pool: any) {
@@ -21,7 +20,9 @@ export class BddServiceAccountSQL {
     return Promise.resolve(true);
   }
 
-  async getAccounts(dto: GetAccountsServiceDto): Promise<AccountServiceModel[]> {
+  async getAccounts(
+    dto: GetAccountsServiceDto,
+  ): Promise<AccountServiceModel[]> {
     const query = `SELECT id, 
         type_id, 
         parent_account_id, 
@@ -61,26 +62,36 @@ export class BddServiceAccountSQL {
       AND a.creator_id = ${dto.user_id}
     ;`;
     const [results] = await this.pool.execute(query);
-    if(results.length > 0) {
+    if (results.length > 0) {
       return results[0];
     } else {
       return null;
     }
   }
 
-  async createAccount(dto: CreateAccountServiceDto): Promise<AccountServiceModel> {
+  async createAccount(
+    dto: CreateAccountServiceDto,
+  ): Promise<AccountServiceModel> {
     const query = `INSERT INTO account (type_id, parent_account_id, label, description, creator_id)
     VALUES (?, ?, ?, ?, ?)
     ;`;
-    const [results] = await this.pool.execute(query, [dto.type_id, (dto.parent_account_id)?dto.parent_account_id:null, dto.label, (dto.description)?dto.description:null, dto.user_id]);
+    const [results] = await this.pool.execute(query, [
+      dto.type_id,
+      dto.parent_account_id ? dto.parent_account_id : null,
+      dto.label,
+      dto.description ? dto.description : null,
+      dto.user_id,
+    ]);
     return await this.getAccount({
       account_id: results.insertId,
-      user_id: dto.user_id
+      user_id: dto.user_id,
     });
   }
 
-  async updateAccount(dto: UpdateAccountServiceDto): Promise<AccountServiceModel> {
-    const old:AccountServiceModel = await this.getAccount(dto);
+  async updateAccount(
+    dto: UpdateAccountServiceDto,
+  ): Promise<AccountServiceModel> {
+    const old: AccountServiceModel = await this.getAccount(dto);
     const query = `UPDATE account SET
       type_id = ?,
       parent_account_id = ?,
@@ -92,17 +103,17 @@ export class BddServiceAccountSQL {
       AND id = ?
     ;`;
     const [results] = await this.pool.execute(query, [
-      (dto.type_id)?dto.type_id:old.type_id, 
-      (dto.parent_account_id)?dto.parent_account_id:old.parent_account_id, 
-      (dto.label)?dto.label:old.label, 
-      (dto.description)?dto.description:old.type_id, 
+      dto.type_id ? dto.type_id : old.type_id,
+      dto.parent_account_id ? dto.parent_account_id : old.parent_account_id,
+      dto.label ? dto.label : old.label,
+      dto.description ? dto.description : old.type_id,
       dto.user_id,
       'now',
-      dto.account_id
+      dto.account_id,
     ]);
     return await this.getAccount({
       account_id: results.updateId,
-      user_id: dto.user_id
+      user_id: dto.user_id,
     });
   }
 
@@ -115,11 +126,7 @@ export class BddServiceAccountSQL {
       AND id = ?
       AND active = 1
     ;`;
-    const [results] = await this.pool.execute(query, [
-      dto.user_id,
-      'now',
-      dto.account_id
-    ]);
+    await this.pool.execute(query, [dto.user_id, 'now', dto.account_id]);
     return true;
   }
 

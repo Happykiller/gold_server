@@ -9,5 +9,5 @@ export class Configuration extends ConfigurationBase {
     user?: string;
     password?: string;
     database?: string;
-  }
+  };
 }

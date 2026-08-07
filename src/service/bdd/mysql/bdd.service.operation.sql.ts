@@ -22,20 +22,21 @@ import { GetOperationCategoriesServiceDto } from '@service/bdd/dto/getOperationC
 import { OperationCategoryServiceModel } from '@service/bdd/model/operationCategory.service.model';
 
 export class BddServiceOperationSQL {
-
   pool: any;
 
   constructor(pool: any) {
     this.pool = pool;
   }
 
-  async createOperation(dto: CreateOperationServiceDto): Promise<OperationServiceModel> {
+  async createOperation(
+    dto: CreateOperationServiceDto,
+  ): Promise<OperationServiceModel> {
     const query = `INSERT INTO operation (account_id, account_id_dest, amount, date, status_id, type_id, third_id, category_id, vat_rate, description, creator_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ;`;
     const [results] = await this.pool.execute(query, [
       dto.account_id,
-      (dto.account_id_dest) ? dto.account_id_dest : null,
+      dto.account_id_dest ? dto.account_id_dest : null,
       dto.amount,
       dto.date,
       dto.status_id,
@@ -43,16 +44,18 @@ export class BddServiceOperationSQL {
       dto.third_id,
       dto.category_id,
       dto.vat_rate ?? 20,
-      (dto.description) ? dto.description : null,
-      dto.user_id
+      dto.description ? dto.description : null,
+      dto.user_id,
     ]);
     return await this.getOperation({
       operation_id: results.insertId,
-      user_id: dto.user_id
+      user_id: dto.user_id,
     });
   }
 
-  async getOperation(dto: GetOperationServiceDto): Promise<OperationServiceModel> {
+  async getOperation(
+    dto: GetOperationServiceDto,
+  ): Promise<OperationServiceModel> {
     const query = `SELECT a.id,
         a.account_id,
         a.account_id_dest,
@@ -82,7 +85,9 @@ export class BddServiceOperationSQL {
     }
   }
 
-  async getOperations(dto: GetOperationsServiceDto): Promise<OperationServiceModel[]> {
+  async getOperations(
+    dto: GetOperationsServiceDto,
+  ): Promise<OperationServiceModel[]> {
     const query = `SELECT 
     h.id,
     h.account_id,
@@ -170,7 +175,9 @@ export class BddServiceOperationSQL {
     return results;
   }
 
-  async getCashflow(dto: GetCashflowServiceDto): Promise<CashflowServiceModel[]> {
+  async getCashflow(
+    dto: GetCashflowServiceDto,
+  ): Promise<CashflowServiceModel[]> {
     if (!dto.account_ids || dto.account_ids.length === 0) {
       return [];
     }
@@ -270,25 +277,31 @@ export class BddServiceOperationSQL {
       ORDER BY ad.account_id ASC, ad.date ASC;
     `;
 
-    // Parameters: start_date, end_date (for RECURSIVE dates), user_id (for accounts CTE), 
-    // user_id, user_id (for operations CTEs), 
+    // Parameters: start_date, end_date (for RECURSIVE dates), user_id (for accounts CTE),
+    // user_id, user_id (for operations CTEs),
     // start_date (for initial_balance), start_date, end_date (for daily_movements)
     const [results] = await this.pool.execute(query, [
-      dto.start_date, dto.end_date,
+      dto.start_date,
+      dto.end_date,
       dto.user_id,
-      dto.user_id, dto.user_id,
-      dto.start_date, dto.start_date, dto.end_date
+      dto.user_id,
+      dto.user_id,
+      dto.start_date,
+      dto.start_date,
+      dto.end_date,
     ]);
 
     return results.map((row: any) => ({
       account_id: row.account_id,
       date: row.date,
       reconciled_balance: parseFloat(row.reconciled_balance || 0),
-      total_balance: parseFloat(row.total_balance || 0)
+      total_balance: parseFloat(row.total_balance || 0),
     }));
   }
 
-  async updateOperation(dto: UpdateOperationServiceDto): Promise<OperationServiceModel> {
+  async updateOperation(
+    dto: UpdateOperationServiceDto,
+  ): Promise<OperationServiceModel> {
     const old: OperationServiceModel = await this.getOperation(dto);
     const query = `UPDATE operation SET
       account_id = ?,
@@ -306,9 +319,11 @@ export class BddServiceOperationSQL {
     WHERE 1=1
       AND id = ?
     ;`;
-    const [results] = await this.pool.execute(query, [
+    await this.pool.execute(query, [
       dto.account_id !== undefined ? dto.account_id : old.account_id,
-      dto.account_id_dest !== undefined ? dto.account_id_dest : old.account_id_dest,
+      dto.account_id_dest !== undefined
+        ? dto.account_id_dest
+        : old.account_id_dest,
       dto.amount !== undefined ? dto.amount : old.amount,
       dto.date !== undefined ? dto.date : old.date,
       dto.status_id !== undefined ? dto.status_id : old.status_id,
@@ -318,11 +333,11 @@ export class BddServiceOperationSQL {
       dto.vat_rate !== undefined ? dto.vat_rate : old.vat_rate,
       dto.description !== undefined ? dto.description : old.description,
       dto.user_id,
-      dto.operation_id
+      dto.operation_id,
     ]);
     return await this.getOperation({
       operation_id: dto.operation_id,
-      user_id: dto.user_id
+      user_id: dto.user_id,
     });
   }
 
@@ -335,14 +350,13 @@ export class BddServiceOperationSQL {
       AND id = ?
       AND active = 1
     ;`;
-    const [results] = await this.pool.execute(query, [
-      dto.user_id,
-      dto.operation_id
-    ]);
+    await this.pool.execute(query, [dto.user_id, dto.operation_id]);
     return true;
   }
 
-  async getOperationTypes(dto: GetOperationTypesServiceDto): Promise<OperationTypeServiceModel[]> {
+  async getOperationTypes(
+    dto: GetOperationTypesServiceDto,
+  ): Promise<OperationTypeServiceModel[]> {
     const query = `SELECT id,
         label,
         creator_id, 
@@ -358,7 +372,9 @@ export class BddServiceOperationSQL {
     return results;
   }
 
-  async getOperationThrids(dto: GetOperationThridsServiceDto): Promise<OperationThridServiceModel[]> {
+  async getOperationThrids(
+    dto: GetOperationThridsServiceDto,
+  ): Promise<OperationThridServiceModel[]> {
     const query = `SELECT id,
         label, 
         description, 
@@ -390,7 +406,9 @@ export class BddServiceOperationSQL {
     return results;
   }
 
-  async getOperationCategories(dto: GetOperationCategoriesServiceDto): Promise<OperationCategoryServiceModel[]> {
+  async getOperationCategories(
+    dto: GetOperationCategoriesServiceDto,
+  ): Promise<OperationCategoryServiceModel[]> {
     const query = `SELECT id,
         label, 
         description, 
@@ -407,22 +425,26 @@ export class BddServiceOperationSQL {
     return results;
   }
 
-  async createOperationLink(dto: CreateOperationLinkServiceDto): Promise<OperationLinkServiceModel> {
+  async createOperationLink(
+    dto: CreateOperationLinkServiceDto,
+  ): Promise<OperationLinkServiceModel> {
     const query = `INSERT INTO operation_link (operation_id, operation_ref_id, creator_id)
     VALUES (?, ?, ?)
     ;`;
     const [results] = await this.pool.execute(query, [
       dto.operation_id,
       dto.operation_ref_id,
-      dto.user_id
+      dto.user_id,
     ]);
     return await this.getOperationLink({
       operation_link_id: results.insertId,
-      user_id: dto.user_id
+      user_id: dto.user_id,
     });
   }
 
-  async getOperationLink(dto: GetOperationLinkServiceDto): Promise<OperationLinkServiceModel> {
+  async getOperationLink(
+    dto: GetOperationLinkServiceDto,
+  ): Promise<OperationLinkServiceModel> {
     const query = `SELECT id,
         operation_id,
         operation_ref_id,
@@ -438,7 +460,7 @@ export class BddServiceOperationSQL {
     ;`;
     const [results] = await this.pool.execute(query, [
       dto.user_id,
-      dto.operation_link_id
+      dto.operation_link_id,
     ]);
     if (results.length > 0) {
       return results[0];
@@ -447,7 +469,9 @@ export class BddServiceOperationSQL {
     }
   }
 
-  async getOperationLinks(dto: GetOperationLinksServiceDto): Promise<OperationLinkServiceModel[]> {
+  async getOperationLinks(
+    dto: GetOperationLinksServiceDto,
+  ): Promise<OperationLinkServiceModel[]> {
     const query = `SELECT id,
         operation_id, 
         operation_ref_id, 
@@ -463,12 +487,14 @@ export class BddServiceOperationSQL {
     ;`;
     const [results] = await this.pool.execute(query, [
       dto.operation_id,
-      dto.user_id
+      dto.user_id,
     ]);
     return results;
   }
 
-  async deleteOperationLink(dto: DeleteOperationLinkServiceDto): Promise<boolean> {
+  async deleteOperationLink(
+    dto: DeleteOperationLinkServiceDto,
+  ): Promise<boolean> {
     const query = `UPDATE operation_link SET
       active = 0,
       modificator_id = ?,
@@ -477,14 +503,13 @@ export class BddServiceOperationSQL {
       AND id = ?
       AND active = 1
     ;`;
-    const [results] = await this.pool.execute(query, [
-      dto.user_id,
-      dto.operation_link_id
-    ]);
+    await this.pool.execute(query, [dto.user_id, dto.operation_link_id]);
     return true;
   }
 
-  async cloneOperations(dto: CloneOperationsServiceDto): Promise<OperationServiceModel[]> {
+  async cloneOperations(
+    dto: CloneOperationsServiceDto,
+  ): Promise<OperationServiceModel[]> {
     let query = `INSERT INTO operation (account_id, account_id_dest, amount, date, status_id, type_id, third_id, category_id, vat_rate, description, creator_id)
     SELECT ?, a.account_id_dest, a.amount, ?, a.status_id, a.type_id, a.third_id, a.category_id, a.vat_rate, a.description, ?
       FROM operation a, account b
@@ -497,7 +522,7 @@ export class BddServiceOperationSQL {
       dto.account_id,
       dto.date,
       dto.user_id,
-      dto.template_account_id
+      dto.template_account_id,
     ]);
     query = `SELECT a.id,
         a.account_id,
@@ -522,7 +547,7 @@ export class BddServiceOperationSQL {
     ;`;
     [results] = await this.pool.execute(query, [
       results.insertId,
-      results.affectedRows
+      results.affectedRows,
     ]);
     return results;
   }

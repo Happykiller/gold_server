@@ -2,7 +2,6 @@ import { Inversify } from '@src/inversify/investify';
 import { DeleteOperationLinkUsecaseDto } from '@usecase/dto/deleteOperationLink.usecase.dto';
 
 export class DeleteOperationLinkUsecase {
-
   inversify: Inversify;
 
   constructor(inversify: Inversify) {

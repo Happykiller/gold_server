@@ -5,8 +5,6 @@ import { OperationResolver } from '@presentation/operation/operation.resolver';
 
 @Module({
   imports: [],
-  providers: [
-    OperationResolver
-  ],
+  providers: [OperationResolver],
 })
 export class OperationModule {}

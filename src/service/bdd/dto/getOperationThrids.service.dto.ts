@@ -1,3 +1,3 @@
 export class GetOperationThridsServiceDto {
-    user_id: number;
+  user_id: number;
 }

@@ -38,22 +38,40 @@ export interface BddService extends BddServiceBase {
 
   getAccountTypes(): Promise<AccountTypeServiceModel[]>;
 
-  createOperation(dto: CreateOperationServiceDto): Promise<OperationServiceModel>;
+  createOperation(
+    dto: CreateOperationServiceDto,
+  ): Promise<OperationServiceModel>;
   getOperation(dto: GetOperationServiceDto): Promise<OperationServiceModel>;
   getOperations(dto: GetOperationsServiceDto): Promise<OperationServiceModel[]>;
   getCashflow(dto: GetCashflowServiceDto): Promise<CashflowServiceModel[]>;
-  updateOperation(dto: UpdateOperationServiceDto): Promise<OperationServiceModel>;
+  updateOperation(
+    dto: UpdateOperationServiceDto,
+  ): Promise<OperationServiceModel>;
   deleteOperation(dto: DeleteOperationServiceDto): Promise<boolean>;
 
-  getOperationTypes(dto: GetOperationTypesServiceDto): Promise<OperationTypeServiceModel[]>;
-  getOperationThrids(dto: GetOperationThridsServiceDto): Promise<OperationThridServiceModel[]>;
+  getOperationTypes(
+    dto: GetOperationTypesServiceDto,
+  ): Promise<OperationTypeServiceModel[]>;
+  getOperationThrids(
+    dto: GetOperationThridsServiceDto,
+  ): Promise<OperationThridServiceModel[]>;
   getOperationStatus(): Promise<OperationStatutServiceModel[]>;
-  getOperationCategories(dto: GetOperationCategoriesServiceDto): Promise<OperationCategoryServiceModel[]>;
+  getOperationCategories(
+    dto: GetOperationCategoriesServiceDto,
+  ): Promise<OperationCategoryServiceModel[]>;
 
-  createOperationLink(dto: CreateOperationLinkServiceDto): Promise<OperationLinkServiceModel>;
-  getOperationLink(dto: GetOperationLinkServiceDto): Promise<OperationLinkServiceModel>;
-  getOperationLinks(dto: GetOperationLinksServiceDto): Promise<OperationLinkServiceModel[]>;
+  createOperationLink(
+    dto: CreateOperationLinkServiceDto,
+  ): Promise<OperationLinkServiceModel>;
+  getOperationLink(
+    dto: GetOperationLinkServiceDto,
+  ): Promise<OperationLinkServiceModel>;
+  getOperationLinks(
+    dto: GetOperationLinksServiceDto,
+  ): Promise<OperationLinkServiceModel[]>;
   deleteOperationLink(dto: DeleteOperationLinkServiceDto): Promise<boolean>;
 
-  cloneOperations(dto: CloneOperationsServiceDto): Promise<OperationServiceModel[]>;
+  cloneOperations(
+    dto: CloneOperationsServiceDto,
+  ): Promise<OperationServiceModel[]>;
 }

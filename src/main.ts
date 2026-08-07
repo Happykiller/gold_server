@@ -12,8 +12,10 @@ import { configureAuthGuardFactory } from '@happykiller/sunny-apis';
 
 async function bootstrap() {
   const logger = new Logger('bootstrap');
-  logger.log(`Environnement selected: ${config.env.mode} on port ${config.env.port ?? 3000}`);
-  
+  logger.log(
+    `Environnement selected: ${config.env.mode} on port ${config.env.port ?? 3000}`,
+  );
+
   require('events').EventEmitter.defaultMaxListeners = 50;
   const app = await NestFactory.create(AppModule);
   configureAuthGuardFactory({

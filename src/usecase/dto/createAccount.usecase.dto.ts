@@ -1,7 +1,7 @@
 export interface CreateAccountUsecaseDto {
-  user_id: number,
-  type_id: number,
-  parent_account_id: number,
-  label: string,
-  description: string
+  user_id: number;
+  type_id: number;
+  parent_account_id: number;
+  label: string;
+  description: string;
 }

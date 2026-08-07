@@ -6,18 +6,20 @@ import { BddServiceTestSQL } from './bdd.service.test.mysql';
 import { BddServicePasskeyMysql } from './db.service.passkey.mysql';
 import { BddServiceUserMysql } from './db.service.user.mysql';
 
-
-
 class BddServiceSQL {
   constructor(pool: any) {
-    applyInstanceMixins(this, [
-      // Project
-      BddServiceAccountSQL,
-      BddServiceOperationSQL,
-      BddServiceTestSQL,
-      BddServicePasskeyMysql,
-      BddServiceUserMysql
-    ], [pool]);
+    applyInstanceMixins(
+      this,
+      [
+        // Project
+        BddServiceAccountSQL,
+        BddServiceOperationSQL,
+        BddServiceTestSQL,
+        BddServicePasskeyMysql,
+        BddServiceUserMysql,
+      ],
+      [pool],
+    );
   }
 }
 

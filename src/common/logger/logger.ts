@@ -3,7 +3,7 @@ import 'winston-daily-rotate-file';
 import { createLogger, format, transports } from 'winston';
 
 /* istanbul ignore next */
-const myFormat = format.printf(info => {
+const myFormat = format.printf((info) => {
   let myformat: string;
   if (info.error) {
     myformat = `${info.timestamp} ${info.module} ${info.level}: ${info.message} => ${info.error}`;
@@ -21,16 +21,14 @@ const logger = createLogger({
     format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss',
     }),
-    format.json()
+    format.json(),
   ),
   defaultMeta: { module: 'gold' },
-  transports: [
-    new transports.Console()
-  ],
+  transports: [new transports.Console()],
 });
 
 /* istanbul ignore next */
-if (process.env.NODE_ENV === 'prod'){
+if (process.env.NODE_ENV === 'prod') {
   logger.level = 'debug';
 
   const transport = new transports.DailyRotateFile({
@@ -38,7 +36,7 @@ if (process.env.NODE_ENV === 'prod'){
     filename: 'logs/gold-%DATE%.log',
     datePattern: 'YYYY-MM-DD',
     maxSize: '20m',
-    maxFiles: '14d'
+    maxFiles: '14d',
   });
 
   logger.add(transport);
@@ -50,7 +48,7 @@ if (process.env.NODE_ENV === 'prod'){
       format: 'YYYY-MM-DD HH:mm:ss',
     }),
     format.colorize(),
-    myFormat
+    myFormat,
   );
 }
 

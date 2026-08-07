@@ -1,4 +1,7 @@
-import { RegistrationInfo, RegistrationJSON } from "@passwordless-id/webauthn/dist/esm/types";
+import {
+  RegistrationInfo,
+  RegistrationJSON,
+} from '@passwordless-id/webauthn/dist/esm/types';
 
 export default interface PasskeyDbModel {
   id: string;

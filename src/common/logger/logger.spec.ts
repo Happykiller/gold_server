@@ -6,9 +6,9 @@ const loggerMock = {
   add: jest.fn(),
   transports: [
     {
-      format: jest.fn()
-    }
-  ]
+      format: jest.fn(),
+    },
+  ],
 };
 
 // trying to mock createLogger to return a specific logger instance
@@ -25,8 +25,8 @@ jest.mock('winston', () => ({
   createLogger: jest.fn().mockReturnValue(loggerMock),
   transports: {
     File: jest.fn(),
-    Console: jest.fn()
-  }
+    Console: jest.fn(),
+  },
 }));
 
 describe('logger', () => {
@@ -94,5 +94,4 @@ describe('logger', () => {
     // assert
     expect(logger.info).toHaveBeenCalledTimes(1);
   });
-  
 });

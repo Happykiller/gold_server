@@ -11,7 +11,14 @@ import { version } from '../package.json';
 import inversify from '@src/inversify/investify';
 import { AccountModule } from '@presentation/account/account.module';
 import { OperationModule } from '@presentation/operation/operation.module';
-import { AuthGuardModule, AuthModule, PasskeyModule, SystemModule, TestModule, UserModule } from '@happykiller/sunny-apis';
+import {
+  AuthGuardModule,
+  AuthModule,
+  PasskeyModule,
+  SystemModule,
+  TestModule,
+  UserModule,
+} from '@happykiller/sunny-apis';
 
 @Module({
   imports: [
@@ -50,6 +57,6 @@ import { AuthGuardModule, AuthModule, PasskeyModule, SystemModule, TestModule, U
     }),
     ScheduleModule.forRoot(),
     ThrottlerModule.forRoot(config.throttle),
-  ]
+  ],
 })
-export class AppModule { }
+export class AppModule {}

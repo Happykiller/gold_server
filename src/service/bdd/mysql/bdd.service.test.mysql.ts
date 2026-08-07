@@ -1,6 +1,5 @@
 // src\service\bdd\bdd.service.test.sql.ts
 export class BddServiceTestSQL {
-
   pool: any;
 
   constructor(pool: any) {

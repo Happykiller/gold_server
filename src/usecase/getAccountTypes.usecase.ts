@@ -2,7 +2,6 @@ import { Inversify } from '@src/inversify/investify';
 import { AccountTypeUsecaseModel } from '@src/usecase/model/accountType.usecase.model';
 
 export class GetAccountTypesUsecase {
-
   inversify: Inversify;
 
   constructor(inversify: Inversify) {

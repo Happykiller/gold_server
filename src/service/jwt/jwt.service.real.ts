@@ -8,12 +8,12 @@ export class JwtServiceReal implements JwtService {
     const token: string = jwt.sign(
       {
         code: dto.code,
-        id: dto.id
+        id: dto.id,
       },
       config.jwt.secret,
       {
-        expiresIn: config.jwt.signOptions.expiresIn
-      }
+        expiresIn: config.jwt.signOptions.expiresIn,
+      },
     );
     return token;
   }

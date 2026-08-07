@@ -1,3 +1,3 @@
 export class GetOperationTypesServiceDto {
-    user_id: number;
+  user_id: number;
 }

@@ -1,26 +1,40 @@
 // src\service\bdd\mysql\db.service.passkey.mysql.ts
 import { BddService } from '@service/bdd/bdd.service';
 import PasskeyDbModel from '@happykiller/sunny-apis/dist/services/db/model/passkey.db.model';
-import { CreatePasskeyDbDto, DeletePasskeyDbDto, GetPasskeyByUserIdDbDto, GetPasskeyDbDto, } from '@happykiller/sunny-apis';
+import {
+  CreatePasskeyDbDto,
+  DeletePasskeyDbDto,
+  GetPasskeyByUserIdDbDto,
+  GetPasskeyDbDto,
+} from '@happykiller/sunny-apis';
 
 export class BddServicePasskeyMysql
   implements
     Pick<BddService, 'createPasskey' | 'getPasskeyByUserId' | 'getPasskey'>
 {
-
   pool: any;
 
   async createPasskey(dto: CreatePasskeyDbDto): Promise<PasskeyDbModel> {
     const query = `INSERT INTO passkeys (user_id, user_code, label, hostname, challenge, registration, registration_parsed) 
     VALUES (?, ?, ?, ?, ?, ?, ?)
     ;`;
-    const [results] = await this.pool.execute(query, [dto.user_id, dto.user_code, dto.label, dto.hostname, dto.challenge, JSON.stringify(dto.registration), JSON.stringify(dto.registrationParsed)]);
+    const [results] = await this.pool.execute(query, [
+      dto.user_id,
+      dto.user_code,
+      dto.label,
+      dto.hostname,
+      dto.challenge,
+      JSON.stringify(dto.registration),
+      JSON.stringify(dto.registrationParsed),
+    ]);
     return await this.getPasskey({
-      passkey_id: results.insertId
+      passkey_id: results.insertId,
     });
   }
 
-  async getPasskeyByUserId(dto: GetPasskeyByUserIdDbDto): Promise<PasskeyDbModel[]> {
+  async getPasskeyByUserId(
+    dto: GetPasskeyByUserIdDbDto,
+  ): Promise<PasskeyDbModel[]> {
     const query = `SELECT id, 
         user_id, 
         user_code, 
@@ -39,19 +53,22 @@ export class BddServicePasskeyMysql
       return {
         ...elt,
         registration: JSON.parse(elt.registration),
-        registrationParsed: JSON.parse((!elt.registration_parsed || elt.registration_parsed==='')?null:elt.registration_parsed)
-      }
+        registrationParsed: JSON.parse(
+          !elt.registration_parsed || elt.registration_parsed === ''
+            ? null
+            : elt.registration_parsed,
+        ),
+      };
     });
     return results;
   }
 
   async getPasskey(dto: GetPasskeyDbDto): Promise<PasskeyDbModel> {
-
     let filter = 'AND false';
     if (dto.passkey_id) {
-      filter = `AND a.id = ${dto.passkey_id}`
+      filter = `AND a.id = ${dto.passkey_id}`;
     } else if (dto.credential_id) {
-      filter = `AND a.registration like '%${dto.credential_id}%'`
+      filter = `AND a.registration like '%${dto.credential_id}%'`;
     }
 
     const query = `SELECT id, 
@@ -68,16 +85,16 @@ export class BddServicePasskeyMysql
       ${filter}
     ;`;
     let [results] = await this.pool.execute(query);
-    
+
     results = results.map((elt) => {
       return {
         ...elt,
         registration: JSON.parse(elt.registration),
-        registrationParsed: JSON.parse(elt.registration_parsed)
-      }
+        registrationParsed: JSON.parse(elt.registration_parsed),
+      };
     });
 
-    if(results.length > 0) {
+    if (results.length > 0) {
       return results[0];
     } else {
       return null;
@@ -91,9 +108,7 @@ export class BddServicePasskeyMysql
       AND id = ?
       AND active = 1
     ;`;
-    const [results] = await this.pool.execute(query, [
-      dto.passkey_id
-    ]);
+    await this.pool.execute(query, [dto.passkey_id]);
     return true;
   }
 }

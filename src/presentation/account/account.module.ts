@@ -4,8 +4,6 @@ import { AccountResolver } from './account.resolver';
 
 @Module({
   imports: [],
-  providers: [
-    AccountResolver
-  ],
+  providers: [AccountResolver],
 })
 export class AccountModule {}

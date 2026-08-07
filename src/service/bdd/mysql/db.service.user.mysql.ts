@@ -1,12 +1,9 @@
 // src\service\bdd\mysql\db.service.passkey.mysql.ts
 import { ERRORS } from '@src/common/ERROR';
 import { BddService } from '@service/bdd/bdd.service';
-import { GetUserDbDto, UserDbModel, } from '@happykiller/sunny-apis';
+import { GetUserDbDto, UserDbModel } from '@happykiller/sunny-apis';
 
-export class BddServiceUserMysql
-  implements
-  Pick<BddService, 'getUser'> {
-
+export class BddServiceUserMysql implements Pick<BddService, 'getUser'> {
   pool: any;
 
   async getUser(dto: GetUserDbDto): Promise<UserDbModel> {

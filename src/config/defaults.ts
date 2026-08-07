@@ -3,7 +3,10 @@ import { version } from '../../package.json';
 import { Configuration } from '@src/config/configuration';
 
 const dotenv = require('dotenv').config().parsed;
-const dotenvlocal = require('dotenv').config({ path: `.env.local`, override: true }).parsed;
+const dotenvlocal = require('dotenv').config({
+  path: `.env.local`,
+  override: true,
+}).parsed;
 
 const merged = Object.assign({}, dotenv, dotenvlocal);
 const appPort = Number.parseInt(merged.APP_PORT ?? '', 10);
@@ -14,7 +17,7 @@ const defaults: Configuration = {
   version,
   env: {
     mode: 'defaults',
-    port: Number.isNaN(appPort) ? 3000 : appPort
+    port: Number.isNaN(appPort) ? 3000 : appPort,
   },
   graphQL: {
     schemaFileName: true,
@@ -26,22 +29,22 @@ const defaults: Configuration = {
     refreshTokenName: 'gold-refresh-token',
     secret: merged.JWT_SECRET ?? 'secretKey',
     signOptions: {
-      expiresIn: '8h'
-    }
+      expiresIn: '8h',
+    },
   },
   bdd: {
     host: merged.DB_HOST ?? 'localhost',
     port: Number.isNaN(dbPort) ? 3306 : dbPort,
     user: merged.DB_USER ?? 'root',
     password: merged.DB_PASSWORD ?? 'password',
-    database: merged.DB_NAME ?? 'gold'
+    database: merged.DB_NAME ?? 'gold',
   },
   morgans: {
-    url: 'http://morgans:8000/graphql'
+    url: 'http://morgans:8000/graphql',
   },
   puppet: {
     url: 'http://puppet:3000',
-    token: 'token'
+    token: 'token',
   },
   throttle: [
     {

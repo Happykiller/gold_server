@@ -1,3 +1,3 @@
 export interface CryptServiceDto {
-  message: string
+  message: string;
 }

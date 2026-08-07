@@ -31,10 +31,20 @@ import { CreateOperationLinkUsecase } from '@usecase/createOperationLink.usecase
 import { DeleteOperationLinkUsecase } from '@usecase/deleteOperationLink.usecase';
 import { GetOperationCategoriesUsecase } from '@usecase/getOperationCategories.usecase';
 import {
-  AuthPasskeyUsecase, AuthUsecase, CreatePasskeyUsecase, CryptServiceReal,
-  DeletePasskeyUsecase, GetByUserIdPasskeyUsecase, GetUserUsecase, HttpService,
-  HttpServiceReal, InversifyInterface, MorgansService, MorgansServiceReal,
-  PasswordLessServiceFake, PasswordLessServiceReal
+  AuthPasskeyUsecase,
+  AuthUsecase,
+  CreatePasskeyUsecase,
+  CryptServiceReal,
+  DeletePasskeyUsecase,
+  GetByUserIdPasskeyUsecase,
+  GetUserUsecase,
+  HttpService,
+  HttpServiceReal,
+  InversifyInterface,
+  MorgansService,
+  MorgansServiceReal,
+  PasswordLessServiceFake,
+  PasswordLessServiceReal,
 } from '@happykiller/sunny-apis';
 
 export class Inversify implements InversifyInterface {
@@ -114,7 +124,9 @@ export class Inversify implements InversifyInterface {
     this.getOperationStatusUsecase = new GetOperationStatusUsecase(this);
     this.deleteOperationLinkUsecase = new DeleteOperationLinkUsecase(this);
     this.createOperationLinkUsecase = new CreateOperationLinkUsecase(this);
-    this.getOperationCategoriesUsecase = new GetOperationCategoriesUsecase(this);
+    this.getOperationCategoriesUsecase = new GetOperationCategoriesUsecase(
+      this,
+    );
 
     if (config.env.mode === 'prod') {
       this.loggerService = logger;
@@ -122,7 +134,7 @@ export class Inversify implements InversifyInterface {
 
       const pool = mysql.createPool({
         debug: false,
-        ...config.bdd
+        ...config.bdd,
       });
 
       this.bddService = new BddServiceSQL(pool) as unknown as BddService;
@@ -132,7 +144,7 @@ export class Inversify implements InversifyInterface {
 
       const pool = mysql.createPool({
         debug: false,
-        ...config.bdd
+        ...config.bdd,
       });
       this.bddService = new BddServiceSQL(pool) as unknown as BddService;
     } else {
@@ -141,7 +153,6 @@ export class Inversify implements InversifyInterface {
       this.bddService = new BddServiceFake() as unknown as BddService;
     }
   }
-
 }
 
 const inversify = new Inversify();
