@@ -20,12 +20,13 @@
     "up:sunny": "npm install @happykiller/sunny-apis@latest --force"
   },
   "dependencies": {
-    "@apollo/server": "^4.12.2",
+    "@apollo/server": "^5.5.1",
+    "@as-integrations/express5": "^1.1.2",
     "@happykiller/sunny-apis": "^0.8.1",
-    "@nestjs/apollo": "^13.1.0",
+    "@nestjs/apollo": "^13.4.2",
     "@nestjs/common": "^11.1.28",
     "@nestjs/core": "^11.1.28",
-    "@nestjs/graphql": "^13.1.0",
+    "@nestjs/graphql": "^13.4.2",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.1.28",

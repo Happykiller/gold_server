@@ -1,6 +1,7 @@
 // src\app.module.ts
 /* istanbul ignore file */
 import { Module } from '@nestjs/common';
+import type { JwtModuleOptions } from '@nestjs/jwt';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -29,7 +30,10 @@ import {
       inversify,
     }),
     AuthModule.forRoot({
-      jwtConfig: config.jwt,
+      // Même écart de typage que dans JwtServiceReal : sunny-apis déclare
+      // `signOptions.expiresIn` en `string`, là où JwtModuleOptions attend un
+      // littéral de durée. La valeur ('8h') est valide.
+      jwtConfig: config.jwt as JwtModuleOptions,
       appConfig: config,
       inversify,
     }),

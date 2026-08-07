@@ -8,10 +8,10 @@ import {
   GetPasskeyDbDto,
 } from '@happykiller/sunny-apis';
 
-export class BddServicePasskeyMysql
-  implements
-    Pick<BddService, 'createPasskey' | 'getPasskeyByUserId' | 'getPasskey'>
-{
+export class BddServicePasskeyMysql implements Pick<
+  BddService,
+  'createPasskey' | 'getPasskeyByUserId' | 'getPasskey'
+> {
   pool: any;
 
   async createPasskey(dto: CreatePasskeyDbDto): Promise<PasskeyDbModel> {
