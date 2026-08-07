@@ -98,21 +98,20 @@ export class BddServiceAccountSQL {
       label = ?,
       description = ?,
       modificator_id = ?,
-      modification_date = ?
+      modification_date = current_date()
     WHERE 1=1
       AND id = ?
     ;`;
-    const [results] = await this.pool.execute(query, [
+    await this.pool.execute(query, [
       dto.type_id ? dto.type_id : old.type_id,
       dto.parent_account_id ? dto.parent_account_id : old.parent_account_id,
       dto.label ? dto.label : old.label,
-      dto.description ? dto.description : old.type_id,
+      dto.description ? dto.description : old.description,
       dto.user_id,
-      'now',
       dto.account_id,
     ]);
     return await this.getAccount({
-      account_id: results.updateId,
+      account_id: dto.account_id,
       user_id: dto.user_id,
     });
   }

@@ -1,5 +1,8 @@
 // src\presentation\account\account.resolver.ts
 import { UseGuards } from '@nestjs/common';
+import { GraphQLError } from 'graphql';
+
+import { ERRORS } from '@src/common/ERROR';
 import {
   Field,
   ObjectType,
@@ -150,10 +153,21 @@ export class AccountResolver {
     @CurrentSession() session: UserSession,
     @Args('dto') dto: UpdateAccountInputResolver,
   ): Promise<AccountModelResolver> {
-    return inversify.updateAccountUsecase.execute({
-      user_id: parseInt(session.id),
-      ...dto,
-    });
+    try {
+      return await inversify.updateAccountUsecase.execute({
+        user_id: parseInt(session.id),
+        ...dto,
+      });
+    } catch (e) {
+      // Le usecase reste indépendant du framework : la traduction en refus
+      // GraphQL typé se fait ici. Voir docs/KB/REGLES/normes.md.
+      if (e instanceof Error && e.message === ERRORS.ACCOUNT_NOT_FOUND) {
+        throw new GraphQLError(ERRORS.ACCOUNT_NOT_FOUND, {
+          extensions: { code: 'NOT_FOUND' },
+        });
+      }
+      throw e;
+    }
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
