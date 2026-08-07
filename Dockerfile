@@ -1,5 +1,7 @@
 # Base image
-FROM node:20-alpine
+# Node 22 (LTS) : la 20 est en fin de vie depuis avril 2026. NestJS 11 exige
+# `>= 20` et aucune autre dépendance ne plafonne la version.
+FROM node:22-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
