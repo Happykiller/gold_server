@@ -1,10 +1,25 @@
 // src\presentation\operation\operation.resolver.ts
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Query, Resolver, Args, ResolveField, Parent } from '@nestjs/graphql';
+import { GraphQLError } from 'graphql';
+import {
+  Mutation,
+  Query,
+  Resolver,
+  Args,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
+
+import { ERRORS } from '@src/common/ERROR';
 
 import inversify from '@src/inversify/investify';
 import { AccountModelResolver } from '@presentation/account/account.resolver';
-import { CurrentSession, makeAuthGuard, USER_ROLE, UserSession } from '@happykiller/sunny-apis';
+import {
+  CurrentSession,
+  makeAuthGuard,
+  USER_ROLE,
+  UserSession,
+} from '@happykiller/sunny-apis';
 import { OperationModelResolver } from '@presentation/operation/model/operation.resolver.model';
 import { GetOperationInputResolver } from '@presentation/operation/dto/get.operation.resolver.dto';
 import { GetOperationsInputResolver } from '@presentation/operation/dto/getAll.operation.resolver.dto';
@@ -23,18 +38,16 @@ import { CashflowInputResolver } from '@presentation/operation/dto/cashflow.reso
 
 @Resolver((of) => OperationModelResolver)
 export class OperationResolver {
-
   @ResolveField((of) => AccountModelResolver)
   async account(
     @Parent() parent: OperationModelResolver,
     @CurrentSession() session: UserSession,
   ): Promise<AccountModelResolver> {
-    const entity: AccountModelResolver = await inversify.getAccountUsecase.execute(
-      {
+    const entity: AccountModelResolver =
+      await inversify.getAccountUsecase.execute({
         user_id: parseInt(session.id),
-        account_id: parent.account_id
-      },
-    );
+        account_id: parent.account_id,
+      });
     return entity;
   }
 
@@ -44,12 +57,11 @@ export class OperationResolver {
     @CurrentSession() session: UserSession,
   ): Promise<AccountModelResolver> {
     if (parent.account_id_dest !== null) {
-      const entity: AccountModelResolver = await inversify.getAccountUsecase.execute(
-        {
+      const entity: AccountModelResolver =
+        await inversify.getAccountUsecase.execute({
           user_id: parseInt(session.id),
-          account_id: parent.account_id_dest
-        },
-      );
+          account_id: parent.account_id_dest,
+        });
       return entity;
     } else {
       return null;
@@ -58,10 +70,10 @@ export class OperationResolver {
 
   @ResolveField((of) => OperationStatutModelResolver)
   async status(
-    @Parent() parent: OperationModelResolver
+    @Parent() parent: OperationModelResolver,
   ): Promise<OperationStatutModelResolver> {
     const statusEntities = await inversify.getOperationStatusUsecase.execute();
-    return statusEntities.find(elt => parent.status_id === elt.id);
+    return statusEntities.find((elt) => parent.status_id === elt.id);
   }
 
   @ResolveField((of) => OperationTypeModelResolver)
@@ -69,8 +81,10 @@ export class OperationResolver {
     @Parent() parent: OperationModelResolver,
     @CurrentSession() session: UserSession,
   ): Promise<OperationTypeModelResolver> {
-    const typeEntities = await inversify.getOperationTypesUsecase.execute({ user_id: parseInt(session.id) });
-    return typeEntities.find(elt => parent.type_id === elt.id);
+    const typeEntities = await inversify.getOperationTypesUsecase.execute({
+      user_id: parseInt(session.id),
+    });
+    return typeEntities.find((elt) => parent.type_id === elt.id);
   }
 
   @ResolveField((of) => OperationThirdModelResolver)
@@ -78,8 +92,10 @@ export class OperationResolver {
     @Parent() parent: OperationModelResolver,
     @CurrentSession() session: UserSession,
   ): Promise<OperationThirdModelResolver> {
-    const thirdEntities = await inversify.getOperationThridsUsecase.execute({ user_id: parseInt(session.id) });
-    return thirdEntities.find(elt => parent.third_id === elt.id);
+    const thirdEntities = await inversify.getOperationThridsUsecase.execute({
+      user_id: parseInt(session.id),
+    });
+    return thirdEntities.find((elt) => parent.third_id === elt.id);
   }
 
   @ResolveField((of) => OperationCategoryModelResolver)
@@ -87,104 +103,146 @@ export class OperationResolver {
     @Parent() parent: OperationModelResolver,
     @CurrentSession() session: UserSession,
   ): Promise<OperationCategoryModelResolver> {
-    const categoryEntities = await inversify.getOperationCategoriesUsecase.execute({ user_id: parseInt(session.id) });
-    return categoryEntities.find(elt => parent.category_id === elt.id);
+    const categoryEntities =
+      await inversify.getOperationCategoriesUsecase.execute({
+        user_id: parseInt(session.id),
+      });
+    return categoryEntities.find((elt) => parent.category_id === elt.id);
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
-    () => [OperationModelResolver]
+    () => [OperationModelResolver],
   )
-  async operations(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationsInputResolver): Promise<OperationModelResolver[]> {
+  async operations(
+    @CurrentSession() session: UserSession,
+    @Args('dto') dto: GetOperationsInputResolver,
+  ): Promise<OperationModelResolver[]> {
     return inversify.getOperationsUsecase.execute({
       user_id: parseInt(session.id),
-      ...dto
+      ...dto,
     });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
-    () => [CashflowModelResolver]
+    () => [CashflowModelResolver],
   )
-  async cashflow(@CurrentSession() session: UserSession, @Args('dto') dto: CashflowInputResolver): Promise<CashflowModelResolver[]> {
+  async cashflow(
+    @CurrentSession() session: UserSession,
+    @Args('dto') dto: CashflowInputResolver,
+  ): Promise<CashflowModelResolver[]> {
     return inversify.getCashflowUsecase.execute({
       user_id: parseInt(session.id),
-      ...dto
+      ...dto,
     });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
-    () => OperationModelResolver
+    () => OperationModelResolver,
   )
-  async operation(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationInputResolver): Promise<OperationModelResolver> {
+  async operation(
+    @CurrentSession() session: UserSession,
+    @Args('dto') dto: GetOperationInputResolver,
+  ): Promise<OperationModelResolver> {
     return inversify.getOperationUsecase.execute({
       user_id: parseInt(session.id),
-      ...dto
+      ...dto,
     });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
-    () => OperationModelResolver
+    () => OperationModelResolver,
   )
-  async createOperation(@CurrentSession() session: UserSession, @Args('dto') dto: CreateOperationInputResolver): Promise<OperationModelResolver> {
+  async createOperation(
+    @CurrentSession() session: UserSession,
+    @Args('dto') dto: CreateOperationInputResolver,
+  ): Promise<OperationModelResolver> {
     return inversify.createOperationUsecase.execute({
       user_id: parseInt(session.id),
-      ...dto
+      ...dto,
     });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
-    () => OperationModelResolver
+    () => OperationModelResolver,
   )
-  async updateOperation(@CurrentSession() session: UserSession, @Args('dto') dto: UpdateOperationInputResolver): Promise<OperationModelResolver> {
-    return inversify.updateOperationUsecase.execute({
-      user_id: parseInt(session.id),
-      ...dto
-    });
+  async updateOperation(
+    @CurrentSession() session: UserSession,
+    @Args('dto') dto: UpdateOperationInputResolver,
+  ): Promise<OperationModelResolver> {
+    try {
+      return await inversify.updateOperationUsecase.execute({
+        user_id: parseInt(session.id),
+        ...dto,
+      });
+    } catch (e) {
+      // Le usecase reste indépendant du framework : c'est ici, dans la couche
+      // de présentation, qu'une erreur métier devient un refus GraphQL typé.
+      // Sans cette traduction, le client reçoit un INTERNAL_SERVER_ERROR et ne
+      // peut pas distinguer une opération inconnue d'une panne du serveur.
+      if (e instanceof Error && e.message === ERRORS.OPERATION_NOT_FOUND) {
+        throw new GraphQLError(ERRORS.OPERATION_NOT_FOUND, {
+          extensions: { code: 'NOT_FOUND' },
+        });
+      }
+      throw e;
+    }
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
-    () => Boolean
+    () => Boolean,
   )
-  async deleteOperation(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationInputResolver): Promise<boolean> {
+  async deleteOperation(
+    @CurrentSession() session: UserSession,
+    @Args('dto') dto: GetOperationInputResolver,
+  ): Promise<boolean> {
     return inversify.deleteOperationUsecase.execute({
       user_id: parseInt(session.id),
-      operation_id: dto.operation_id
+      operation_id: dto.operation_id,
     });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
-    () => [OperationTypeModelResolver]
+    () => [OperationTypeModelResolver],
   )
-  async operationTypes(@CurrentSession() session: UserSession): Promise<OperationTypeModelResolver[]> {
-    return inversify.getOperationTypesUsecase.execute({ user_id: parseInt(session.id) });
+  async operationTypes(
+    @CurrentSession() session: UserSession,
+  ): Promise<OperationTypeModelResolver[]> {
+    return inversify.getOperationTypesUsecase.execute({
+      user_id: parseInt(session.id),
+    });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
-    () => [OperationCategoryModelResolver]
+    () => [OperationCategoryModelResolver],
   )
-  async operationCategories(@CurrentSession() session: UserSession): Promise<OperationCategoryModelResolver[]> {
-    return inversify.getOperationCategoriesUsecase.execute({ user_id: parseInt(session.id) });
+  async operationCategories(
+    @CurrentSession() session: UserSession,
+  ): Promise<OperationCategoryModelResolver[]> {
+    return inversify.getOperationCategoriesUsecase.execute({
+      user_id: parseInt(session.id),
+    });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
-    () => [OperationStatutModelResolver]
+    () => [OperationStatutModelResolver],
   )
   async operationStatus(): Promise<OperationStatutModelResolver[]> {
     return inversify.getOperationStatusUsecase.execute();
@@ -193,57 +251,73 @@ export class OperationResolver {
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
-    () => [OperationThirdModelResolver]
+    () => [OperationThirdModelResolver],
   )
-  async operationThirds(@CurrentSession() session: UserSession): Promise<OperationThirdModelResolver[]> {
-    return inversify.getOperationThridsUsecase.execute({ user_id: parseInt(session.id) });
+  async operationThirds(
+    @CurrentSession() session: UserSession,
+  ): Promise<OperationThirdModelResolver[]> {
+    return inversify.getOperationThridsUsecase.execute({
+      user_id: parseInt(session.id),
+    });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Query(
     /* istanbul ignore next */
-    () => [OperationLinkModelResolver]
+    () => [OperationLinkModelResolver],
   )
-  async operationLinks(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationInputResolver): Promise<OperationLinkModelResolver[]> {
+  async operationLinks(
+    @CurrentSession() session: UserSession,
+    @Args('dto') dto: GetOperationInputResolver,
+  ): Promise<OperationLinkModelResolver[]> {
     return inversify.getOperationLinksUsecase.execute({
       user_id: parseInt(session.id),
-      operation_id: dto.operation_id
+      operation_id: dto.operation_id,
     });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
-    () => OperationLinkModelResolver
+    () => OperationLinkModelResolver,
   )
-  async createOperationLink(@CurrentSession() session: UserSession, @Args('dto') dto: CreateOperationLinkInputResolver): Promise<OperationLinkModelResolver> {
+  async createOperationLink(
+    @CurrentSession() session: UserSession,
+    @Args('dto') dto: CreateOperationLinkInputResolver,
+  ): Promise<OperationLinkModelResolver> {
     return inversify.createOperationLinkUsecase.execute({
       user_id: parseInt(session.id),
-      ...dto
+      ...dto,
     });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
-    () => Boolean
+    () => Boolean,
   )
-  async deleteOperationLink(@CurrentSession() session: UserSession, @Args('dto') dto: GetOperationLinkInputResolver): Promise<boolean> {
+  async deleteOperationLink(
+    @CurrentSession() session: UserSession,
+    @Args('dto') dto: GetOperationLinkInputResolver,
+  ): Promise<boolean> {
     return inversify.deleteOperationLinkUsecase.execute({
       user_id: parseInt(session.id),
-      operation_link_id: dto.operation_link_id
+      operation_link_id: dto.operation_link_id,
     });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
   @Mutation(
     /* istanbul ignore next */
-    () => [OperationModelResolver]
+    () => [OperationModelResolver],
   )
-  async cloneOperations(@CurrentSession() session: UserSession, @Args('dto') dto: CloneOperationInputResolver): Promise<OperationModelResolver[]> {
+  async cloneOperations(
+    @CurrentSession() session: UserSession,
+    @Args('dto') dto: CloneOperationInputResolver,
+  ): Promise<OperationModelResolver[]> {
     return inversify.cloneOperationsUsecase.execute({
       user_id: parseInt(session.id),
-      ...dto
+      ...dto,
     });
   }
 }
