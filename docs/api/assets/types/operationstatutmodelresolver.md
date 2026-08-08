@@ -5,7 +5,6 @@
 type OperationStatutModelResolver {
   id: Int!
   label: String!
-  description: String!
   active: Boolean!
   creator_id: Int!
   creation_date: String!

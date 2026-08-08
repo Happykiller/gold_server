@@ -5,23 +5,23 @@
   * [Request](#request)
   * [Response](#response)
 
-# mutation deleteAccount
+# query users
  
 ## Output
-The output is a **Boolean**
+The output is a **[UserModelResolver**
 ## Errors
 ## Example
 ### Request
 ```graphql
-mutation {
-  deleteAccount
+query {
+  users
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "deleteAccount": true
+    "users": UserModelResolver
   }
 }
 ```

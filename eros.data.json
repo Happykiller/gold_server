@@ -15,6 +15,66 @@
     {
       "type": "Int",
       "value": 0
+    },
+    {
+      "type": "OperationLinkModelResolver",
+      "value": "OperationLinkModelResolver"
+    },
+    {
+      "type": "OperationThirdModelResolver",
+      "value": "OperationThirdModelResolver"
+    },
+    {
+      "type": "OperationStatutModelResolver",
+      "value": "OperationStatutModelResolver"
+    },
+    {
+      "type": "OperationCategoryModelResolver",
+      "value": "OperationCategoryModelResolver"
+    },
+    {
+      "type": "OperationTypeModelResolver",
+      "value": "OperationTypeModelResolver"
+    },
+    {
+      "type": "OperationModelResolver",
+      "value": "OperationModelResolver"
+    },
+    {
+      "type": "CashflowModelResolver",
+      "value": "CashflowModelResolver"
+    },
+    {
+      "type": "AccountTypeModelResolver",
+      "value": "AccountTypeModelResolver"
+    },
+    {
+      "type": "AccountModelResolver",
+      "value": "AccountModelResolver"
+    },
+    {
+      "type": "UserModelResolver",
+      "value": "UserModelResolver"
+    },
+    {
+      "type": "SendMailSystemResolverModel",
+      "value": "SendMailSystemResolverModel"
+    },
+    {
+      "type": "SystemInfoResolverModel",
+      "value": "SystemInfoResolverModel"
+    },
+    {
+      "type": "PasskeyResolverModel",
+      "value": "PasskeyResolverModel"
+    },
+    {
+      "type": "AuthModelResolver",
+      "value": "AuthModelResolver"
+    },
+    {
+      "type": "PingResponse",
+      "value": "PingResponse"
     }
   ]
 }

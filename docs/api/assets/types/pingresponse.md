@@ -2,7 +2,7 @@
 
 
 ```graphql
-type TestModelResolver {
-  resultat: Boolean
+type PingResponse {
+  message: String!
 }
 ```

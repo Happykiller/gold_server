@@ -5,23 +5,23 @@
   * [Request](#request)
   * [Response](#response)
 
-# mutation deleteAccount
+# query test_mail
  
 ## Output
-The output is a **Boolean**
+The output is a **SendMailSystemResolverModel**
 ## Errors
 ## Example
 ### Request
 ```graphql
-mutation {
-  deleteAccount
+query {
+  test_mail
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "deleteAccount": true
+    "test_mail": SendMailSystemResolverModel
   }
 }
 ```

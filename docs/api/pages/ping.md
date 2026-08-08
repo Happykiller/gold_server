@@ -5,23 +5,23 @@
   * [Request](#request)
   * [Response](#response)
 
-# mutation deleteAccount
+# query ping
  
 ## Output
-The output is a **Boolean**
+The output is a **PingResponse**
 ## Errors
 ## Example
 ### Request
 ```graphql
-mutation {
-  deleteAccount
+query {
+  ping
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "deleteAccount": true
+    "ping": PingResponse
   }
 }
 ```

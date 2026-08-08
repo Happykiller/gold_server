@@ -1,6 +1,4 @@
 [back](../tableOfContent.md)
-* [Input](#input)
-  * [GetOperationLinkInputResolver](#getoperationlinkinputresolver-optionable-false)
 * [Output](#output)
 * [Errors](#errors)
 * [Example](#example)
@@ -9,12 +7,6 @@
 
 # mutation deleteOperationLink
  
-## Input
-### [GetOperationLinkInputResolver](../assets/inputs/getoperationlinkinputresolver.md) `optionable: false`
-| fields |types |optionable |default |descriptions |deprecated |
-| :----:  |:---:  |:--------:  |:-----:  |:----------:  |:--------:  |
-| operation_link_id |Int |false | | | 
-
 ## Output
 The output is a **Boolean**
 ## Errors
@@ -22,11 +14,7 @@ The output is a **Boolean**
 ### Request
 ```graphql
 mutation {
-  deleteOperationLink (
-    dto: {
-      operation_link_id: 0
-    }
-  )
+  deleteOperationLink
 }
 ```
 ### Response

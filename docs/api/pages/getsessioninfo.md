@@ -5,23 +5,23 @@
   * [Request](#request)
   * [Response](#response)
 
-# mutation deleteAccount
+# query getSessionInfo
  
 ## Output
-The output is a **Boolean**
+The output is a **AuthModelResolver**
 ## Errors
 ## Example
 ### Request
 ```graphql
-mutation {
-  deleteAccount
+query {
+  getSessionInfo
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "deleteAccount": true
+    "getSessionInfo": AuthModelResolver
   }
 }
 ```

@@ -5,7 +5,7 @@
   * [Request](#request)
   * [Response](#response)
 
-# mutation deleteAccount
+# mutation delete_passkey
  
 ## Output
 The output is a **Boolean**
@@ -14,14 +14,14 @@ The output is a **Boolean**
 ### Request
 ```graphql
 mutation {
-  deleteAccount
+  delete_passkey
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "deleteAccount": true
+    "delete_passkey": true
   }
 }
 ```

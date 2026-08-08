@@ -5,23 +5,23 @@
   * [Request](#request)
   * [Response](#response)
 
-# mutation deleteAccount
+# mutation update_password
  
 ## Output
-The output is a **Boolean**
+The output is a **AuthModelResolver**
 ## Errors
 ## Example
 ### Request
 ```graphql
 mutation {
-  deleteAccount
+  update_password
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "deleteAccount": true
+    "update_password": AuthModelResolver
   }
 }
 ```

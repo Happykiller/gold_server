@@ -19,5 +19,11 @@ type OperationModelResolver {
   creation_date: String!
   modificator_id: Int
   modification_date: String
+  account: AccountModelResolver!
+  account_dest: AccountModelResolver
+  status: OperationStatutModelResolver!
+  type: OperationTypeModelResolver!
+  third: OperationThirdModelResolver!
+  category: OperationCategoryModelResolver!
 }
 ```

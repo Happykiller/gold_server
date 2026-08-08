@@ -2,25 +2,33 @@
 Apis for Gold
 ## Summary
 ---
-### Others subscription
-- [subHello](./pages/subhello.md)
----
 ### Others query
-- [auth](./pages/auth.md)
 - [operationLinks](./pages/operationlinks.md)
 - [operationThirds](./pages/operationthirds.md)
 - [operationStatus](./pages/operationstatus.md)
 - [operationCategories](./pages/operationcategories.md)
 - [operationTypes](./pages/operationtypes.md)
 - [operation](./pages/operation.md)
+- [cashflow](./pages/cashflow.md)
 - [operations](./pages/operations.md)
 - [accountTypes](./pages/accounttypes.md)
 - [account](./pages/account.md)
 - [accounts](./pages/accounts.md)
-- [hello](./pages/hello.md)
-- [testBdd](./pages/testbdd.md)
+- [user](./pages/user.md)
+- [users](./pages/users.md)
+- [test_mail](./pages/test_mail.md)
+- [systemInfo](./pages/systeminfo.md)
+- [passkeys_for_user](./pages/passkeys_for_user.md)
+- [getSessionInfo](./pages/getsessioninfo.md)
+- [auth_passkey](./pages/auth_passkey.md)
+- [auth](./pages/auth.md)
+- [ping](./pages/ping.md)
 ---
 ### Others mutation
+- [update_password](./pages/update_password.md)
+- [create_passkey](./pages/create_passkey.md)
+- [delete_passkey](./pages/delete_passkey.md)
+- [create_user](./pages/create_user.md)
 - [createAccount](./pages/createaccount.md)
 - [updateAccount](./pages/updateaccount.md)
 - [deleteAccount](./pages/deleteaccount.md)
@@ -29,3 +37,4 @@ Apis for Gold
 - [deleteOperation](./pages/deleteoperation.md)
 - [createOperationLink](./pages/createoperationlink.md)
 - [deleteOperationLink](./pages/deleteoperationlink.md)
+- [cloneOperations](./pages/cloneoperations.md)

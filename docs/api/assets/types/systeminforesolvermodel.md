@@ -2,9 +2,7 @@
 
 
 ```graphql
-
-
-type HelloModelResolver {
-  message: String
+type SystemInfoResolverModel {
+  version: String!
 }
 ```

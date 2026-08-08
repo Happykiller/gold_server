@@ -5,23 +5,23 @@
   * [Request](#request)
   * [Response](#response)
 
-# mutation deleteAccount
+# mutation cloneOperations
  
 ## Output
-The output is a **Boolean**
+The output is a **[OperationModelResolver**
 ## Errors
 ## Example
 ### Request
 ```graphql
 mutation {
-  deleteAccount
+  cloneOperations
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "deleteAccount": true
+    "cloneOperations": OperationModelResolver
   }
 }
 ```

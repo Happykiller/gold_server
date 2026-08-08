@@ -5,23 +5,23 @@
   * [Request](#request)
   * [Response](#response)
 
-# mutation deleteAccount
+# query passkeys_for_user
  
 ## Output
-The output is a **Boolean**
+The output is a **[PasskeyResolverModel**
 ## Errors
 ## Example
 ### Request
 ```graphql
-mutation {
-  deleteAccount
+query {
+  passkeys_for_user
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "deleteAccount": true
+    "passkeys_for_user": PasskeyResolverModel
   }
 }
 ```

@@ -1,8 +1,5 @@
 [back](../tableOfContent.md)
-* [Input](#input)
-  * [CreateOperationLinkInputResolver](#createoperationlinkinputresolver-optionable-false)
 * [Output](#output)
-  * [OperationLinkModelResolver](#operationlinkmodelresolver-optionable-false)
 * [Errors](#errors)
 * [Example](#example)
   * [Request](#request)
@@ -10,62 +7,21 @@
 
 # mutation createOperationLink
  
-## Input
-### [CreateOperationLinkInputResolver](../assets/inputs/createoperationlinkinputresolver.md) `optionable: false`
-| fields |types |optionable |default |descriptions |deprecated |
-| :----:  |:---:  |:--------:  |:-----:  |:----------:  |:--------:  |
-| operation_id |Int |false | | | |
-| operation_ref_id |Int |false | | | 
-
 ## Output
-### [OperationLinkModelResolver](../assets/types/operationlinkmodelresolver.md) `optionable: false`
-| fields |types |nullable |descriptions |deprecated |
-| :----:  |:---:  |:--------:  |:----------:  |:--------:  |
-| id |Int |false | | |
-| operation_id |Int |false | | |
-| operation_ref_id |Int |false | | |
-| active |Boolean |false | | |
-| creator_id |Int |false | | |
-| creation_date |String |false | | |
-| modificator_id |Int |true | | |
-| modification_date |String |true | | 
-
+The output is a **OperationLinkModelResolver**
 ## Errors
 ## Example
 ### Request
 ```graphql
 mutation {
-  createOperationLink (
-    dto: {
-      operation_id: 0
-      operation_ref_id: 0
-    }
-  ) {
-    id
-    operation_id
-    operation_ref_id
-    active
-    creator_id
-    creation_date
-    modificator_id
-    modification_date
-  }
+  createOperationLink
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "createOperationLink": {
-      "id": 0,
-      "operation_id": 0,
-      "operation_ref_id": 0,
-      "active": true,
-      "creator_id": 0,
-      "creation_date": "Bob",
-      "modificator_id": 0,
-      "modification_date": "Bob"
-    }
+    "createOperationLink": OperationLinkModelResolver
   }
 }
 ```

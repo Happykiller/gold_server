@@ -1,6 +1,5 @@
 [back](../tableOfContent.md)
 * [Output](#output)
-  * [[AccountTypeModelResolver]](#[accounttypemodelresolver]-optionable-false)
 * [Errors](#errors)
 * [Example](#example)
   * [Request](#request)
@@ -9,48 +8,20 @@
 # query accountTypes
  
 ## Output
-### [[AccountTypeModelResolver]](../assets/types/accounttypemodelresolver.md) `optionable: false`
-| fields |types |nullable |descriptions |deprecated |
-| :----:  |:---:  |:--------:  |:----------:  |:--------:  |
-| id |Int |false | | |
-| label |String |false | | |
-| description |String |true | | |
-| creator_id |Int |false | | |
-| creation_date |String |false | | |
-| modificator_id |Int |true | | |
-| modification_date |String |true | | 
-
+The output is a **[AccountTypeModelResolver**
 ## Errors
 ## Example
 ### Request
 ```graphql
 query {
-  accountTypes {
-    id
-    label
-    description
-    creator_id
-    creation_date
-    modificator_id
-    modification_date
-  }
+  accountTypes
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "accountTypes": [
-      {
-        "id": 0,
-        "label": "Bob",
-        "description": "Bob",
-        "creator_id": 0,
-        "creation_date": "Bob",
-        "modificator_id": 0,
-        "modification_date": "Bob"
-      }
-    ]
+    "accountTypes": AccountTypeModelResolver
   }
 }
 ```

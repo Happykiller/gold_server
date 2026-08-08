@@ -5,23 +5,23 @@
   * [Request](#request)
   * [Response](#response)
 
-# mutation deleteAccount
+# query cashflow
  
 ## Output
-The output is a **Boolean**
+The output is a **[CashflowModelResolver**
 ## Errors
 ## Example
 ### Request
 ```graphql
-mutation {
-  deleteAccount
+query {
+  cashflow
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "deleteAccount": true
+    "cashflow": CashflowModelResolver
   }
 }
 ```

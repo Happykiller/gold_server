@@ -1,6 +1,4 @@
 [back](../tableOfContent.md)
-* [Input](#input)
-  * [GetOperationInputResolver](#getoperationinputresolver-optionable-false)
 * [Output](#output)
 * [Errors](#errors)
 * [Example](#example)
@@ -9,12 +7,6 @@
 
 # mutation deleteOperation
  
-## Input
-### [GetOperationInputResolver](../assets/inputs/getoperationinputresolver.md) `optionable: false`
-| fields |types |optionable |default |descriptions |deprecated |
-| :----:  |:---:  |:--------:  |:-----:  |:----------:  |:--------:  |
-| operation_id |Int |false | | | 
-
 ## Output
 The output is a **Boolean**
 ## Errors
@@ -22,11 +14,7 @@ The output is a **Boolean**
 ### Request
 ```graphql
 mutation {
-  deleteOperation (
-    dto: {
-      operation_id: 0
-    }
-  )
+  deleteOperation
 }
 ```
 ### Response

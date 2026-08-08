@@ -5,23 +5,23 @@
   * [Request](#request)
   * [Response](#response)
 
-# mutation deleteAccount
+# query systemInfo
  
 ## Output
-The output is a **Boolean**
+The output is a **SystemInfoResolverModel**
 ## Errors
 ## Example
 ### Request
 ```graphql
-mutation {
-  deleteAccount
+query {
+  systemInfo
 }
 ```
 ### Response
 ```json
 {
   "data": {
-    "deleteAccount": true
+    "systemInfo": SystemInfoResolverModel
   }
 }
 ```

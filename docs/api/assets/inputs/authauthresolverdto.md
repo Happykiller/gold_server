@@ -2,7 +2,7 @@
 
 
 ```graphql
-input AuthInput {
+input AuthAuthResolverDto {
   """User code for the session"""
   login: String!
 
