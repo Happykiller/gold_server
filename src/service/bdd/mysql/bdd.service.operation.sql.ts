@@ -85,10 +85,82 @@ export class BddServiceOperationSQL {
     }
   }
 
+  /**
+   * Traduit les critères de recherche en clauses SQL **paramétrées**.
+   *
+   * Rien n'est interpolé : `description` et `text` viennent de la saisie
+   * utilisateur, et le reste de ce fichier construit historiquement ses
+   * requêtes par interpolation — motif tenable tant que GraphQL coerçait tout
+   * en `Int`, intenable dès qu'une chaîne emprunte le même chemin.
+   *
+   * La clause retournée est destinée aux **deux branches** du UNION de
+   * `getOperations` : elle y est insérée deux fois, et les paramètres doivent
+   * donc être fournis deux fois, dans le même ordre.
+   */
+  private buildOperationFilters(dto: GetOperationsServiceDto): {
+    clause: string;
+    params: unknown[];
+  } {
+    const parts: string[] = [];
+    const params: unknown[] = [];
+
+    // `%` et `_` sont des jokers LIKE : sans échappement, une description
+    // contenant « 100% » ou « credit_agricole » élargirait la recherche au
+    // lieu de la restreindre.
+    const like = (value: string) => `%${value.replace(/[\\%_]/g, '\\$&')}%`;
+
+    const inList = (column: string, ids?: number[] | null) => {
+      // Liste vide : critère ignoré. `IN ()` est une erreur de syntaxe MySQL.
+      if (!ids || ids.length === 0) return;
+      parts.push(`AND ${column} IN (${ids.map(() => '?').join(', ')})`);
+      params.push(...ids);
+    };
+
+    const compare = (column: string, op: string, value?: number | string) => {
+      if (value === undefined || value === null || value === '') return;
+      parts.push(`AND ${column} ${op} ?`);
+      params.push(value);
+    };
+
+    inList('a.category_id', dto.category_ids);
+    inList('a.third_id', dto.third_ids);
+    inList('a.account_id_dest', dto.dest_account_ids);
+    inList('a.type_id', dto.type_ids);
+    inList('a.status_id', dto.status_ids);
+
+    compare('a.amount', '>=', dto.amount_min);
+    compare('a.amount', '<=', dto.amount_max);
+    compare('a.date', '>=', dto.date_from);
+    compare('a.date', '<=', dto.date_to);
+
+    if (dto.description) {
+      parts.push('AND a.description LIKE ?');
+      params.push(like(dto.description));
+    }
+
+    if (dto.text) {
+      // Recherche large : la description, mais aussi le libellé du tiers et de
+      // la catégorie. `EXISTS` plutôt qu'une jointure pour ne pas dupliquer de
+      // lignes et laisser les deux branches du UNION intactes.
+      parts.push(`AND (
+             a.description LIKE ?
+          OR EXISTS (SELECT 1 FROM operation_third_list t
+                      WHERE t.id = a.third_id AND t.label LIKE ?)
+          OR EXISTS (SELECT 1 FROM operation_category_list c
+                      WHERE c.id = a.category_id AND c.label LIKE ?)
+        )`);
+      const pattern = like(dto.text);
+      params.push(pattern, pattern, pattern);
+    }
+
+    return { clause: parts.join('\n        '), params };
+  }
+
   async getOperations(
     dto: GetOperationsServiceDto,
   ): Promise<OperationServiceModel[]> {
-    const query = `SELECT 
+    const filters = this.buildOperationFilters(dto);
+    const query = `SELECT
     h.id,
     h.account_id,
     h.account_id_dest,
@@ -139,11 +211,12 @@ export class BddServiceOperationSQL {
         a.modificator_id,
         a.modification_date
       FROM operation a
-      WHERE 1 = 1 
-        AND a.account_id = ${dto.account_id}
-        AND a.creator_id = ${dto.user_id}
-        AND a.active = 1 
-      UNION 
+      WHERE 1 = 1
+        AND a.account_id = ?
+        AND a.creator_id = ?
+        AND a.active = 1
+        ${filters.clause}
+      UNION
       SELECT 
         a.id,
         a.amount,
@@ -162,16 +235,28 @@ export class BddServiceOperationSQL {
         a.modification_date
       FROM operation a
       WHERE 1 = 1
-        AND a.account_id_dest = ${dto.account_id}
-        AND a.creator_id = ${dto.user_id}
+        AND a.account_id_dest = ?
+        AND a.creator_id = ?
         AND a.active = 1
+        ${filters.clause}
     ) g
   ) h
   WHERE 1=1
   ORDER BY h.date DESC, h.id DESC
-  LIMIT ${dto.limit} OFFSET ${dto.offset}; 
-;`;
-    const [results] = await this.pool.execute(query, []);
+  LIMIT ? OFFSET ?;`;
+    // Ordre des paramètres : branche 1 (compte, créateur, filtres), puis
+    // branche 2 à l'identique — la clause de filtre est insérée deux fois,
+    // ses paramètres doivent l'être aussi — puis la pagination.
+    const [results] = await this.pool.execute(query, [
+      dto.account_id,
+      dto.user_id,
+      ...filters.params,
+      dto.account_id,
+      dto.user_id,
+      ...filters.params,
+      dto.limit,
+      dto.offset,
+    ]);
     return results;
   }
 
