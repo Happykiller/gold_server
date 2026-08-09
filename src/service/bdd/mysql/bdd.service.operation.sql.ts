@@ -60,6 +60,30 @@ const linkCountColumns = (alias: string) => `
         AND l.creator_id = ${alias}.creator_id
         AND l.operation_ref_id = ${alias}.id) AS linked_by_count`;
 
+/**
+ * Le prédicat de visibilité d'une entrée de référentiel : celles que tout le
+ * monde partage, plus celles que l'utilisateur a créées lui-même.
+ *
+ * **Une entrée partagée s'écrit `NULL` dans trois tables et `0` dans la
+ * quatrième**, et ce n'est pas une négligence de données : `creator_id` est
+ * nullable sur `operation_status_list`, `operation_third_list` et
+ * `operation_category_list`, mais `NOT NULL` sur `operation_type_list` (comme
+ * sur `account_type_list`). Cette table ne *peut* pas porter `NULL` — sa
+ * sentinelle de « sans créateur » est donc `0`, en base de production comme
+ * dans le seed `002-seed`.
+ *
+ * Ne reconnaître que `NULL` rendait `getOperationTypes` vide pour tout
+ * utilisateur : crédit, débit et virement portent `creator_id = 0`. Le défaut
+ * est resté invisible jusqu'au 08/08/2026 parce que les écrans écrivaient les
+ * trois types en dur dans un `Select` ; le jour où ils sont passés sur le
+ * référentiel de l'API, le champ Type est devenu un « Aucun résultat ».
+ *
+ * Aucun paramètre `?` n'est ajouté : `0` est un littéral, la requête garde donc
+ * exactement les liaisons de ses appelants.
+ */
+const sharedOrOwnedBy = (alias: string) =>
+  `(${alias}.creator_id IS NULL OR ${alias}.creator_id = 0 OR ${alias}.creator_id = ?)`;
+
 export class BddServiceOperationSQL {
   pool: any;
 
@@ -502,7 +526,7 @@ export class BddServiceOperationSQL {
       FROM operation_type_list a
       WHERE 1=1
       AND a.active = 1
-      AND (a.creator_id IS NULL OR a.creator_id = ?)
+      AND ${sharedOrOwnedBy('a')}
     ;`;
     const [results] = await this.pool.execute(query, [dto.user_id]);
     return results;
@@ -521,7 +545,7 @@ export class BddServiceOperationSQL {
       FROM operation_third_list a
       WHERE 1=1
       AND a.active = 1
-      AND (a.creator_id IS NULL OR a.creator_id = ?)
+      AND ${sharedOrOwnedBy('a')}
     ;`;
     const [results] = await this.pool.execute(query, [dto.user_id]);
     return results;
@@ -555,7 +579,7 @@ export class BddServiceOperationSQL {
       FROM operation_category_list a
       WHERE 1=1
       AND a.active = 1
-      AND (a.creator_id IS NULL OR a.creator_id = ?)
+      AND ${sharedOrOwnedBy('a')}
     ;`;
     const [results] = await this.pool.execute(query, [dto.user_id]);
     return results;
