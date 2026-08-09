@@ -19,11 +19,15 @@ type OperationModelResolver {
   creation_date: String!
   modificator_id: Int
   modification_date: String
+  linked_count: Int!
+  linked_by_count: Int!
   account: AccountModelResolver!
   account_dest: AccountModelResolver
   status: OperationStatutModelResolver!
   type: OperationTypeModelResolver!
   third: OperationThirdModelResolver!
   category: OperationCategoryModelResolver!
+  linked_operations: [LinkedOperationModelResolver!]!
+  linked_by_operations: [LinkedOperationModelResolver!]!
 }
 ```

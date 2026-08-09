@@ -23,6 +23,8 @@ import { GetAccountTypesUsecase } from '@usecase/getAccountTypes.usecase';
 import { UpdateOperationUsecase } from '@usecase/UpdateOperation.usecase';
 import { CreateOperationUsecase } from '@usecase/createOperation.usecase';
 import { GetOperationTypesUsecase } from '@usecase/getOperationTypes.usecase';
+import { GetOperationLinkUsecase } from '@usecase/getOperationLink.usecase';
+import { GetLinkedOperationsUsecase } from '@usecase/getLinkedOperations.usecase';
 import { GetOperationLinksUsecase } from '@usecase/getOperationLinks.usecase';
 import { GetOperationStatusUsecase } from '@usecase/getOperationStatus.usecase';
 import { GetOperationThridsUsecase } from '@usecase/getOperationThrids.usecase';
@@ -75,6 +77,8 @@ export class Inversify implements InversifyInterface {
   deleteOperationUsecase: DeleteOperationUsecase;
   cloneOperationsUsecase: CloneOperationsUsecase;
   getOperationTypesUsecase: GetOperationTypesUsecase;
+  getOperationLinkUsecase: GetOperationLinkUsecase;
+  getLinkedOperationsUsecase: GetLinkedOperationsUsecase;
   getOperationLinksUsecase: GetOperationLinksUsecase;
   getByUserIdPasskeyUsecase: GetByUserIdPasskeyUsecase;
   getOperationThridsUsecase: GetOperationThridsUsecase;
@@ -119,6 +123,8 @@ export class Inversify implements InversifyInterface {
     this.updateOperationUsecase = new UpdateOperationUsecase(this);
     this.deleteOperationUsecase = new DeleteOperationUsecase(this);
     this.getOperationTypesUsecase = new GetOperationTypesUsecase(this);
+    this.getOperationLinkUsecase = new GetOperationLinkUsecase(this);
+    this.getLinkedOperationsUsecase = new GetLinkedOperationsUsecase(this);
     this.getOperationLinksUsecase = new GetOperationLinksUsecase(this);
     this.getOperationThridsUsecase = new GetOperationThridsUsecase(this);
     this.getOperationStatusUsecase = new GetOperationStatusUsecase(this);

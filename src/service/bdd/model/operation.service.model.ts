@@ -15,4 +15,8 @@ export interface OperationServiceModel {
   creation_date: string;
   modificator_id: number;
   modification_date: string;
+  /** Nombre d'opérations que celle-ci prend en charge (cas du virement). */
+  linked_count: number;
+  /** Nombre de virements qui prennent celle-ci en charge. */
+  linked_by_count: number;
 }

@@ -10,4 +10,13 @@ export interface CreateOperationUsecaseDto {
   category_id: number;
   vat_rate?: number;
   description: string;
+  /**
+   * Les opérations que cette opération prend en charge — le cas d'usage est le
+   * virement qui rembourse des dépenses déjà pointées.
+   *
+   * Le champ ne descend pas jusqu'à `CreateOperationServiceDto` : le service
+   * `createOperation` n'a pas à connaître les liens, c'est le usecase qui
+   * orchestre les deux écritures.
+   */
+  linked_operation_ids?: number[];
 }

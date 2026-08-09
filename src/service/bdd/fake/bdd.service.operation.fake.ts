@@ -16,6 +16,12 @@ import { GetOperationLinksServiceDto } from '@service/bdd/dto/getOperationLinks.
 import { OperationStatutServiceModel } from '@service/bdd/model/operationStatut.service.model';
 import { DeleteOperationLinkServiceDto } from '@service/bdd/dto/deleteOperationLink.service.dto';
 import { CreateOperationLinkServiceDto } from '@service/bdd/dto/createOperationLink.service.dto';
+import { CreateOperationLinksServiceDto } from '@service/bdd/dto/createOperationLinks.service.dto';
+import { LinkedOperationServiceModel } from '@service/bdd/model/linkedOperation.service.model';
+import {
+  GetLinkedOperationsServiceDto,
+  LINK_DIRECTION,
+} from '@service/bdd/dto/getLinkedOperations.service.dto';
 import { GetOperationThridsServiceDto } from '@service/bdd/dto/getOperationThrids.service.dto';
 import { GetOperationTypesServiceDto } from '@service/bdd/dto/getOperationTypes.service.dto';
 import { GetOperationCategoriesServiceDto } from '@service/bdd/dto/getOperationCategories.service.dto';
@@ -40,16 +46,25 @@ export class BddServiceOperationFake {
       creation_date: 'now',
       modificator_id: null,
       modification_date: null,
+      linked_count: 0,
+      linked_by_count: 0,
     },
   ];
 
   collectionOperationLink: OperationLinkServiceModel[] = [];
 
+  // Des compteurs explicites plutôt que `collection.length++ - 1` : cette
+  // expression incrémente la longueur du tableau *puis* retranche 1, ce qui
+  // donne l'identifiant -1 sur une collection vide, 0 sur la suivante, et
+  // laisse au passage un trou dans le tableau.
+  private nextOperationId = 2;
+  private nextOperationLinkId = 1;
+
   createOperation(
     dto: CreateOperationServiceDto,
   ): Promise<OperationServiceModel> {
     const elt: OperationServiceModel = {
-      id: this.collectionOperation.length++ - 1,
+      id: this.nextOperationId++,
       account_id: 1,
       account_id_dest: dto.account_id_dest,
       amount: dto.amount,
@@ -65,6 +80,10 @@ export class BddServiceOperationFake {
       creation_date: new Date().getTime().toString(),
       modificator_id: null,
       modification_date: null,
+      // Une opération naît sans lien : ceux du virement sont posés juste après,
+      // par `createOperationLinks`, depuis le usecase.
+      linked_count: 0,
+      linked_by_count: 0,
     };
 
     this.collectionOperation.push(elt);
@@ -245,7 +264,7 @@ export class BddServiceOperationFake {
     dto: CreateOperationLinkServiceDto,
   ): Promise<OperationLinkServiceModel> {
     const elt: OperationLinkServiceModel = {
-      id: this.collectionOperationLink.length++ - 1,
+      id: this.nextOperationLinkId++,
       operation_id: dto.operation_id,
       operation_ref_id: dto.operation_ref_id,
       active: true,
@@ -260,13 +279,50 @@ export class BddServiceOperationFake {
     return Promise.resolve(elt);
   }
 
+  async createOperationLinks(
+    dto: CreateOperationLinksServiceDto,
+  ): Promise<OperationLinkServiceModel[]> {
+    for (const ref of [...new Set(dto.operation_ref_ids)]) {
+      if (ref === dto.operation_id) continue;
+
+      // Miroir du `WHERE o.creator_id = ? AND o.active = 1` de l'adaptateur
+      // SQL : une opération d'autrui ou supprimée ne produit aucun lien.
+      const target = this.collectionOperation.find(
+        (elt) => elt.id === ref && elt.creator_id === dto.user_id && elt.active,
+      );
+      if (!target) continue;
+
+      const already = this.collectionOperationLink.some(
+        (elt) =>
+          elt.active &&
+          elt.operation_id === dto.operation_id &&
+          elt.operation_ref_id === ref,
+      );
+      if (already) continue;
+
+      await this.createOperationLink({
+        user_id: dto.user_id,
+        operation_id: dto.operation_id,
+        operation_ref_id: ref,
+      });
+    }
+
+    return await this.getOperationLinks({
+      operation_id: dto.operation_id,
+      user_id: dto.user_id,
+    });
+  }
+
   getOperationLink(
     dto: GetOperationLinkServiceDto,
   ): Promise<OperationLinkServiceModel> {
     return Promise.resolve(
       this.collectionOperationLink.find(
-        (elt) => elt.id === dto.operation_link_id,
-      ),
+        (elt) =>
+          elt.id === dto.operation_link_id &&
+          elt.creator_id === dto.user_id &&
+          elt.active,
+      ) ?? null,
     );
   }
 
@@ -274,14 +330,73 @@ export class BddServiceOperationFake {
     dto: GetOperationLinksServiceDto,
   ): Promise<OperationLinkServiceModel[]> {
     return Promise.resolve(
-      this.collectionOperationLink.filter((elt) => elt.id === dto.operation_id),
+      this.collectionOperationLink.filter(
+        // Était `elt.id === dto.operation_id` : le fake cherchait un lien par
+        // son propre identifiant là où le SQL cherche par opération portante.
+        (elt) =>
+          elt.operation_id === dto.operation_id &&
+          elt.creator_id === dto.user_id &&
+          elt.active,
+      ),
+    );
+  }
+
+  getLinkedOperations(
+    dto: GetLinkedOperationsServiceDto,
+  ): Promise<LinkedOperationServiceModel[]> {
+    const links = this.collectionOperationLink.filter(
+      (elt) =>
+        elt.active &&
+        elt.creator_id === dto.user_id &&
+        (dto.direction === LINK_DIRECTION.DOWN
+          ? elt.operation_id === dto.operation_id
+          : elt.operation_ref_id === dto.operation_id),
+    );
+
+    return Promise.resolve(
+      links
+        .map((link) => {
+          const target = this.collectionOperation.find(
+            (elt) =>
+              elt.id ===
+                (dto.direction === LINK_DIRECTION.DOWN
+                  ? link.operation_ref_id
+                  : link.operation_id) &&
+              elt.creator_id === dto.user_id &&
+              elt.active,
+          );
+          if (!target) return null;
+          return {
+            link_id: link.id,
+            id: target.id,
+            account_id: target.account_id,
+            account_id_dest: target.account_id_dest,
+            amount: target.amount,
+            date: target.date,
+            status_id: target.status_id,
+            type_id: target.type_id,
+            third_id: target.third_id,
+            category_id: target.category_id,
+            description: target.description,
+          };
+        })
+        .filter((elt) => elt !== null),
     );
   }
 
   deleteOperationLink(dto: DeleteOperationLinkServiceDto): Promise<boolean> {
     const elt = this.collectionOperationLink.find(
-      (obj) => obj.id == dto.operation_link_id,
+      (obj) =>
+        obj.id === dto.operation_link_id &&
+        obj.creator_id === dto.user_id &&
+        obj.active,
     );
+
+    // Sans cette garde, un identifiant inconnu levait un TypeError là où
+    // l'adaptateur SQL se contente de renvoyer false.
+    if (!elt) {
+      return Promise.resolve(false);
+    }
 
     elt.active = false;
     elt.modificator_id = dto.user_id;
@@ -311,6 +426,8 @@ export class BddServiceOperationFake {
         creation_date: 'now',
         modificator_id: null,
         modification_date: null,
+        linked_count: 0,
+        linked_by_count: 0,
       },
     ]);
   }

@@ -2,7 +2,9 @@
 
 
 ```graphql
-input CreateOperationInputResolver {
+type LinkedOperationModelResolver {
+  link_id: Int!
+  id: Int!
   account_id: Int!
   account_id_dest: Int
   amount: Float!
@@ -11,8 +13,6 @@ input CreateOperationInputResolver {
   type_id: Int!
   third_id: Int
   category_id: Int
-  vat_rate: Float
   description: String
-  linked_operation_ids: [Int!]
 }
 ```

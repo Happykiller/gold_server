@@ -16,10 +16,49 @@ import { GetOperationLinksServiceDto } from '@service/bdd/dto/getOperationLinks.
 import { OperationStatutServiceModel } from '@service/bdd/model/operationStatut.service.model';
 import { DeleteOperationLinkServiceDto } from '@service/bdd/dto/deleteOperationLink.service.dto';
 import { CreateOperationLinkServiceDto } from '@service/bdd/dto/createOperationLink.service.dto';
+import { CreateOperationLinksServiceDto } from '@service/bdd/dto/createOperationLinks.service.dto';
+import { LinkedOperationServiceModel } from '@service/bdd/model/linkedOperation.service.model';
+import {
+  GetLinkedOperationsServiceDto,
+  LINK_DIRECTION,
+} from '@service/bdd/dto/getLinkedOperations.service.dto';
 import { GetOperationThridsServiceDto } from '@service/bdd/dto/getOperationThrids.service.dto';
 import { GetOperationTypesServiceDto } from '@service/bdd/dto/getOperationTypes.service.dto';
 import { GetOperationCategoriesServiceDto } from '@service/bdd/dto/getOperationCategories.service.dto';
 import { OperationCategoryServiceModel } from '@service/bdd/model/operationCategory.service.model';
+
+/**
+ * Les deux compteurs de liens d'une opération, à corréler sur un alias de la
+ * table `operation`.
+ *
+ * Trois requêtes produisent un `OperationServiceModel` — `getOperations`,
+ * `getOperation` et `cloneOperations` — et les deux champs sont non nullables
+ * au schéma : les oublier dans l'une d'elles ne casse que l'écran qu'elle sert.
+ * D'où ce fragment unique plutôt que trois copies vouées à diverger.
+ *
+ * `alias` n'est jamais une saisie : c'est un littéral écrit ici même, à côté de
+ * chaque appel. Aucun paramètre `?` n'est ajouté — les sous-requêtes se
+ * corrèlent sur `<alias>.creator_id` — ce qui laisse intacts les tableaux de
+ * liaisons des trois appelants. Un `?` inséré dans une liste SELECT viendrait
+ * textuellement AVANT ceux du FROM et décalerait tout le reste.
+ *
+ * La jointure sur `operation` n'est pas décorative : des liens actifs pointent
+ * vers des opérations supprimées logiquement. Sans elle, un virement
+ * annoncerait « 3 » là où son détail n'en listerait que 2.
+ */
+const linkCountColumns = (alias: string) => `
+    (SELECT COUNT(*)
+       FROM operation_link l
+       JOIN operation r ON r.id = l.operation_ref_id AND r.active = 1
+      WHERE l.active = 1
+        AND l.creator_id = ${alias}.creator_id
+        AND l.operation_id = ${alias}.id)     AS linked_count,
+    (SELECT COUNT(*)
+       FROM operation_link l
+       JOIN operation r ON r.id = l.operation_id AND r.active = 1
+      WHERE l.active = 1
+        AND l.creator_id = ${alias}.creator_id
+        AND l.operation_ref_id = ${alias}.id) AS linked_by_count`;
 
 export class BddServiceOperationSQL {
   pool: any;
@@ -70,7 +109,8 @@ export class BddServiceOperationSQL {
         a.creator_id,
         a.creation_date,
         a.modificator_id,
-        a.modification_date
+        a.modification_date,
+        ${linkCountColumns('a')}
       FROM operation a
       WHERE 1=1
       AND a.active = 1
@@ -160,7 +200,16 @@ export class BddServiceOperationSQL {
     dto: GetOperationsServiceDto,
   ): Promise<OperationServiceModel[]> {
     const filters = this.buildOperationFilters(dto);
+    // Les compteurs se calculent dans une enveloppe posée APRÈS le LIMIT, et
+    // non dans le SELECT de `h` : le compte le plus chargé porte plus de 7 000
+    // opérations, et les sous-requêtes corrélées y seraient évaluées sur toutes
+    // les lignes triées avant d'en garder 50. Ici, elles ne voient que la page.
+    // L'ordre d'une table dérivée n'étant pas garanti, il se redit à la fin.
     const query = `SELECT
+    p.*,
+    ${linkCountColumns('p')}
+  FROM (
+  SELECT
     h.id,
     h.account_id,
     h.account_id_dest,
@@ -243,7 +292,9 @@ export class BddServiceOperationSQL {
   ) h
   WHERE 1=1
   ORDER BY h.date DESC, h.id DESC
-  LIMIT ? OFFSET ?;`;
+  LIMIT ? OFFSET ?
+  ) p
+  ORDER BY p.date DESC, p.id DESC;`;
     // Ordre des paramètres : branche 1 (compte, créateur, filtres), puis
     // branche 2 à l'identique — la clause de filtre est insérée deux fois,
     // ses paramètres doivent l'être aussi — puis la pagination.
@@ -527,12 +578,67 @@ export class BddServiceOperationSQL {
     });
   }
 
+  /**
+   * Lie en une seule instruction une opération portante à plusieurs opérations.
+   *
+   * Le cloisonnement n'est pas vérifié en amont puis appliqué : il **est** la
+   * clause de sélection. Une opération qui n'appartient pas à l'utilisateur, ou
+   * qui est supprimée, ne produit simplement aucune ligne — il n'y a rien à
+   * contourner, et aucun aller-retour par identifiant.
+   *
+   * Le `NOT EXISTS` porte sur une table dérivée et non sur `operation_link`
+   * directement : MariaDB refuse de référencer la table cible d'un INSERT dans
+   * sa propre sous-requête. Il évite de recréer un lien déjà actif — le doublon
+   * présent en production vient d'un double envoi du formulaire.
+   */
+  async createOperationLinks(
+    dto: CreateOperationLinksServiceDto,
+  ): Promise<OperationLinkServiceModel[]> {
+    const ids = [...new Set(dto.operation_ref_ids)].filter(
+      (id) => Number.isInteger(id) && id !== dto.operation_id,
+    );
+
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const placeholders = ids.map(() => '?').join(', ');
+    const query = `INSERT INTO operation_link (operation_id, operation_ref_id, creator_id)
+      SELECT ?, o.id, ?
+        FROM operation o
+       WHERE o.id IN (${placeholders})
+         AND o.creator_id = ?
+         AND o.active = 1
+         AND NOT EXISTS (
+           SELECT 1
+             FROM (SELECT operation_id, operation_ref_id, active
+                     FROM operation_link) x
+            WHERE x.active = 1
+              AND x.operation_id = ?
+              AND x.operation_ref_id = o.id
+         )
+    ;`;
+    await this.pool.execute(query, [
+      dto.operation_id,
+      dto.user_id,
+      ...ids,
+      dto.user_id,
+      dto.operation_id,
+    ]);
+
+    return await this.getOperationLinks({
+      operation_id: dto.operation_id,
+      user_id: dto.user_id,
+    });
+  }
+
   async getOperationLink(
     dto: GetOperationLinkServiceDto,
   ): Promise<OperationLinkServiceModel> {
     const query = `SELECT id,
         operation_id,
         operation_ref_id,
+        active,
         creator_id,
         creation_date,
         modificator_id,
@@ -543,9 +649,14 @@ export class BddServiceOperationSQL {
       AND a.id = ?
       AND a.creator_id = ?
     ;`;
+    // L'ordre des liaisons suit celui des `?` dans le texte de la requête, et
+    // non celui des champs du DTO. Inversées, elles cherchaient le lien
+    // n° <user_id> appartenant à l'utilisateur n° <operation_link_id> : la
+    // lecture ne rendait jamais rien, et `createOperationLink`, qui relit par
+    // ici, renvoyait donc null après avoir pourtant inséré sa ligne.
     const [results] = await this.pool.execute(query, [
-      dto.user_id,
       dto.operation_link_id,
+      dto.user_id,
     ]);
     if (results.length > 0) {
       return results[0];
@@ -557,20 +668,74 @@ export class BddServiceOperationSQL {
   async getOperationLinks(
     dto: GetOperationLinksServiceDto,
   ): Promise<OperationLinkServiceModel[]> {
+    // La clause FROM visait le référentiel des catégories, copié de
+    // getOperationCategories : une table qui n'a ni operation_id ni
+    // operation_ref_id. La requête échouait sur « Unknown column » à chaque
+    // appel, et la query GraphQL `operationLinks` avec elle.
     const query = `SELECT id,
-        operation_id, 
-        operation_ref_id, 
-        creator_id, 
-        creation_date, 
-        modificator_id, 
+        operation_id,
+        operation_ref_id,
+        active,
+        creator_id,
+        creation_date,
+        modificator_id,
         modification_date
-      FROM operation_category_list a
+      FROM operation_link a
       WHERE 1=1
       AND a.active = 1
       AND a.operation_id = ?
       AND a.creator_id = ?
     ;`;
     const [results] = await this.pool.execute(query, [
+      dto.operation_id,
+      dto.user_id,
+    ]);
+    return results;
+  }
+
+  /**
+   * Les opérations reliées à une opération, dans un sens ou dans l'autre.
+   *
+   * `direction` choisit deux **noms de colonnes**. Ils ne sont jamais
+   * interpolés depuis une saisie : le type est une union fermée côté
+   * TypeScript, et la valeur vient du resolver, pas du client.
+   *
+   * Le filtre `o.active = 1` n'est pas décoratif : des liens actifs pointent
+   * vers des opérations supprimées logiquement. Sans lui, le détail listerait
+   * des lignes que la liste ne montre plus, et le compteur ne collerait pas.
+   */
+  async getLinkedOperations(
+    dto: GetLinkedOperationsServiceDto,
+  ): Promise<LinkedOperationServiceModel[]> {
+    const [pivot, target] =
+      dto.direction === LINK_DIRECTION.DOWN
+        ? ['operation_id', 'operation_ref_id']
+        : ['operation_ref_id', 'operation_id'];
+
+    const query = `SELECT
+        l.id AS link_id,
+        o.id,
+        o.account_id,
+        o.account_id_dest,
+        o.amount,
+        o.date,
+        o.status_id,
+        o.type_id,
+        o.third_id,
+        o.category_id,
+        o.description
+      FROM operation_link l
+      JOIN operation o ON o.id = l.${target}
+      WHERE 1=1
+      AND l.active = 1
+      AND l.creator_id = ?
+      AND l.${pivot} = ?
+      AND o.active = 1
+      AND o.creator_id = ?
+      ORDER BY o.date DESC, o.id DESC
+    ;`;
+    const [results] = await this.pool.execute(query, [
+      dto.user_id,
       dto.operation_id,
       dto.user_id,
     ]);
@@ -586,10 +751,19 @@ export class BddServiceOperationSQL {
       modification_date = current_date()
     WHERE 1=1
       AND id = ?
+      -- Sans ce filtre, n'importe quel utilisateur authentifié pouvait défaire
+      -- le lien d'un autre : l'identifiant du lien suffisait.
+      AND creator_id = ?
       AND active = 1
     ;`;
-    await this.pool.execute(query, [dto.user_id, dto.operation_link_id]);
-    return true;
+    const [results] = await this.pool.execute(query, [
+      dto.user_id,
+      dto.operation_link_id,
+      dto.user_id,
+    ]);
+    // `true` inconditionnel masquait aussi bien un identifiant inconnu qu'un
+    // lien déjà supprimé.
+    return results.affectedRows > 0;
   }
 
   async cloneOperations(
@@ -623,7 +797,11 @@ export class BddServiceOperationSQL {
         a.creator_id,
         a.creation_date,
         a.modificator_id,
-        a.modification_date
+        a.modification_date,
+        -- Toujours 0/0 sur une opération qui vient d'être clonée, mais les deux
+        -- champs sont non nullables : les omettre ne casserait que l'écran de
+        -- clonage, et seulement lui.
+        ${linkCountColumns('a')}
       FROM operation a
       WHERE 1=1
         AND a.id >= ?

@@ -216,8 +216,8 @@ query {
     }
   ) {
     id
-    operationA_id
-    operationB_id
+    operation_id
+    operation_ref_id
     active
     creator_id
     creation_date
@@ -235,13 +235,13 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   createOperationLink (
     dto: {
-      operationA_id: 1
-      operationB_id: 1
+      operation_id: 1
+      operation_ref_id: 2
     }
   ) {
     id
-    operationA_id
-    operationB_id
+    operation_id
+    operation_ref_id
     active
     creator_id
     creation_date

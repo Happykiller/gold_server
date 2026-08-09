@@ -24,6 +24,9 @@ import { GetOperationLinksServiceDto } from '@service/bdd/dto/getOperationLinks.
 import { OperationStatutServiceModel } from '@service/bdd/model/operationStatut.service.model';
 import { DeleteOperationLinkServiceDto } from '@service/bdd/dto/deleteOperationLink.service.dto';
 import { CreateOperationLinkServiceDto } from '@service/bdd/dto/createOperationLink.service.dto';
+import { CreateOperationLinksServiceDto } from '@service/bdd/dto/createOperationLinks.service.dto';
+import { LinkedOperationServiceModel } from '@service/bdd/model/linkedOperation.service.model';
+import { GetLinkedOperationsServiceDto } from '@service/bdd/dto/getLinkedOperations.service.dto';
 import { GetOperationThridsServiceDto } from '@service/bdd/dto/getOperationThrids.service.dto';
 import { GetOperationTypesServiceDto } from '@service/bdd/dto/getOperationTypes.service.dto';
 import { GetOperationCategoriesServiceDto } from '@service/bdd/dto/getOperationCategories.service.dto';
@@ -63,12 +66,18 @@ export interface BddService extends BddServiceBase {
   createOperationLink(
     dto: CreateOperationLinkServiceDto,
   ): Promise<OperationLinkServiceModel>;
+  createOperationLinks(
+    dto: CreateOperationLinksServiceDto,
+  ): Promise<OperationLinkServiceModel[]>;
   getOperationLink(
     dto: GetOperationLinkServiceDto,
   ): Promise<OperationLinkServiceModel>;
   getOperationLinks(
     dto: GetOperationLinksServiceDto,
   ): Promise<OperationLinkServiceModel[]>;
+  getLinkedOperations(
+    dto: GetLinkedOperationsServiceDto,
+  ): Promise<LinkedOperationServiceModel[]>;
   deleteOperationLink(dto: DeleteOperationLinkServiceDto): Promise<boolean>;
 
   cloneOperations(

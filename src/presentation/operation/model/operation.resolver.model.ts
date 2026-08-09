@@ -34,4 +34,15 @@ export class OperationModelResolver {
   modificator_id: number;
   @Field(() => String, { nullable: true })
   modification_date: string;
+  /** Nombre d'opérations que ce virement prend en charge. */
+  @Field(() => Int)
+  linked_count: number;
+  /**
+   * Nombre de virements qui prennent cette opération en charge.
+   *
+   * Un compteur, et non l'identifiant du porteur : la relation est N-N, plus de
+   * cent opérations en production sont couvertes par plusieurs virements.
+   */
+  @Field(() => Int)
+  linked_by_count: number;
 }

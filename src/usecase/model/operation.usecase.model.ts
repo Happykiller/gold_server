@@ -15,4 +15,6 @@ export interface OperationUsecaseModel {
   creation_date: string;
   modificator_id: number;
   modification_date: string;
+  linked_count: number;
+  linked_by_count: number;
 }

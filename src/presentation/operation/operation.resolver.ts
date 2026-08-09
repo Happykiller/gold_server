@@ -25,6 +25,8 @@ import { GetOperationInputResolver } from '@presentation/operation/dto/get.opera
 import { GetOperationsInputResolver } from '@presentation/operation/dto/getAll.operation.resolver.dto';
 import { CloneOperationInputResolver } from '@presentation/operation/dto/clone.operation.resolver.dto';
 import { OperationLinkModelResolver } from '@presentation/operation/model/operationLink.resolver.model';
+import { LinkedOperationModelResolver } from '@presentation/operation/model/linkedOperation.resolver.model';
+import { LINK_DIRECTION } from '@service/bdd/dto/getLinkedOperations.service.dto';
 import { OperationTypeModelResolver } from '@presentation/operation/model/operationType.resolver.model';
 import { CreateOperationInputResolver } from '@presentation/operation/dto/create.operation.resolver.dto';
 import { UpdateOperationInputResolver } from '@presentation/operation/dto/update.operation.resolver.dto';
@@ -108,6 +110,44 @@ export class OperationResolver {
         user_id: parseInt(session.id),
       });
     return categoryEntities.find((elt) => parent.category_id === elt.id);
+  }
+
+  /**
+   * Les opérations que ce virement prend en charge.
+   *
+   * Une requête SQL, et seulement si le client la demande : l'écran de liste ne
+   * la demande pas, il lit `linked_count`, calculé dans la même requête que les
+   * lignes. Seul le détail descend jusqu'ici.
+   */
+  @ResolveField(
+    /* istanbul ignore next */
+    () => [LinkedOperationModelResolver],
+  )
+  async linked_operations(
+    @Parent() parent: OperationModelResolver,
+    @CurrentSession() session: UserSession,
+  ): Promise<LinkedOperationModelResolver[]> {
+    return inversify.getLinkedOperationsUsecase.execute({
+      user_id: parseInt(session.id),
+      operation_id: parent.id,
+      direction: LINK_DIRECTION.DOWN,
+    });
+  }
+
+  /** Les virements qui prennent cette opération en charge. */
+  @ResolveField(
+    /* istanbul ignore next */
+    () => [LinkedOperationModelResolver],
+  )
+  async linked_by_operations(
+    @Parent() parent: OperationModelResolver,
+    @CurrentSession() session: UserSession,
+  ): Promise<LinkedOperationModelResolver[]> {
+    return inversify.getLinkedOperationsUsecase.execute({
+      user_id: parseInt(session.id),
+      operation_id: parent.id,
+      direction: LINK_DIRECTION.UP,
+    });
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
