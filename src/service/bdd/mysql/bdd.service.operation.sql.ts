@@ -229,6 +229,21 @@ export class BddServiceOperationSQL {
     // opérations, et les sous-requêtes corrélées y seraient évaluées sur toutes
     // les lignes triées avant d'en garder 50. Ici, elles ne voient que la page.
     // L'ordre d'une table dérivée n'étant pas garanti, il se redit à la fin.
+    //
+    // UNION ALL, et non UNION : le dédoublonnage obligeait MariaDB à
+    // matérialiser puis dédoublonner l'historique ENTIER des deux branches
+    // avant d'appliquer le LIMIT — 71 ms contre 13 ms sur le compte le plus
+    // chargé (10 339 lignes), mesuré le 10/08/2026.
+    //
+    // La réécriture est une identité, pas un pari sur les données du jour. La
+    // branche 1 retient `account_id = ?`, la branche 2 `account_id_dest = ?` :
+    // une ligne ne peut sortir des deux que si `account_id = account_id_dest`,
+    // et le prédicat ajouté à la seconde branche exclut exactement cette
+    // classe de lignes, rien d'autre. Le `IS NULL` couvre le cas d'un
+    // `account_id` nul, qu'aucune comparaison ne rendrait vrai. Quant aux
+    // doublons de valeurs, ils sont impossibles : `a.id` figure au SELECT.
+    // (Vérifié en base ce jour-là : zéro opération d'un compte vers lui-même —
+    // ce qui confirme le raisonnement au lieu de lui tenir lieu de preuve.)
     const query = `SELECT
     p.*,
     ${linkCountColumns('p')}
@@ -245,12 +260,13 @@ export class BddServiceOperationSQL {
     h.category_id,
     h.vat_rate,
     h.description,
+    h.active,
     h.creator_id,
     h.creation_date,
     h.modificator_id,
     h.modification_date
   FROM (
-    SELECT 
+    SELECT
       g.id,
       g.account_id,
       g.account_id_dest,
@@ -262,6 +278,7 @@ export class BddServiceOperationSQL {
       g.vat_rate,
       g.amount,
       g.date,
+      g.active,
       g.creator_id,
       g.creation_date,
       g.modificator_id,
@@ -279,6 +296,7 @@ export class BddServiceOperationSQL {
         a.type_id,
         a.vat_rate,
         a.date,
+        a.active,
         a.creator_id,
         a.creation_date,
         a.modificator_id,
@@ -289,8 +307,8 @@ export class BddServiceOperationSQL {
         AND a.creator_id = ?
         AND a.active = 1
         ${filters.clause}
-      UNION
-      SELECT 
+      UNION ALL
+      SELECT
         a.id,
         a.amount,
         a.account_id,
@@ -302,6 +320,7 @@ export class BddServiceOperationSQL {
         a.type_id,
         a.vat_rate,
         a.date,
+        a.active,
         a.creator_id,
         a.creation_date,
         a.modificator_id,
@@ -311,6 +330,7 @@ export class BddServiceOperationSQL {
         AND a.account_id_dest = ?
         AND a.creator_id = ?
         AND a.active = 1
+        AND (a.account_id IS NULL OR a.account_id <> a.account_id_dest)
         ${filters.clause}
     ) g
   ) h
