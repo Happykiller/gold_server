@@ -4,13 +4,16 @@ import { createLogger, format, transports } from 'winston';
 
 /* istanbul ignore next */
 const myFormat = format.printf((info) => {
-  let myformat: string;
-  if (info.error) {
-    myformat = `${info.timestamp} ${info.module} ${info.level}: ${info.message} => ${info.error}`;
-  } else {
-    myformat = `${info.timestamp} ${info.module} ${info.level}: ${info.message}`;
-  }
-  return myformat;
+  const { timestamp, module, level, message, error, ...meta } = info;
+  // Les métadonnées étaient jetées : un log `graphql` s'affichait sans sa durée
+  // ni son nombre de requêtes SQL, c'est-à-dire sans ce qu'il avait à dire.
+  const extra = Object.entries(meta)
+    .filter(([key]) => key !== 'splat' && !key.startsWith('Symbol('))
+    .map(([key, value]) => `${key}=${value}`)
+    .join(' ');
+  const head = `${timestamp} ${module} ${level}: ${message}`;
+  if (error) return `${head} => ${error}${extra ? ` ${extra}` : ''}`;
+  return extra ? `${head} ${extra}` : head;
 });
 
 // Default

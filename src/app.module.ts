@@ -10,6 +10,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { config } from '@src/config';
 import { version } from '../package.json';
 import inversify from '@src/inversify/investify';
+import { logger } from '@src/common/logger/logger';
+import { createMetricsPlugin } from '@presentation/graphql/metrics.plugin';
 import { AccountModule } from '@presentation/account/account.module';
 import { OperationModule } from '@presentation/operation/operation.module';
 import {
@@ -58,6 +60,14 @@ import {
       context: ({ req, res }) => {
         return { req, res };
       },
+      plugins: config.log?.metrics
+        ? [
+            createMetricsPlugin({
+              slowOperationMs: config.log?.slowOperationMs,
+              log: (message, meta) => logger.info(message, meta),
+            }),
+          ]
+        : [],
     }),
     ScheduleModule.forRoot(),
     ThrottlerModule.forRoot(config.throttle),

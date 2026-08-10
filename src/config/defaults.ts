@@ -38,6 +38,12 @@ const defaults: Configuration = {
     user: merged.DB_USER ?? 'root',
     password: merged.DB_PASSWORD ?? 'password',
     database: merged.DB_NAME ?? 'gold',
+    connectionLimit: 20,
+  },
+  log: {
+    slowQueryMs: 100,
+    slowOperationMs: 0,
+    metrics: true,
   },
   morgans: {
     url: 'http://morgans:8000/graphql',

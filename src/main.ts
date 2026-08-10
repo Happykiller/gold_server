@@ -9,6 +9,7 @@ import { config } from '@src/config';
 import { AppModule } from '@src/app.module';
 import inversify from '@src/inversify/investify';
 import { configureAuthGuardFactory } from '@happykiller/sunny-apis';
+import { runInRequestContext } from '@src/common/metrics/request.context';
 
 async function bootstrap() {
   const logger = new Logger('bootstrap');
@@ -29,6 +30,12 @@ async function bootstrap() {
     res.append('Access-Control-Expose-Headers', '*');
     next();
   });
+  // Ouvre le contexte de mesure pour toute la durée de la requête. Doit
+  // précéder le handler GraphQL : ce qui est exécuté hors de ce `run` ne sera
+  // pas compté, et le compteur SQL rendrait alors 0 sans le dire.
+  app.use((_req: Request, _res: Response, next: NextFunction) =>
+    runInRequestContext(next),
+  );
   await app.listen(config.env.port ?? 3000);
 }
 bootstrap();

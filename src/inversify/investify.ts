@@ -28,6 +28,7 @@ import { GetLinkedOperationsUsecase } from '@usecase/getLinkedOperations.usecase
 import { GetOperationLinksUsecase } from '@usecase/getOperationLinks.usecase';
 import { GetOperationStatusUsecase } from '@usecase/getOperationStatus.usecase';
 import { GetOperationThridsUsecase } from '@usecase/getOperationThrids.usecase';
+import { instrumentPool } from '@service/bdd/mysql/pool.instrumented';
 import { PasswordLessService } from '@service/passwordless/passwordless.service';
 import { CreateOperationLinkUsecase } from '@usecase/createOperationLink.usecase';
 import { DeleteOperationLinkUsecase } from '@usecase/deleteOperationLink.usecase';
@@ -134,25 +135,36 @@ export class Inversify implements InversifyInterface {
       this,
     );
 
-    if (config.env.mode === 'prod') {
+    if (config.env.mode === 'prod' || config.env.mode === 'dev') {
       this.loggerService = logger;
       this.passwordLessService = new PasswordLessServiceReal();
 
+      // `connectionLimit` était laissé au défaut de mysql2, soit 10 : un défaut
+      // subi, pas un choix. Les requêtes d'un même appel GraphQL s'y
+      // sérialisaient par paquets de dix.
+      // Le spread vient EN PREMIER : posées après lui, ces options seraient
+      // écrasées par une clé homonyme de `config.bdd`, fût-elle `undefined` —
+      // et mysql2 retomberait alors sur son défaut de 10 connexions.
       const pool = mysql.createPool({
         debug: false,
         ...config.bdd,
+        connectionLimit: config.bdd?.connectionLimit ?? 20,
+        waitForConnections: true,
       });
 
-      this.bddService = new BddServiceSQL(pool) as unknown as BddService;
-    } else if (config.env.mode === 'dev') {
-      this.loggerService = logger;
-      this.passwordLessService = new PasswordLessServiceReal();
-
-      const pool = mysql.createPool({
-        debug: false,
-        ...config.bdd,
+      // Toute requête SQL passe par ici : c'est le seul point où la compter.
+      const instrumented = instrumentPool(pool, {
+        slowQueryMs: config.log?.slowQueryMs,
+        onSlowQuery: (sql, ms) =>
+          logger.warn('slow sql', {
+            ms: Math.round(ms),
+            sql: sql.slice(0, 300),
+          }),
       });
-      this.bddService = new BddServiceSQL(pool) as unknown as BddService;
+
+      this.bddService = new BddServiceSQL(
+        instrumented,
+      ) as unknown as BddService;
     } else {
       this.loggerService = logger;
       this.passwordLessService = new PasswordLessServiceFake();

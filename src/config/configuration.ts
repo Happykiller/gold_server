@@ -9,5 +9,16 @@ export class Configuration extends ConfigurationBase {
     user?: string;
     password?: string;
     database?: string;
+    connectionLimit?: number;
+  };
+
+  /** Instrumentation — voir src/common/metrics/request.context.ts. */
+  public log?: {
+    /** Journalise une requête SQL au-delà de ce nombre de millisecondes. */
+    slowQueryMs?: number;
+    /** Journalise une opération GraphQL au-delà de ce seuil. 0 = toutes. */
+    slowOperationMs?: number;
+    /** Coupe complètement la journalisation des mesures (tests, mock). */
+    metrics?: boolean;
   };
 }
