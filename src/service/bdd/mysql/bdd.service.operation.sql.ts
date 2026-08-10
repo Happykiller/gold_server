@@ -479,41 +479,54 @@ export class BddServiceOperationSQL {
     }));
   }
 
+  /**
+   * Met à jour les seules colonnes fournies.
+   *
+   * La version précédente relisait l'opération pour remplir les colonnes
+   * absentes du DTO, alors que le usecase venait déjà de la lire pour sa garde
+   * `OPERATION_NOT_FOUND` : quatre allers-retours pour une écriture, sur le
+   * geste le plus répété du produit — le pointage passe par ici.
+   *
+   * La clause `SET` est construite à partir des clés présentes, et le test
+   * reste `!== undefined` : un `null` explicite doit continuer de vider la
+   * colonne. (Ne pas copier le `dto.x ? : old.x` d'`updateAccount`, qui teste
+   * la véracité et ne peut donc jamais effacer une description.)
+   */
   async updateOperation(
     dto: UpdateOperationServiceDto,
   ): Promise<OperationServiceModel> {
-    const old: OperationServiceModel = await this.getOperation(dto);
+    const colonnes: [string, unknown][] = [
+      ['account_id', dto.account_id],
+      ['account_id_dest', dto.account_id_dest],
+      ['amount', dto.amount],
+      ['date', dto.date],
+      ['status_id', dto.status_id],
+      ['type_id', dto.type_id],
+      ['third_id', dto.third_id],
+      ['category_id', dto.category_id],
+      ['vat_rate', dto.vat_rate],
+      ['description', dto.description],
+    ].filter(([, value]) => value !== undefined) as [string, unknown][];
+
     const query = `UPDATE operation SET
-      account_id = ?,
-      account_id_dest = ?,
-      amount = ?,
-      date = ?,
-      status_id = ?,
-      type_id = ?,
-      third_id = ?,
-      category_id = ?,
-      vat_rate = ?,
-      description = ?,
+      ${colonnes.map(([nom]) => `${nom} = ?`).join(',\n      ')}${
+        colonnes.length ? ',' : ''
+      }
       modificator_id = ?,
       modification_date = current_date()
     WHERE 1=1
       AND id = ?
+      AND creator_id = ?
+      AND active = 1
     ;`;
+    // `creator_id` au WHERE : le cloisonnement ne tenait qu'à la relecture
+    // qu'on vient de supprimer, et l'UPDATE ne filtrait que sur l'id. La garde
+    // métier reste dans le usecase, celle-ci est la barrière de fond (loi 1).
     await this.pool.execute(query, [
-      dto.account_id !== undefined ? dto.account_id : old.account_id,
-      dto.account_id_dest !== undefined
-        ? dto.account_id_dest
-        : old.account_id_dest,
-      dto.amount !== undefined ? dto.amount : old.amount,
-      dto.date !== undefined ? dto.date : old.date,
-      dto.status_id !== undefined ? dto.status_id : old.status_id,
-      dto.type_id !== undefined ? dto.type_id : old.type_id,
-      dto.third_id !== undefined ? dto.third_id : old.third_id,
-      dto.category_id !== undefined ? dto.category_id : old.category_id,
-      dto.vat_rate !== undefined ? dto.vat_rate : old.vat_rate,
-      dto.description !== undefined ? dto.description : old.description,
+      ...colonnes.map(([, value]) => value),
       dto.user_id,
       dto.operation_id,
+      dto.user_id,
     ]);
     return await this.getOperation({
       operation_id: dto.operation_id,
