@@ -88,46 +88,83 @@ export class OperationResolver {
     return accounts.get(parent.account_id_dest) ?? null;
   }
 
+  /**
+   * Un référentiel indexé par id, chargé UNE fois par requête.
+   *
+   * Les quatre resolvers ci-dessous rechargeaient chacun leur référentiel
+   * ENTIER pour chaque ligne, puis cherchaient une entrée en JavaScript : 100
+   * requêtes SQL par lot de 50, pour des données qui tiennent en mémoire et ne
+   * changent pas pendant une requête.
+   *
+   * Une `Map` plutôt que le tableau brut : le `.find()` par ligne restait
+   * gratuit à cette taille, mais l'index rend le coût indépendant du nombre
+   * d'entrées, et dit mieux ce que fait l'appel.
+   */
+  private async refById<T extends { id: number }>(
+    key: string,
+    context: { cache?: RequestCache },
+    load: () => Promise<T[]>,
+  ): Promise<Map<number, T>> {
+    return cacheOf(context).get(key, async () => {
+      const entries = await load();
+      return new Map(entries.map((entry) => [entry.id, entry]));
+    });
+  }
+
   @ResolveField((of) => OperationStatutModelResolver)
   async status(
     @Parent() parent: OperationModelResolver,
+    @Context() context: { cache?: RequestCache },
   ): Promise<OperationStatutModelResolver> {
-    const statusEntities = await inversify.getOperationStatusUsecase.execute();
-    return statusEntities.find((elt) => parent.status_id === elt.id);
+    // Seul référentiel sans user_id : sa clé n'en porte donc pas non plus.
+    const statuses = await this.refById('operation-status', context, () =>
+      inversify.getOperationStatusUsecase.execute(),
+    );
+    return statuses.get(parent.status_id);
   }
 
   @ResolveField((of) => OperationTypeModelResolver)
   async type(
     @Parent() parent: OperationModelResolver,
     @CurrentSession() session: UserSession,
+    @Context() context: { cache?: RequestCache },
   ): Promise<OperationTypeModelResolver> {
-    const typeEntities = await inversify.getOperationTypesUsecase.execute({
-      user_id: parseInt(session.id),
-    });
-    return typeEntities.find((elt) => parent.type_id === elt.id);
+    const userId = parseInt(session.id);
+    const types = await this.refById(`operation-types:${userId}`, context, () =>
+      inversify.getOperationTypesUsecase.execute({ user_id: userId }),
+    );
+    return types.get(parent.type_id);
   }
 
   @ResolveField((of) => OperationThirdModelResolver)
   async third(
     @Parent() parent: OperationModelResolver,
     @CurrentSession() session: UserSession,
+    @Context() context: { cache?: RequestCache },
   ): Promise<OperationThirdModelResolver> {
-    const thirdEntities = await inversify.getOperationThridsUsecase.execute({
-      user_id: parseInt(session.id),
-    });
-    return thirdEntities.find((elt) => parent.third_id === elt.id);
+    const userId = parseInt(session.id);
+    const thirds = await this.refById(
+      `operation-thirds:${userId}`,
+      context,
+      () => inversify.getOperationThridsUsecase.execute({ user_id: userId }),
+    );
+    return thirds.get(parent.third_id);
   }
 
   @ResolveField((of) => OperationCategoryModelResolver)
   async category(
     @Parent() parent: OperationModelResolver,
     @CurrentSession() session: UserSession,
+    @Context() context: { cache?: RequestCache },
   ): Promise<OperationCategoryModelResolver> {
-    const categoryEntities =
-      await inversify.getOperationCategoriesUsecase.execute({
-        user_id: parseInt(session.id),
-      });
-    return categoryEntities.find((elt) => parent.category_id === elt.id);
+    const userId = parseInt(session.id);
+    const categories = await this.refById(
+      `operation-categories:${userId}`,
+      context,
+      () =>
+        inversify.getOperationCategoriesUsecase.execute({ user_id: userId }),
+    );
+    return categories.get(parent.category_id);
   }
 
   /**
