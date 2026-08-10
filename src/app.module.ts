@@ -12,6 +12,7 @@ import { version } from '../package.json';
 import inversify from '@src/inversify/investify';
 import { logger } from '@src/common/logger/logger';
 import { createMetricsPlugin } from '@presentation/graphql/metrics.plugin';
+import { RequestCache } from '@src/common/graphql/request.cache';
 import { AccountModule } from '@presentation/account/account.module';
 import { OperationModule } from '@presentation/operation/operation.module';
 import {
@@ -57,8 +58,10 @@ import {
       playground: config.graphQL.playground,
       introspection: config.graphQL.introspection,
       autoSchemaFile: config.graphQL.schemaFileName,
+      // Le cache naît et meurt avec la requête : c'est la seule durée de vie
+      // acceptable pour un solde ou un référentiel — voir request.cache.ts.
       context: ({ req, res }) => {
-        return { req, res };
+        return { req, res, cache: new RequestCache() };
       },
       plugins: config.log?.metrics
         ? [

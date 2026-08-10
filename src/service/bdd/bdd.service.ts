@@ -12,6 +12,7 @@ import { CreateAccountServiceDto } from '@service/bdd/dto/createAccount.service.
 import { UpdateAccountServiceDto } from '@service/bdd/dto/updateAccount.service.dto';
 import { DeleteAccountServiceDto } from '@service/bdd/dto/deleteAccount.service.dto';
 import { AccountTypeServiceModel } from '@service/bdd/model/accountType.service.model';
+import { AccountBalanceServiceModel } from '@service/bdd/model/accountBalance.service.model';
 import { CreateOperationServiceDto } from '@service/bdd/dto/createOperation.service.dto';
 import { UpdateOperationServiceDto } from '@service/bdd/dto/updateOperation.service.dto';
 import { DeleteOperationServiceDto } from '@service/bdd/dto/deleteOperation.service.dto';
@@ -36,6 +37,9 @@ export interface BddService extends BddServiceBase {
   createAccount(dto: CreateAccountServiceDto): Promise<AccountServiceModel>;
   getAccount(dto: GetAccountServiceDto): Promise<AccountServiceModel>;
   getAccounts(dto: GetAccountsServiceDto): Promise<AccountServiceModel[]>;
+  getAccountsBalances(
+    dto: GetAccountsServiceDto,
+  ): Promise<AccountBalanceServiceModel[]>;
   updateAccount(dto: UpdateAccountServiceDto): Promise<AccountServiceModel>;
   deleteAccount(dto: DeleteAccountServiceDto): Promise<boolean>;
 

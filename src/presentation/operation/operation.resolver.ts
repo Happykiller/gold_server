@@ -8,11 +8,13 @@ import {
   Args,
   ResolveField,
   Parent,
+  Context,
 } from '@nestjs/graphql';
 
 import { ERRORS } from '@src/common/ERROR';
 
 import inversify from '@src/inversify/investify';
+import { cacheOf, RequestCache } from '@src/common/graphql/request.cache';
 import { AccountModelResolver } from '@presentation/account/account.resolver';
 import {
   CurrentSession,
@@ -40,34 +42,50 @@ import { CashflowInputResolver } from '@presentation/operation/dto/cashflow.reso
 
 @Resolver((of) => OperationModelResolver)
 export class OperationResolver {
+  /**
+   * Les comptes de l'utilisateur, indexés par id, chargés UNE fois par requête.
+   *
+   * Ces deux resolvers s'exécutent par ligne : sur un lot de 50 opérations,
+   * c'était 66 lectures de compte, dont chacune calculait deux soldes en
+   * balayant tout l'historique. Le lot entier tenait dans une seule lecture —
+   * les 50 lignes d'une page portent une poignée de comptes distincts.
+   */
+  private async accountsById(
+    session: UserSession,
+    context: { cache?: RequestCache },
+  ): Promise<Map<number, AccountModelResolver>> {
+    const userId = parseInt(session.id);
+    return cacheOf(context).get(`accounts-by-id:${userId}`, async () => {
+      const accounts = await inversify.getAccountsUsecase.execute({
+        user_id: userId,
+      });
+      return new Map(accounts.map((account) => [account.id, account]));
+    });
+  }
+
   @ResolveField((of) => AccountModelResolver)
   async account(
     @Parent() parent: OperationModelResolver,
     @CurrentSession() session: UserSession,
+    @Context() context: { cache?: RequestCache },
   ): Promise<AccountModelResolver> {
-    const entity: AccountModelResolver =
-      await inversify.getAccountUsecase.execute({
-        user_id: parseInt(session.id),
-        account_id: parent.account_id,
-      });
-    return entity;
+    const accounts = await this.accountsById(session, context);
+    // `?? null` : `getAccountUsecase` rendait null pour un compte absent ou
+    // appartenant à un autre utilisateur. Le comportement est conservé, y
+    // compris le fait qu'il viole le `AccountModelResolver!` du schéma —
+    // corriger cette nullabilité touche le contrat, et se traite à part.
+    return accounts.get(parent.account_id) ?? null;
   }
 
   @ResolveField((of) => AccountModelResolver, { nullable: true })
   async account_dest(
     @Parent() parent: OperationModelResolver,
     @CurrentSession() session: UserSession,
+    @Context() context: { cache?: RequestCache },
   ): Promise<AccountModelResolver> {
-    if (parent.account_id_dest !== null) {
-      const entity: AccountModelResolver =
-        await inversify.getAccountUsecase.execute({
-          user_id: parseInt(session.id),
-          account_id: parent.account_id_dest,
-        });
-      return entity;
-    } else {
-      return null;
-    }
+    if (parent.account_id_dest === null) return null;
+    const accounts = await this.accountsById(session, context);
+    return accounts.get(parent.account_id_dest) ?? null;
   }
 
   @ResolveField((of) => OperationStatutModelResolver)

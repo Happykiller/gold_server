@@ -6,6 +6,7 @@ import { CreateAccountServiceDto } from '@service/bdd/dto/createAccount.service.
 import { UpdateAccountServiceDto } from '@service/bdd/dto/updateAccount.service.dto';
 import { DeleteAccountServiceDto } from '@service/bdd/dto/deleteAccount.service.dto';
 import { AccountTypeServiceModel } from '@service/bdd/model/accountType.service.model';
+import { AccountBalanceServiceModel } from '@service/bdd/model/accountBalance.service.model';
 
 export class BddServiceAccountFake {
   collectionAccount: AccountServiceModel[] = [
@@ -27,6 +28,21 @@ export class BddServiceAccountFake {
 
   getAccounts(_dto: GetAccountsServiceDto): Promise<AccountServiceModel[]> {
     return Promise.resolve(this.collectionAccount);
+  }
+
+  getAccountsBalances(
+    _dto: GetAccountsServiceDto,
+  ): Promise<AccountBalanceServiceModel[]> {
+    // Les mêmes 41/42 que la collection ci-dessus : les tests qui les
+    // attendaient continuent de les voir, que le solde vienne de la ligne ou
+    // du resolver de champs.
+    return Promise.resolve(
+      this.collectionAccount.map((account) => ({
+        account_id: account.id,
+        balance_reconcilied: account.balance_reconcilied,
+        balance_not_reconcilied: account.balance_not_reconcilied,
+      })),
+    );
   }
 
   getAccount(dto: GetAccountServiceDto): Promise<AccountServiceModel> {

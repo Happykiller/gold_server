@@ -10,6 +10,7 @@ import { CryptService } from '@src/service/crypt/crypt.service';
 import { GetAccountUsecase } from '@usecase/getAccount.usecase';
 import { BddServiceSQL } from '@service/bdd/mysql/bdd.service.sql';
 import { GetAccountsUsecase } from '@usecase/getAccounts.usecase';
+import { GetAccountsBalancesUsecase } from '@usecase/getAccountsBalances.usecase';
 import { GetOperationUsecase } from '@usecase/getOperation.usecase';
 import { BddServiceFake } from '@service/bdd/fake/bdd.service.fake';
 import { GetOperationsUsecase } from '@usecase/getOperations.usecase';
@@ -62,6 +63,7 @@ export class Inversify implements InversifyInterface {
   getUserUsecase: GetUserUsecase;
   getAccountUsecase: GetAccountUsecase;
   getAccountsUsecase: GetAccountsUsecase;
+  getAccountsBalancesUsecase: GetAccountsBalancesUsecase;
   authPasskeyUsecase: AuthPasskeyUsecase;
   getOperationUsecase: GetOperationUsecase;
   passwordLessService: PasswordLessService;
@@ -112,6 +114,7 @@ export class Inversify implements InversifyInterface {
      */
     this.getAccountUsecase = new GetAccountUsecase(this);
     this.getAccountsUsecase = new GetAccountsUsecase(this);
+    this.getAccountsBalancesUsecase = new GetAccountsBalancesUsecase(this);
     this.getOperationUsecase = new GetOperationUsecase(this);
     this.createAccountUsecase = new CreateAccountUsecase(this);
     this.updateAccountUsecase = new UpdateAccountUsecase(this);
