@@ -22,7 +22,7 @@
   "dependencies": {
     "@apollo/server": "^5.5.1",
     "@as-integrations/express5": "^1.1.2",
-    "@happykiller/sunny-apis": "^0.8.1",
+    "@happykiller/sunny-apis": "^0.9.0",
     "@nestjs/apollo": "^13.4.2",
     "@nestjs/common": "^11.1.28",
     "@nestjs/core": "^11.1.28",
