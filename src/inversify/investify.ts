@@ -41,6 +41,8 @@ import {
   CryptServiceReal,
   DeletePasskeyUsecase,
   GetByUserIdPasskeyUsecase,
+  OptionsAuthPasskeyUsecase,
+  OptionsRegisterPasskeyUsecase,
   GetUserUsecase,
   HttpService,
   HttpServiceReal,
@@ -84,6 +86,8 @@ export class Inversify implements InversifyInterface {
   getLinkedOperationsUsecase: GetLinkedOperationsUsecase;
   getOperationLinksUsecase: GetOperationLinksUsecase;
   getByUserIdPasskeyUsecase: GetByUserIdPasskeyUsecase;
+  optionsAuthPasskeyUsecase: OptionsAuthPasskeyUsecase;
+  optionsRegisterPasskeyUsecase: OptionsRegisterPasskeyUsecase;
   getOperationThridsUsecase: GetOperationThridsUsecase;
   getOperationStatusUsecase: GetOperationStatusUsecase;
   deleteOperationLinkUsecase: DeleteOperationLinkUsecase;
@@ -108,6 +112,10 @@ export class Inversify implements InversifyInterface {
     this.deletePasskeyUsecase = new DeletePasskeyUsecase(this);
     this.createPasskeyUsecase = new CreatePasskeyUsecase(this);
     this.getByUserIdPasskeyUsecase = new GetByUserIdPasskeyUsecase(this);
+    this.optionsAuthPasskeyUsecase = new OptionsAuthPasskeyUsecase(this);
+    this.optionsRegisterPasskeyUsecase = new OptionsRegisterPasskeyUsecase(
+      this,
+    );
 
     /**
      * Usecases project

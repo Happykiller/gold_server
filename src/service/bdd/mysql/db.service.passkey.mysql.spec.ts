@@ -123,14 +123,38 @@ describe('BddServicePasskeyMysql — lecture des colonnes JSON', () => {
       expect(passkey.registrationParsed).toBeNull();
     });
 
-    it('lie le credential_id au lieu de l’interpoler', async () => {
+    it('renseigne credential_id à l’insertion', async () => {
+      // Sans quoi la colonne resterait vide pour toute clé créée après la
+      // migration, et la connexion ne retrouverait plus rien.
+      const { service, execute } = makeService([]);
+
+      await service.createPasskey({
+        user_id: 1,
+        user_code: 'faro',
+        label: 'un appareil',
+        hostname: 'exemple.test',
+        challenge: 'c',
+        registration: REGISTRATION,
+        registrationParsed: REGISTRATION_PARSED,
+      } as any);
+
+      expect(lastQuery(execute)).toContain('credential_id');
+      expect(lastParams(execute)).toContain(REGISTRATION.id);
+    });
+
+    it('cherche par la colonne indexée, et lie sa valeur', async () => {
+      // C'était `registration LIKE '%…%'` : un balayage de toute la table avec
+      // comparaison de sous-chaîne sur un document JSON, sur le chemin de la
+      // connexion. La colonne `credential_id` (migration 009) porte la même
+      // valeur, sous index unique.
       const { service, execute } = makeService([]);
 
       await service.getPasskey({ credential_id: "x' OR 1=1 --" } as any);
 
-      expect(lastQuery(execute)).toContain('a.registration LIKE ?');
+      expect(lastQuery(execute)).toContain('a.credential_id = ?');
+      expect(lastQuery(execute)).not.toContain('LIKE');
       expect(lastQuery(execute)).not.toContain('OR 1=1');
-      expect(lastParams(execute)).toEqual(["%x' OR 1=1 --%"]);
+      expect(lastParams(execute)).toEqual(["x' OR 1=1 --"]);
     });
 
     it('lie le passkey_id au lieu de l’interpoler', async () => {

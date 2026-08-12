@@ -39,12 +39,16 @@ export class BddServicePasskeyMysql implements Pick<
   pool: any;
 
   async createPasskey(dto: CreatePasskeyDbDto): Promise<PasskeyDbModel> {
-    const query = `INSERT INTO passkeys (user_id, user_code, label, hostname, challenge, registration, registration_parsed) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    // `credential_id` double une valeur du JSON `registration`, délibérément :
+    // c'est par elle que la connexion retrouve sa clé, et une colonne indexée
+    // remplace le `LIKE '%…%'` qui balayait la table (migration 009).
+    const query = `INSERT INTO passkeys (user_id, user_code, credential_id, label, hostname, challenge, registration, registration_parsed)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ;`;
     const [results] = await this.pool.execute(query, [
       dto.user_id,
       dto.user_code,
+      dto.registration?.id ?? null,
       dto.label,
       dto.hostname,
       dto.challenge,
@@ -93,8 +97,11 @@ export class BddServicePasskeyMysql implements Pick<
       filter = 'AND a.id = ?';
       params.push(dto.passkey_id);
     } else if (dto.credential_id) {
-      filter = 'AND a.registration LIKE ?';
-      params.push(`%${dto.credential_id}%`);
+      // Colonne indexée (migration 009) : c'était `registration LIKE '%…%'`,
+      // soit un balayage complet avec comparaison de sous-chaîne sur un
+      // document JSON — sur le chemin de la connexion, qui plus est.
+      filter = 'AND a.credential_id = ?';
+      params.push(dto.credential_id);
     }
 
     const query = `SELECT id, 
