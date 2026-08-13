@@ -190,6 +190,13 @@ type CashflowModelResolver {
   total_balance: Float!
 }
 
+type OperationsChangedModelResolver {
+  kind: String!
+  account_ids: [Int!]!
+  operation_ids: [Int!]!
+  origin: String
+}
+
 type Query {
   ping: PingResponse!
   auth(dto: AuthAuthResolverDto!): AuthModelResolver!
@@ -403,4 +410,8 @@ input CloneOperationInputResolver {
   account_id: Int!
   template_account_id: Int!
   date: String!
+}
+
+type Subscription {
+  operationsChanged: OperationsChangedModelResolver!
 }

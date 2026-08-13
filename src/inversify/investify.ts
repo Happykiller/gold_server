@@ -31,6 +31,7 @@ import { GetOperationStatusUsecase } from '@usecase/getOperationStatus.usecase';
 import { GetOperationThridsUsecase } from '@usecase/getOperationThrids.usecase';
 import { instrumentPool } from '@service/bdd/mysql/pool.instrumented';
 import { PasswordLessService } from '@service/passwordless/passwordless.service';
+import { OperationEventService } from '@service/event/operationEvent.service';
 import { CreateOperationLinkUsecase } from '@usecase/createOperationLink.usecase';
 import { DeleteOperationLinkUsecase } from '@usecase/deleteOperationLink.usecase';
 import { GetOperationCategoriesUsecase } from '@usecase/getOperationCategories.usecase';
@@ -60,6 +61,7 @@ export class Inversify implements InversifyInterface {
   httpService: HttpService;
   cryptService: CryptService;
   morgansService: MorgansService;
+  operationEventService: OperationEventService;
 
   authUsecase: AuthUsecase;
   getUserUsecase: GetUserUsecase;
@@ -102,6 +104,9 @@ export class Inversify implements InversifyInterface {
     this.httpService = new HttpServiceReal();
     this.cryptService = new CryptServiceReal(config);
     this.morgansService = new MorgansServiceReal(this, config.morgans.url);
+    // Instancié dans tous les modes : un bus en mémoire ne dépend d'aucune
+    // base, il n'a donc pas de variante factice.
+    this.operationEventService = new OperationEventService();
 
     /**
      * Usecases sunny

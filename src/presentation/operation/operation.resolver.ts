@@ -39,9 +39,55 @@ import { OperationCategoryModelResolver } from '@presentation/operation/model/op
 import { CreateOperationLinkInputResolver } from '@presentation/operation/dto/create.operationLink.resolver.dto';
 import { CashflowModelResolver } from '@presentation/operation/model/cashflow.resolver.model';
 import { CashflowInputResolver } from '@presentation/operation/dto/cashflow.resolver.dto';
+import { OperationChangeKind } from '@service/event/operationEvent.service';
+
+/**
+ * Ce qu'une mutation lit dans le contexte : l'en-tête que le front pose pour se
+ * reconnaître dans les événements qu'il déclenche.
+ */
+interface MutationContext {
+  req?: { headers?: Record<string, string | string[] | undefined> };
+}
+
+/** Les comptes concernés par un lot d'opérations, sans doublon ni trou. */
+const accountsOf = (
+  operations: Pick<OperationModelResolver, 'account_id' | 'account_id_dest'>[],
+): number[] => [
+  ...new Set(
+    operations
+      .flatMap((operation) => [operation.account_id, operation.account_id_dest])
+      .filter((id): id is number => typeof id === 'number'),
+  ),
+];
 
 @Resolver((of) => OperationModelResolver)
 export class OperationResolver {
+  /**
+   * Prévient les clients de cet utilisateur qu'une opération a bougé.
+   *
+   * Publié depuis la présentation et non depuis le usecase, pour deux raisons :
+   * le usecase n'a aucun accès à la requête, donc pas à l'onglet émetteur ; et
+   * c'est ici qu'on tient déjà le résultat de la mutation, donc les comptes
+   * touchés. Le métier reste ignorant du fait qu'on l'écoute.
+   *
+   * Ne lève jamais : un abonné qui écoute mal ne doit pas faire échouer une
+   * écriture déjà commise en base.
+   */
+  private notify(
+    session: UserSession,
+    context: MutationContext,
+    kind: OperationChangeKind,
+    touched: { account_ids?: number[]; operation_ids?: number[] },
+  ): void {
+    const origin = context?.req?.headers?.['x-gold-client'];
+    inversify.operationEventService.publish(parseInt(session.id), {
+      kind,
+      account_ids: touched.account_ids ?? [],
+      operation_ids: touched.operation_ids ?? [],
+      origin: typeof origin === 'string' ? origin : null,
+    });
+  }
+
   /**
    * Les comptes de l'utilisateur, indexés par id, chargés UNE fois par requête.
    *
@@ -258,11 +304,17 @@ export class OperationResolver {
   async createOperation(
     @CurrentSession() session: UserSession,
     @Args('dto') dto: CreateOperationInputResolver,
+    @Context() context: MutationContext,
   ): Promise<OperationModelResolver> {
-    return inversify.createOperationUsecase.execute({
+    const operation = await inversify.createOperationUsecase.execute({
       user_id: parseInt(session.id),
       ...dto,
     });
+    this.notify(session, context, 'created', {
+      account_ids: accountsOf([operation]),
+      operation_ids: [operation.id],
+    });
+    return operation;
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
@@ -273,12 +325,18 @@ export class OperationResolver {
   async updateOperation(
     @CurrentSession() session: UserSession,
     @Args('dto') dto: UpdateOperationInputResolver,
+    @Context() context: MutationContext,
   ): Promise<OperationModelResolver> {
     try {
-      return await inversify.updateOperationUsecase.execute({
+      const operation = await inversify.updateOperationUsecase.execute({
         user_id: parseInt(session.id),
         ...dto,
       });
+      this.notify(session, context, 'updated', {
+        account_ids: accountsOf([operation]),
+        operation_ids: [operation.id],
+      });
+      return operation;
     } catch (e) {
       // Le usecase reste indépendant du framework : c'est ici, dans la couche
       // de présentation, qu'une erreur métier devient un refus GraphQL typé.
@@ -301,11 +359,19 @@ export class OperationResolver {
   async deleteOperation(
     @CurrentSession() session: UserSession,
     @Args('dto') dto: GetOperationInputResolver,
+    @Context() context: MutationContext,
   ): Promise<boolean> {
-    return inversify.deleteOperationUsecase.execute({
+    const deleted = await inversify.deleteOperationUsecase.execute({
       user_id: parseInt(session.id),
       operation_id: dto.operation_id,
     });
+    // Sans `account_ids` : la suppression est logique et ne rend qu'un booléen.
+    // Les relire coûterait une lecture pour épargner au client un rechargement
+    // qu'il fait de toute façon quand la liste affichée est concernée.
+    this.notify(session, context, 'deleted', {
+      operation_ids: [dto.operation_id],
+    });
+    return deleted;
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
@@ -379,11 +445,19 @@ export class OperationResolver {
   async createOperationLink(
     @CurrentSession() session: UserSession,
     @Args('dto') dto: CreateOperationLinkInputResolver,
+    @Context() context: MutationContext,
   ): Promise<OperationLinkModelResolver> {
-    return inversify.createOperationLinkUsecase.execute({
+    const link = await inversify.createOperationLinkUsecase.execute({
       user_id: parseInt(session.id),
       ...dto,
     });
+    // Un lien ne porte pas de compte, mais il déplace les compteurs
+    // `linked_count` / `linked_by_count` des deux opérations qu'il joint : la
+    // liste doit se relire.
+    this.notify(session, context, 'linked', {
+      operation_ids: [dto.operation_id, dto.operation_ref_id],
+    });
+    return link;
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
@@ -394,11 +468,14 @@ export class OperationResolver {
   async deleteOperationLink(
     @CurrentSession() session: UserSession,
     @Args('dto') dto: GetOperationLinkInputResolver,
+    @Context() context: MutationContext,
   ): Promise<boolean> {
-    return inversify.deleteOperationLinkUsecase.execute({
+    const deleted = await inversify.deleteOperationLinkUsecase.execute({
       user_id: parseInt(session.id),
       operation_link_id: dto.operation_link_id,
     });
+    this.notify(session, context, 'linked', {});
+    return deleted;
   }
 
   @UseGuards(makeAuthGuard('graphql', [USER_ROLE.ALL]))
@@ -409,10 +486,16 @@ export class OperationResolver {
   async cloneOperations(
     @CurrentSession() session: UserSession,
     @Args('dto') dto: CloneOperationInputResolver,
+    @Context() context: MutationContext,
   ): Promise<OperationModelResolver[]> {
-    return inversify.cloneOperationsUsecase.execute({
+    const operations = await inversify.cloneOperationsUsecase.execute({
       user_id: parseInt(session.id),
       ...dto,
     });
+    this.notify(session, context, 'cloned', {
+      account_ids: accountsOf(operations),
+      operation_ids: operations.map((operation) => operation.id),
+    });
+    return operations;
   }
 }
